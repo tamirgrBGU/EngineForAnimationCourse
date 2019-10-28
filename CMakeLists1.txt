@@ -1,0 +1,27 @@
+cmake_minimum_required(VERSION 3.14)
+set(CMAKE_CXX_STANDARD 14)
+project(Engine3DIGL)
+
+# All dependencies that are downloaded as cmake projects and tested on the auto-builds are ON
+# (by default, all build options are off)
+#option(LIBIGL_WITH_COMISO            "Use CoMiso"                   ON)
+#option(LIBIGL_WITH_OPENGL            "Use OpenGL"                   ON)
+#option(LIBIGL_WITH_OPENGL_GLFW       "Use GLFW"                     ON)
+#option(LIBIGL_WITH_OPENGL_GLFW_IMGUI "Use ImGui"                    ON)
+#option(LIBIGL_WITH_PNG               "Use PNG"                      ON)
+
+### End
+file(GLOB ENGINE igl/opengl/*.cpp igl/opengl/*.h  )
+file(GLOB DISPLAY igl/opengl/glfw/*.cpp igl/opengl/glfw/*.h)
+add_library(Display ${DISPLAY})
+add_library(Engine ${ENGINE})
+
+
+### Adding libIGL: choose the path to your local copy libIGL
+include_directories(${PROJECT_SOURCE_DIR}/igl ${PROJECT_SOURCE_DIR}/external ${PROJECT_SOURCE_DIR})
+
+add_subdirectory(external/glad glad)
+add_subdirectory(sandBox)
+
+
+
