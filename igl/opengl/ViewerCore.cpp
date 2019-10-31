@@ -101,6 +101,7 @@ IGL_INLINE void igl::opengl::ViewerCore::clear_framebuffers()
 }
 
 IGL_INLINE void igl::opengl::ViewerCore::draw(
+  Eigen::Matrix4f &worldMat,
   ViewerData& data,
   bool update_matrices)
 {
@@ -139,7 +140,7 @@ IGL_INLINE void igl::opengl::ViewerCore::draw(
     look_at( camera_eye, camera_center, camera_up, view);
     view = view
       * (trackball_angle * Eigen::Scaling(camera_zoom * camera_base_zoom)
-      * Eigen::Translation3f(camera_translation + camera_base_translation)).matrix();
+      * Eigen::Translation3f(camera_translation + camera_base_translation)).matrix()* worldMat*data.MakeTrans();
 
     norm = view.inverse().transpose() ;
 
@@ -242,7 +243,12 @@ IGL_INLINE void igl::opengl::ViewerCore::draw(
 
 }
 
-IGL_INLINE void igl::opengl::ViewerCore::draw_buffer(ViewerData& data,
+IGL_INLINE void igl::opengl::ViewerCore::UpdateUniforms(Eigen::Matrix4f &worldMat, ViewerData& data, bool update_matrices)
+{
+	
+}
+
+IGL_INLINE void igl::opengl::ViewerCore::draw_buffer(Eigen::Matrix4f &worldMat, ViewerData& data,
   bool update_matrices,
   Eigen::Matrix<unsigned char,Eigen::Dynamic,Eigen::Dynamic>& R,
   Eigen::Matrix<unsigned char,Eigen::Dynamic,Eigen::Dynamic>& G,
@@ -300,7 +306,7 @@ IGL_INLINE void igl::opengl::ViewerCore::draw_buffer(ViewerData& data,
   Eigen::Vector4f viewport_ori = viewport;
   viewport << 0,0,width,height;
   // Draw
-  draw(data,update_matrices);
+  draw(worldMat,data,update_matrices);
   // Restore viewport
   viewport = viewport_ori;
 

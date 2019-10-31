@@ -39,16 +39,12 @@ namespace opengl
 namespace glfw
 {
   // GLFW-based mesh viewer
-  class Viewer
+  class Viewer : public Movable
   {
   public:
     // UI Enumerations
-    enum class MouseButton {Left, Middle, Right};
-    enum class MouseMode { None, Rotation, Zoom, Pan, Translation} mouse_mode;
-    //IGL_INLINE int launch(bool resizable = true, bool fullscreen = false, const std::string &name = "libigl viewer", int width = 0, int height = 0);
-    //IGL_INLINE int launch_init(bool resizable = true, bool fullscreen = false, const std::string &name = "libigl viewer", int width = 0, int height = 0);
-    //IGL_INLINE bool launch_rendering(bool loop = true);
-    //IGL_INLINE void launch_shut();
+   // enum class MouseButton {Left, Middle, Right};
+   // enum class MouseMode { None, Rotation, Zoom, Pan, Translation} mouse_mode;
     IGL_INLINE void init();
     IGL_INLINE void init_plugins();
     IGL_INLINE void shutdown_plugins();
@@ -68,7 +64,7 @@ namespace glfw
     // OpenGL context resize
    
     // Helper functions
-    IGL_INLINE void snap_to_canonical_quaternion();
+
     IGL_INLINE void open_dialog_load_mesh();
     IGL_INLINE void open_dialog_save_mesh();
 
@@ -136,22 +132,10 @@ public:
     
 
     // List of registered plugins
-    std::vector<ViewerPlugin*> plugins;
-    // Temporary data stored when the mouse button is pressed
-    Eigen::Quaternionf down_rotation;
-    int current_mouse_x;
-    int current_mouse_y;
-    int down_mouse_x;
-    int down_mouse_y;
-    float down_mouse_z;
-    Eigen::Vector3f down_translation;
-    bool down;
-    bool hack_never_moved;
+//    std::vector<ViewerPlugin*> plugins;
+
     // Keep track of the global position of the scrollwheel
     float scroll_position;
-    // C++-style functions
-    //
-
 
   public:
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW

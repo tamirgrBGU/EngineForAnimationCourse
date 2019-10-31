@@ -56,55 +56,28 @@ namespace opengl
 namespace glfw
 {
 
-  //IGL_INLINE int Viewer::launch(bool resizable /*= true*/, bool fullscreen /*= false*/,
-  //  const std::string &name, int windowWidth /*= 0*/, int windowHeight /*= 0*/)
-  //{
-  //  // TODO return values are being ignored...
-  //  launch_init(resizable,fullscreen,name,windowWidth,windowHeight);
-  //  launch_rendering(true);
-  //  launch_shut();
-  //  return EXIT_SUCCESS;
-  //}
-
-  
-
-  
-
-  //IGL_INLINE void Viewer::launch_shut()
-  //{
-  //  for(auto & data : data_list)
-  //  {
-  //    data.meshgl.free();
-  //  }
-  //  core().shut(); // Doesn't do anything
-  //  shutdown_plugins();
-  //  glfwDestroyWindow(window);
-  //  glfwTerminate();
-  //  return;
-  //}
-
   IGL_INLINE void Viewer::init()
   {
    
 
   }
 
-  IGL_INLINE void Viewer::init_plugins()
-  {
-    // Init all plugins
-    for (unsigned int i = 0; i<plugins.size(); ++i)
-    {
-      plugins[i]->init(this);
-    }
-  }
+  //IGL_INLINE void Viewer::init_plugins()
+  //{
+  //  // Init all plugins
+  //  for (unsigned int i = 0; i<plugins.size(); ++i)
+  //  {
+  //    plugins[i]->init(this);
+  //  }
+  //}
 
-  IGL_INLINE void Viewer::shutdown_plugins()
-  {
-    for (unsigned int i = 0; i<plugins.size(); ++i)
-    {
-      plugins[i]->shutdown();
-    }
-  }
+  //IGL_INLINE void Viewer::shutdown_plugins()
+  //{
+  //  for (unsigned int i = 0; i<plugins.size(); ++i)
+  //  {
+  //    plugins[i]->shutdown();
+  //  }
+  //}
 
   IGL_INLINE Viewer::Viewer():
     data_list(1),
@@ -116,8 +89,8 @@ namespace glfw
   
 
     // Temporary variables initialization
-    down = false;
-    hack_never_moved = true;
+   // down = false;
+  //  hack_never_moved = true;
     scroll_position = 0.0f;
 
     // Per face
@@ -133,10 +106,8 @@ namespace glfw
   L,l     Toggle wireframe
   O,o     Toggle orthographic/perspective projection
   T,t     Toggle filled faces
-  Z       Snap to canonical view
-  [,]     Toggle between rotation control types (trackball, two-axis
-          valuator with fixed up, 2D mode with no rotation))
-  <,>     Toggle between models
+  [,]     Toggle between cameras
+  1,2     Toggle between models
   ;       Toggle vertex labels
   :       Toggle face labels)"
 );
@@ -151,15 +122,6 @@ namespace glfw
   IGL_INLINE bool Viewer::load_mesh_from_file(
       const std::string & mesh_file_name_string)
   {
-
-    // first try to load it with a plugin
-    //for (unsigned int i = 0; i<plugins.size(); ++i)
-    //{
-    //  if (plugins[i]->load(mesh_file_name_string))
-    //  {
-    //    return true;
-    //  }
-    //}
 
     // Create new data slot and set to selected
     if(!(data().F.rows() == 0  && data().V.rows() == 0))
@@ -227,9 +189,9 @@ namespace glfw
     }
     
 
-    for (unsigned int i = 0; i<plugins.size(); ++i)
-      if (plugins[i]->post_load())
-        return true;
+    //for (unsigned int i = 0; i<plugins.size(); ++i)
+    //  if (plugins[i]->post_load())
+    //    return true;
 
     return true;
   }
@@ -238,9 +200,9 @@ namespace glfw
       const std::string & mesh_file_name_string)
   {
     // first try to load it with a plugin
-    for (unsigned int i = 0; i<plugins.size(); ++i)
-      if (plugins[i]->save(mesh_file_name_string))
-        return true;
+    //for (unsigned int i = 0; i<plugins.size(); ++i)
+    //  if (plugins[i]->save(mesh_file_name_string))
+    //    return true;
 
     size_t last_dot = mesh_file_name_string.rfind('.');
     if (last_dot == std::string::npos)
@@ -277,11 +239,7 @@ namespace glfw
     }
     return true;
   }
-
-  
-
  
-
   IGL_INLINE bool Viewer::load_scene()
   {
     std::string fname = igl::file_dialog_open();
@@ -312,12 +270,6 @@ namespace glfw
 
     return true;
   }
-
-  //IGL_INLINE void Viewer::snap_to_canonical_quaternion()
-  //{
-  //  Eigen::Quaternionf snapq = this->core().trackball_angle;
-  //  igl::snap_to_canonical_view_quat(snapq,1.0f,this->core().trackball_angle);
-  //}
 
   IGL_INLINE void Viewer::open_dialog_load_mesh()
   {

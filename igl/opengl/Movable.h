@@ -2,13 +2,17 @@
 #include <Eigen/core>
 #include <Eigen/Geometry>
 
+
 class Movable
 {
 public:
 	Movable();
-	Eigen::Matrix4f makeTrans();
+	Eigen::Matrix4f MakeTrans();
+	void MyTranslate(Eigen::Vector3f amt);
+	void MyRotate(Eigen::Vector3f rotAxis,float angle);
+	void MyScale(Eigen::Vector3f amt);
 private:
-	Eigen::Matrix4f T1, R, T0;
+	Eigen::Transform<float,3,Eigen::Affine> T;
 
 };
 

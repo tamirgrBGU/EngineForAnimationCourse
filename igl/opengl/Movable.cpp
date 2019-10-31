@@ -2,12 +2,25 @@
 
 Movable::Movable()
 {
-	T0 = Eigen::Matrix4f::Identity();
-	R = Eigen::Matrix4f::Identity();
-	T1 = Eigen::Matrix4f::Identity();
+	T = Eigen::Transform<float, 3, Eigen::Affine>::Identity();
 }
 
-Eigen::Matrix4f Movable::makeTrans()
+Eigen::Matrix4f Movable::MakeTrans()
 {
-	return T1 * R * T0;
+	return T.matrix();
+}
+
+void Movable::MyTranslate(Eigen::Vector3f amt)
+{
+	T.translate(amt);
+}
+//angle in radians
+void Movable::MyRotate(Eigen::Vector3f rotAxis, float angle)
+{
+	T.rotate(Eigen::AngleAxisf(angle, rotAxis));
+}
+
+void Movable::MyScale(Eigen::Vector3f amt)
+{
+	T.scale(amt);
 }

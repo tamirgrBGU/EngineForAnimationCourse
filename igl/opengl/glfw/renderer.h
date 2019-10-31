@@ -82,17 +82,19 @@ public:
 
 	// Callbacks
 	IGL_INLINE bool key_pressed(unsigned int unicode_key, int modifier);
-//	IGL_INLINE bool key_down(int key, int modifier);
-//	IGL_INLINE bool key_up(int key, int modifier);
-	//IGL_INLINE bool mouse_down(igl::opengl::glfw::Viewer::MouseButton button, int modifier);
-	//IGL_INLINE bool mouse_up(igl::opengl::glfw::Viewer::MouseButton button, int modifier);
-	//IGL_INLINE bool mouse_move(int mouse_x, int mouse_y);
-//	IGL_INLINE bool mouse_scroll(float delta_y);
 	IGL_INLINE void resize(GLFWwindow* window,int w, int h); // explicitly set window size
 	IGL_INLINE void post_resize(GLFWwindow* window, int w, int h); // external resize due to user interaction
 	void SetScene(igl::opengl::glfw::Viewer* scn);
+	void UpdatePosition(double xpos, double ypos);
+	void MouseProcessing(int button);
 	inline igl::opengl::glfw::Viewer* GetScene() {
 		return scn;
+	}
+	inline void ChangeCamera(int unicode_key)
+	{
+		selected_core_index =
+			(selected_core_index + core_list.size() + (unicode_key == ']' ? 1 : -1)) % core_list.size();
+
 	}
 private:
 	// Stores all the viewing options
@@ -101,6 +103,6 @@ private:
 	size_t selected_core_index;
 	int next_core_id;
 	float highdpi;
-
+	double xold, yold, xrel, yrel;
 };
 
