@@ -2,7 +2,7 @@
 #include <igl/igl_inline.h>
 #include <vector>
 #include <functional>
-#include <igl\opengl\ViewerCore.h>
+#include <igl/opengl/ViewerCore.h>
 #include <igl/opengl/glfw/Viewer.h>
 
 struct GLFWwindow;
@@ -81,6 +81,7 @@ public:
 	// IGL_INLINE void select_hovered_core();
 
 	// Callbacks
+	 bool Picking(double x, double y);
 	IGL_INLINE bool key_pressed(unsigned int unicode_key, int modifier);
 	IGL_INLINE void resize(GLFWwindow* window,int w, int h); // explicitly set window size
 	IGL_INLINE void post_resize(GLFWwindow* window, int w, int h); // external resize due to user interaction
@@ -96,6 +97,7 @@ public:
 			(selected_core_index + core_list.size() + (unicode_key == ']' ? 1 : -1)) % core_list.size();
 
 	}
+
 private:
 	// Stores all the viewing options
 	std::vector<igl::opengl::ViewerCore> core_list;
