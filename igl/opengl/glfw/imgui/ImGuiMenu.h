@@ -9,8 +9,12 @@
 #define IGL_OPENGL_GLFW_IMGUI_IMGUIMENU_H
 
 ////////////////////////////////////////////////////////////////////////////////
-#include <igl/opengl/glfw/Viewer.h>
-#include <igl/opengl/glfw/ViewerPlugin.h>
+#include "igl/opengl/glfw/Viewer.h"
+//#include <igl/opengl/glfw/ViewerPlugin.h>
+
+#include "igl/opengl/ViewerCore.h"
+#include "igl/opengl/ViewerData.h"
+#include "igl/opengl/glfw/Display.h"
 #include <igl/igl_inline.h>
 #include <memory>
 ////////////////////////////////////////////////////////////////////////////////
@@ -27,7 +31,7 @@ namespace glfw
 namespace imgui
 {
 
-class ImGuiMenu : public igl::opengl::glfw::ViewerPlugin
+class ImGuiMenu //: public igl::opengl::glfw::ViewerPlugin
 {
 protected:
   // Hidpi scaling to be used for text rendering.
@@ -41,42 +45,42 @@ protected:
   ImGuiContext * context_ = nullptr;
 
 public:
-  IGL_INLINE virtual void init(igl::opengl::glfw::Viewer *_viewer) override;
+    IGL_INLINE virtual void init(Display* disp);// override;
 
   IGL_INLINE virtual void reload_font(int font_size = 13);
 
-  IGL_INLINE virtual void shutdown() override;
+  IGL_INLINE virtual void shutdown();// override;
 
-  IGL_INLINE virtual bool pre_draw() override;
+  IGL_INLINE virtual bool pre_draw();// override;
 
-  IGL_INLINE  virtual bool post_draw() override;
+  IGL_INLINE  virtual bool post_draw();// override;
 
-  IGL_INLINE virtual void post_resize(int width, int height) override;
+  IGL_INLINE virtual void post_resize(int width, int height);// override;
 
   // Mouse IO
-  IGL_INLINE virtual bool mouse_down(int button, int modifier) override;
+  IGL_INLINE virtual bool mouse_down(GLFWwindow* window, int button, int modifier);// override;
 
-  IGL_INLINE virtual bool mouse_up(int button, int modifier) override;
+  IGL_INLINE virtual bool mouse_up(GLFWwindow* window, int button, int modifier);// override;
 
-  IGL_INLINE virtual bool mouse_move(int mouse_x, int mouse_y) override;
+  IGL_INLINE virtual bool mouse_move(GLFWwindow* window, int mouse_x, int mouse_y);// override;
 
-  IGL_INLINE virtual bool mouse_scroll(float delta_y) override;
+  IGL_INLINE virtual bool mouse_scroll(GLFWwindow* window, float delta_y);// override;
 
   // Keyboard IO
-  IGL_INLINE virtual bool key_pressed(unsigned int key, int modifiers) override;
+  IGL_INLINE virtual bool key_pressed(GLFWwindow* window, unsigned int key, int modifiers);// override;
 
-  IGL_INLINE virtual bool key_down(int key, int modifiers) override;
+  IGL_INLINE virtual bool key_down(GLFWwindow* window, int key, int modifiers);// override;
 
-  IGL_INLINE virtual bool key_up(int key, int modifiers) override;
+  IGL_INLINE virtual bool key_up(GLFWwindow* window, int key, int modifiers);// override;
 
   // Draw menu
-  IGL_INLINE virtual void draw_menu();
+  IGL_INLINE virtual void draw_menu(igl::opengl::glfw::Viewer* viewer, std::vector<igl::opengl::ViewerCore> &core);
 
   // Can be overwritten by `callback_draw_viewer_window`
-  IGL_INLINE virtual void draw_viewer_window();
+  IGL_INLINE virtual void draw_viewer_window(igl::opengl::glfw::Viewer* viewer, std::vector<igl::opengl::ViewerCore> &core);
 
   // Can be overwritten by `callback_draw_viewer_menu`
-  IGL_INLINE virtual void draw_viewer_menu();
+  IGL_INLINE virtual void draw_viewer_menu(igl::opengl::glfw::Viewer* viewer, std::vector<igl::opengl::ViewerCore> &core);
 
   // Can be overwritten by `callback_draw_custom_window`
   IGL_INLINE virtual void draw_custom_window() { }
@@ -86,15 +90,16 @@ public:
   std::function<void(void)> callback_draw_viewer_menu;
   std::function<void(void)> callback_draw_custom_window;
 
-  IGL_INLINE void draw_labels_window();
+  IGL_INLINE void draw_labels_window(igl::opengl::glfw::Viewer* viewer, const igl::opengl::ViewerCore* core);
 
-  IGL_INLINE void draw_labels(const igl::opengl::ViewerData &data);
+  IGL_INLINE void draw_labels(const igl::opengl::ViewerData &data, const igl::opengl::ViewerCore* core);
 
   IGL_INLINE void draw_text(
     Eigen::Vector3d pos, 
     Eigen::Vector3d normal, 
     const std::string &text,
-    const Eigen::Vector4f color = Eigen::Vector4f(0,0,0.04,1)); // old default color
+    const  const igl::opengl::ViewerCore* core,
+      const Eigen::Vector4f color = Eigen::Vector4f(0, 0, 0.04, 1)); // old default color
 
   IGL_INLINE float pixel_ratio();
 

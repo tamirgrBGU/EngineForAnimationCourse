@@ -14,9 +14,10 @@
 
 #include "../../igl_inline.h"
 #include "../MeshGL.h"
-//#include "../ViewerCore.h"
+
 #include "../ViewerData.h"
 #include "ViewerPlugin.h"
+
 
 #include <Eigen/Core>
 #include <Eigen/Geometry>
@@ -45,11 +46,17 @@ namespace glfw
     // UI Enumerations
    // enum class MouseButton {Left, Middle, Right};
    // enum class MouseMode { None, Rotation, Zoom, Pan, Translation} mouse_mode;
-    IGL_INLINE void init();
-    IGL_INLINE void init_plugins();
-    IGL_INLINE void shutdown_plugins();
+    virtual void Init(const std::string config);
+	virtual void Animate() {}
+	virtual void WhenTranslate() {}
+	virtual Eigen::Vector3d GetCameraPosition() { return Eigen::Vector3d(0, 0, 0); }
+	virtual Eigen::Vector3d GetCameraForward() { return Eigen::Vector3d(0, 0, -1); }
+	virtual Eigen::Vector3d GetCameraUp() { return Eigen::Vector3d(0, 1, 0); }
+
+	//IGL_INLINE void init_plugins();
+    //IGL_INLINE void shutdown_plugins();
     Viewer();
-    ~Viewer();
+    virtual ~Viewer();
     // Mesh IO
     IGL_INLINE bool load_mesh_from_file(const std::string & mesh_file_name);
     IGL_INLINE bool save_mesh_to_file(const std::string & mesh_file_name);
@@ -114,7 +121,8 @@ namespace glfw
     // Returns 0 if not found
     IGL_INLINE size_t mesh_index(const int id) const;
 
-
+	Eigen::Matrix4d CalcParentsTrans(int indx);
+	inline bool SetAnimation() { return isActive = !isActive; }
 public:
     //////////////////////
     // Member variables //
@@ -124,10 +132,13 @@ public:
     // old "data" variable.
     // Stores all the data that should be visualized
     std::vector<ViewerData> data_list;
+	
+	std::vector<int> parents;
 
     size_t selected_data_index;
     int next_data_id;
-
+	bool isPicked;
+	bool isActive;
 
     
 

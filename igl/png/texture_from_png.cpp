@@ -8,7 +8,7 @@
 #include "texture_from_png.h"
 
 #include "../opengl/report_gl_error.h"
-#include <igl_stb_image.h>
+#include "external/stb/igl_stb_image.h"
 
 IGL_INLINE bool igl::png::texture_from_png(const std::string png_file, const bool flip, GLuint & id)
 {
@@ -64,16 +64,19 @@ IGL_INLINE bool igl::png::texture_from_png(
   G.resize(height,width);
   B.resize(height,width);
   A.resize(height,width);
-
-  for (unsigned j=0; j<height; ++j) {
-    for (unsigned i=0; i<width; ++i) {
+  int indx = height*width*4;
+  unsigned char tmp;
+  
+  
+  for (unsigned int j=0; j<height; ++j) {
+    for (unsigned int i=0; i<width; ++i) {
       // used to flip with libPNG, but I'm not sure if
       // simply j*width + i wouldn't be better
       // stb_image uses horizontal scanline an starts top-left corner
-      R(i,j) = data[4*( (width-1-i) + width * (height-1-j) )];
-      G(i,j) = data[4*( (width-1-i) + width * (height-1-j) ) + 1];
-      B(i,j) = data[4*( (width-1-i) + width * (height-1-j) ) + 2];
-      //A(i,j) = data[4*( (width-1-i) + width * (height-1-j) ) + 3];
+      R(j,i) = data[4*( (width-1-i) + width * (height-1-j) )];
+      G(j,i) = data[4*( (width-1-i) + width * (height-1-j) ) + 1];
+      B(j,i) = data[4*( (width-1-i) + width * (height-1-j) ) + 2];
+      A(j,i) = data[4*( (width-1-i) + width * (height-1-j) ) + 3];
     }
   }
 

@@ -13,9 +13,9 @@
 #include "../material_colors.h"
 #include "../parula.h"
 #include "../per_vertex_normals.h"
-
+#include "igl/png/texture_from_png.h"
 #include <iostream>
-
+#include "external/stb/igl_stb_image.h"
 
 IGL_INLINE igl::opengl::ViewerData::ViewerData()
 : dirty(MeshGL::DIRTY_ALL),
@@ -74,8 +74,8 @@ IGL_INLINE void igl::opengl::ViewerData::set_mesh(
       Eigen::Vector3d(GOLD_AMBIENT[0], GOLD_AMBIENT[1], GOLD_AMBIENT[2]),
       Eigen::Vector3d(GOLD_DIFFUSE[0], GOLD_DIFFUSE[1], GOLD_DIFFUSE[2]),
       Eigen::Vector3d(GOLD_SPECULAR[0], GOLD_SPECULAR[1], GOLD_SPECULAR[2]));
-
-    grid_texture();
+	image_texture("C:/Dev/EngineIGLnew/tutorial/textures/snake1.png");
+//    grid_texture();
   }
   else
   {
@@ -441,6 +441,20 @@ IGL_INLINE void igl::opengl::ViewerData::uniform_colors(
   dirty |= MeshGL::DIRTY_SPECULAR | MeshGL::DIRTY_DIFFUSE | MeshGL::DIRTY_AMBIENT;
 }
 
+IGL_INLINE void igl::opengl::ViewerData::image_texture(const std::string fileName)
+{
+	//unsigned int texId;
+	//if (igl::png::texture_from_png(fileName, false, texId))
+	if(igl::png::texture_from_png(fileName,texture_R, texture_G, texture_B, texture_A))
+	
+		dirty |= MeshGL::DIRTY_TEXTURE;
+	else
+		std::cout<<"can't open texture file"<<std::endl;
+
+
+
+}
+
 IGL_INLINE void igl::opengl::ViewerData::grid_texture()
 {
   // Don't do anything for an empty mesh
@@ -460,7 +474,7 @@ IGL_INLINE void igl::opengl::ViewerData::grid_texture()
     dirty |= MeshGL::DIRTY_TEXTURE;
   }
 
-  unsigned size = 128;
+  unsigned size = 4;
   unsigned size2 = size/2;
   texture_R.resize(size, size);
   for (unsigned i=0; i<size; ++i)

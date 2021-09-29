@@ -1,7 +1,7 @@
 get_filename_component(PROJECT_NAME ${CMAKE_CURRENT_SOURCE_DIR} NAME)
 project(${PROJECT_NAME})
 
-#file(GLOB SANDBOX ${PROJECT_NAME}/*.cpp ${PROJECT_NAME}/*.h)
-#add_executable(${PROJECT_NAME} ${SANDBOX})
-add_executable(${PROJECT_NAME}_bin sandBox.cpp sandBox.h main.cpp inputManager.h)
+
+
+add_executable(${PROJECT_NAME}_bin IK.cpp IK.h main.cpp inputManager.h)
 target_link_libraries(${PROJECT_NAME}_bin igl::core igl::opengl igl::opengl_glfw igl::opengl_glfw_imgui igl::png)

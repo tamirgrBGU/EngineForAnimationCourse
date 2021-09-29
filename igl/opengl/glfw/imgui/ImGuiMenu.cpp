@@ -6,14 +6,18 @@
 // v. 2.0. If a copy of the MPL was not distributed with this file, You can
 // obtain one at http://mozilla.org/MPL/2.0/.
 ////////////////////////////////////////////////////////////////////////////////
-#include "ImGuiMenu.h"
-#include "ImGuiHelpers.h"
+//#include "ImGuiMenu.h"
+//#include "ImGuiHelpers.h"
 #include <igl/project.h>
-#include <imgui/imgui.h>
-#include <imgui_impl_glfw.h>
-#include <imgui_impl_opengl3.h>
-#include <imgui_fonts_droid_sans.h>
-#include <GLFW/glfw3.h>
+#include "igl/opengl/glfw/imgui/ImGuiHelpers.h"
+
+#include "igl/opengl/glfw/imgui/ImGuiMenu.h"
+#include "../imgui/imgui.h"
+#include "igl/opengl/glfw/imgui/imgui_impl_glfw.h"
+#include "igl/opengl/glfw/imgui/imgui_impl_opengl3.h"
+
+//#include <imgui_fonts_droid_sans.h>
+//#include <GLFW/glfw3.h>
 #include <iostream>
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -26,11 +30,10 @@ namespace glfw
 namespace imgui
 {
 
-IGL_INLINE void ImGuiMenu::init(igl::opengl::glfw::Viewer *_viewer)
+IGL_INLINE void ImGuiMenu::init(Display* disp)
 {
-  ViewerPlugin::init(_viewer);
   // Setup ImGui binding
-  if (_viewer)
+  if (disp->window)
   {
     IMGUI_CHECKVERSION();
     if (!context_)
@@ -40,7 +43,8 @@ IGL_INLINE void ImGuiMenu::init(igl::opengl::glfw::Viewer *_viewer)
       context_ = __global_context;
     }
     const char* glsl_version = "#version 150";
-    ImGui_ImplGlfw_InitForOpenGL(viewer->window, false);
+
+    ImGui_ImplGlfw_InitForOpenGL(disp->window, true);
     ImGui_ImplOpenGL3_Init(glsl_version);
     ImGui::GetIO().IniFilename = nullptr;
     ImGui::StyleColorsDark();
@@ -56,8 +60,8 @@ IGL_INLINE void ImGuiMenu::reload_font(int font_size)
   pixel_ratio_ = pixel_ratio();
   ImGuiIO& io = ImGui::GetIO();
   io.Fonts->Clear();
-  io.Fonts->AddFontFromMemoryCompressedTTF(droid_sans_compressed_data,
-    droid_sans_compressed_size, font_size * hidpi_scaling_);
+ // io.Fonts->AddFontFromMemoryCompressedTTF(droid_sans_compressed_data,
+ //   droid_sans_compressed_size, font_size * hidpi_scaling_);
   io.FontGlobalScale = 1.0 / pixel_ratio_;
 }
 
@@ -90,7 +94,7 @@ IGL_INLINE bool ImGuiMenu::pre_draw()
 
 IGL_INLINE bool ImGuiMenu::post_draw()
 {
-  draw_menu();
+  //draw_menu(viewer,core);
   ImGui::Render();
   ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
   return false;
@@ -106,85 +110,115 @@ IGL_INLINE void ImGuiMenu::post_resize(int width, int height)
 }
 
 // Mouse IO
-IGL_INLINE bool ImGuiMenu::mouse_down(int button, int modifier)
+IGL_INLINE bool ImGuiMenu::mouse_down(GLFWwindow* window, int button, int modifier)
 {
-  ImGui_ImplGlfw_MouseButtonCallback(viewer->window, button, GLFW_PRESS, modifier);
+  ImGui_ImplGlfw_MouseButtonCallback(window, button, GLFW_PRESS, modifier);
   return ImGui::GetIO().WantCaptureMouse;
 }
 
-IGL_INLINE bool ImGuiMenu::mouse_up(int button, int modifier)
+IGL_INLINE bool ImGuiMenu::mouse_up(GLFWwindow* window,int button, int modifier)
 {
   //return ImGui::GetIO().WantCaptureMouse;
   // !! Should not steal mouse up
   return false;
 }
 
-IGL_INLINE bool ImGuiMenu::mouse_move(int mouse_x, int mouse_y)
+IGL_INLINE bool ImGuiMenu::mouse_move(GLFWwindow* window,int mouse_x, int mouse_y)
 {
   return ImGui::GetIO().WantCaptureMouse;
 }
 
-IGL_INLINE bool ImGuiMenu::mouse_scroll(float delta_y)
+IGL_INLINE bool ImGuiMenu::mouse_scroll(GLFWwindow* window,float delta_y)
 {
-  ImGui_ImplGlfw_ScrollCallback(viewer->window, 0.f, delta_y);
+  ImGui_ImplGlfw_ScrollCallback(window, 0.f, delta_y);
   return ImGui::GetIO().WantCaptureMouse;
 }
 
 // Keyboard IO
-IGL_INLINE bool ImGuiMenu::key_pressed(unsigned int key, int modifiers)
+IGL_INLINE bool ImGuiMenu::key_pressed(GLFWwindow* window,unsigned int key, int modifiers)
 {
   ImGui_ImplGlfw_CharCallback(nullptr, key);
   return ImGui::GetIO().WantCaptureKeyboard;
 }
 
-IGL_INLINE bool ImGuiMenu::key_down(int key, int modifiers)
+IGL_INLINE bool ImGuiMenu::key_down(GLFWwindow* window, int key, int modifiers)
 {
-  ImGui_ImplGlfw_KeyCallback(viewer->window, key, 0, GLFW_PRESS, modifiers);
+  ImGui_ImplGlfw_KeyCallback(window, key, 0, GLFW_PRESS, modifiers);
   return ImGui::GetIO().WantCaptureKeyboard;
 }
 
-IGL_INLINE bool ImGuiMenu::key_up(int key, int modifiers)
+IGL_INLINE bool ImGuiMenu::key_up(GLFWwindow* window,int key, int modifiers)
 {
-  ImGui_ImplGlfw_KeyCallback(viewer->window, key, 0, GLFW_RELEASE, modifiers);
+  ImGui_ImplGlfw_KeyCallback(window, key, 0, GLFW_RELEASE, modifiers);
   return ImGui::GetIO().WantCaptureKeyboard;
 }
 
 // Draw menu
-IGL_INLINE void ImGuiMenu::draw_menu()
+IGL_INLINE void ImGuiMenu::draw_menu(igl::opengl::glfw::Viewer* viewer, std::vector<igl::opengl::ViewerCore>& core)
 {
   // Text labels
-  draw_labels_window();
+  draw_labels_window(viewer,&core[1]);
 
   // Viewer settings
   if (callback_draw_viewer_window) { callback_draw_viewer_window(); }
-  else { draw_viewer_window(); }
+  else { draw_viewer_window(viewer,core); }
 
   // Other windows
   if (callback_draw_custom_window) { callback_draw_custom_window(); }
   else { draw_custom_window(); }
 }
 
-IGL_INLINE void ImGuiMenu::draw_viewer_window()
+IGL_INLINE void ImGuiMenu::draw_viewer_window(igl::opengl::glfw::Viewer* viewer, std::vector<igl::opengl::ViewerCore>& core)
 {
   float menu_width = 180.f * menu_scaling();
   ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f), ImGuiSetCond_FirstUseEver);
   ImGui::SetNextWindowSize(ImVec2(0.0f, 0.0f), ImGuiSetCond_FirstUseEver);
   ImGui::SetNextWindowSizeConstraints(ImVec2(menu_width, -1.0f), ImVec2(menu_width, -1.0f));
   bool _viewer_menu_visible = true;
-  ImGui::Begin(
-      "Viewer", &_viewer_menu_visible,
-      ImGuiWindowFlags_NoSavedSettings
-      | ImGuiWindowFlags_AlwaysAutoResize
-  );
-  ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.4f);
-  if (callback_draw_viewer_menu) { callback_draw_viewer_menu(); }
-  else { draw_viewer_menu(); }
-  ImGui::PopItemWidth();
-  ImGui::End();
+
+
+  
 }
 
-IGL_INLINE void ImGuiMenu::draw_viewer_menu()
+
+IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, std::vector<igl::opengl::ViewerCore>& core)
 {
+    bool* p_open = NULL;
+    static bool no_titlebar = false;
+    static bool no_scrollbar = false;
+    static bool no_menu = true;
+    static bool no_move = false;
+    static bool no_resize = false;
+    static bool no_collapse = false;
+    static bool no_close = false;
+    static bool no_nav = false;
+    static bool no_background = false;
+    static bool no_bring_to_front = false;
+
+    ImGuiWindowFlags window_flags = 0;
+    if (no_titlebar)        window_flags |= ImGuiWindowFlags_NoTitleBar;
+    if (no_scrollbar)       window_flags |= ImGuiWindowFlags_NoScrollbar;
+    if (!no_menu)           window_flags |= ImGuiWindowFlags_MenuBar;
+    if (no_move)            window_flags |= ImGuiWindowFlags_NoMove;
+    if (no_resize)          window_flags |= ImGuiWindowFlags_NoResize;
+    if (no_collapse)        window_flags |= ImGuiWindowFlags_NoCollapse;
+    if (no_nav)             window_flags |= ImGuiWindowFlags_NoNav;
+    if (no_background)      window_flags |= ImGuiWindowFlags_NoBackground;
+    if (no_bring_to_front)  window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus;
+
+    ImGui::Begin(
+        "Viewer", p_open,
+        window_flags
+    );
+    ImGui::SetWindowPos(ImVec2(core[0].viewport[0], core[0].viewport[1]), ImGuiCond_Always);
+    ImGui::SetWindowSize(ImVec2(core[0].viewport[2], core[0].viewport[3]), ImGuiCond_Always);
+    ImGui::End();
+    no_move = true;
+    no_resize = true;
+    ImGui::Begin(
+        "Viewer", p_open,
+        window_flags
+    );
   // Workspace
   if (ImGui::CollapsingHeader("Workspace", ImGuiTreeNodeFlags_DefaultOpen))
   {
@@ -222,45 +256,45 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu()
   {
     if (ImGui::Button("Center object", ImVec2(-1, 0)))
     {
-      viewer->core().align_camera_center(viewer->data().V, viewer->data().F);
+      core[1].align_camera_center(viewer->data().V, viewer->data().F);
     }
-    if (ImGui::Button("Snap canonical view", ImVec2(-1, 0)))
-    {
-      viewer->snap_to_canonical_quaternion();
-    }
+    //if (ImGui::Button("Snap canonical view", ImVec2(-1, 0)))
+    //{
+    //  core[1].snap_to_canonical_quaternion();
+    //}
 
     // Zoom
     ImGui::PushItemWidth(80 * menu_scaling());
-    ImGui::DragFloat("Zoom", &(viewer->core().camera_zoom), 0.05f, 0.1f, 20.0f);
+    ImGui::DragFloat("Zoom", &(core[1].camera_zoom), 0.05f, 0.1f, 20.0f);
 
     // Select rotation type
-    int rotation_type = static_cast<int>(viewer->core().rotation_type);
+    int rotation_type = static_cast<int>(core[1].rotation_type);
     static Eigen::Quaternionf trackball_angle = Eigen::Quaternionf::Identity();
     static bool orthographic = true;
     if (ImGui::Combo("Camera Type", &rotation_type, "Trackball\0Two Axes\0002D Mode\0\0"))
     {
       using RT = igl::opengl::ViewerCore::RotationType;
       auto new_type = static_cast<RT>(rotation_type);
-      if (new_type != viewer->core().rotation_type)
+      if (new_type != core[1].rotation_type)
       {
         if (new_type == RT::ROTATION_TYPE_NO_ROTATION)
         {
-          trackball_angle = viewer->core().trackball_angle;
-          orthographic = viewer->core().orthographic;
-          viewer->core().trackball_angle = Eigen::Quaternionf::Identity();
-          viewer->core().orthographic = true;
+          trackball_angle = core[1].trackball_angle;
+          orthographic = core[1].orthographic;
+          core[1].trackball_angle = Eigen::Quaternionf::Identity();
+          core[1].orthographic = true;
         }
-        else if (viewer->core().rotation_type == RT::ROTATION_TYPE_NO_ROTATION)
+        else if (core[1].rotation_type == RT::ROTATION_TYPE_NO_ROTATION)
         {
-          viewer->core().trackball_angle = trackball_angle;
-          viewer->core().orthographic = orthographic;
+          core[1].trackball_angle = trackball_angle;
+          core[1].orthographic = orthographic;
         }
-        viewer->core().set_rotation_type(new_type);
+        core[1].set_rotation_type(new_type);
       }
     }
 
     // Orthographic view
-    ImGui::Checkbox("Orthographic view", &(viewer->core().orthographic));
+    ImGui::Checkbox("Orthographic view", &(core[1].orthographic));
     ImGui::PopItemWidth();
   }
 
@@ -268,10 +302,12 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu()
   auto make_checkbox = [&](const char *label, unsigned int &option)
   {
     return ImGui::Checkbox(label,
-      [&]() { return viewer->core().is_set(option); },
-      [&](bool value) { return viewer->core().set(option, value); }
+      [&]() { return core[1].is_set(option); },
+      [&](bool value) { return core[1].set(option, value); }
     );
   };
+     /* ImGui::ColorEdit4("Background", core[1].background_color.data(),
+      ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_PickerHueWheel);*/
 
   // Draw options
   if (ImGui::CollapsingHeader("Draw Options", ImGuiTreeNodeFlags_DefaultOpen))
@@ -287,8 +323,7 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu()
     }
     make_checkbox("Show overlay", viewer->data().show_overlay);
     make_checkbox("Show overlay depth", viewer->data().show_overlay_depth);
-    ImGui::ColorEdit4("Background", viewer->core().background_color.data(),
-        ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_PickerHueWheel);
+    
     ImGui::ColorEdit4("Line color", viewer->data().line_color.data(),
         ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_PickerHueWheel);
     ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.3f);
@@ -304,9 +339,10 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu()
     ImGui::Checkbox("Show vertex labels", &(viewer->data().show_vertid));
     ImGui::Checkbox("Show faces labels", &(viewer->data().show_faceid));
   }
+  ImGui::End();
 }
 
-IGL_INLINE void ImGuiMenu::draw_labels_window()
+IGL_INLINE void ImGuiMenu::draw_labels_window(igl::opengl::glfw::Viewer* viewer,  const igl::opengl::ViewerCore* core)
 {
   // Text labels
   ImGui::SetNextWindowPos(ImVec2(0,0), ImGuiSetCond_Always);
@@ -325,14 +361,14 @@ IGL_INLINE void ImGuiMenu::draw_labels_window()
       | ImGuiWindowFlags_NoInputs);
   for (const auto & data : viewer->data_list)
   {
-    draw_labels(data);
+    draw_labels(data,core);
   }
   ImGui::End();
   ImGui::PopStyleColor();
   ImGui::PopStyleVar();
 }
 
-IGL_INLINE void ImGuiMenu::draw_labels(const igl::opengl::ViewerData &data)
+IGL_INLINE void ImGuiMenu::draw_labels(const igl::opengl::ViewerData &data,const igl::opengl::ViewerCore* core)
 {
   if (data.show_vertid)
   {
@@ -342,7 +378,7 @@ IGL_INLINE void ImGuiMenu::draw_labels(const igl::opengl::ViewerData &data)
         data.V.row(i), 
         data.V_normals.row(i), 
         std::to_string(i),
-        data.label_color);
+        core,data.label_color);
     }
   }
 
@@ -361,7 +397,7 @@ IGL_INLINE void ImGuiMenu::draw_labels(const igl::opengl::ViewerData &data)
         p, 
         data.F_normals.row(i), 
         std::to_string(i),
-        data.label_color);
+        core,data.label_color);
     }
   }
 
@@ -373,7 +409,7 @@ IGL_INLINE void ImGuiMenu::draw_labels(const igl::opengl::ViewerData &data)
         data.labels_positions.row(i), 
         Eigen::Vector3d(0.0,0.0,0.0),
         data.labels_strings[i],
-        data.label_color);
+        core,data.label_color);
     }
   }
 }
@@ -382,16 +418,17 @@ IGL_INLINE void ImGuiMenu::draw_text(
   Eigen::Vector3d pos, 
   Eigen::Vector3d normal, 
   const std::string &text,
+  const igl::opengl::ViewerCore* core,
   const Eigen::Vector4f color)
 {
-  pos += normal * 0.005f * viewer->core().object_scale;
+  pos += normal * 0.005f * core[1].object_scale;
   Eigen::Vector3f coord = igl::project(Eigen::Vector3f(pos.cast<float>()),
-    viewer->core().view, viewer->core().proj, viewer->core().viewport);
+    core[1].view, core[1].proj, core[1].viewport);
 
   // Draw text labels slightly bigger than normal text
   ImDrawList* drawList = ImGui::GetWindowDrawList();
   drawList->AddText(ImGui::GetFont(), ImGui::GetFontSize() * 1.2,
-      ImVec2(coord[0]/pixel_ratio_, (viewer->core().viewport[3] - coord[1])/pixel_ratio_),
+      ImVec2(coord[0]/pixel_ratio_, (core[1].viewport[3] - coord[1])/pixel_ratio_),
       ImGui::GetColorU32(ImVec4(
         color(0),
         color(1),
