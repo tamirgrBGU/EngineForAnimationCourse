@@ -277,6 +277,8 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
       [&](bool value) { return core[1].set(option, value); }
     );
   };
+     /* ImGui::ColorEdit4("Background", core[1].background_color.data(),
+      ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_PickerHueWheel);*/
 
 
   // Draw options

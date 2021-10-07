@@ -40,5 +40,6 @@ endif()
 
 
   add_subdirectory("sandBox")
+add_subdirectory("IK")
 
 
