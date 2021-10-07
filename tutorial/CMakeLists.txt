@@ -15,7 +15,7 @@ else()
 endif()
 
 ### Download data
-igl_download_tutorial_data()
+#igl_download_tutorial_data()
 
 ### Output directories
 if(MSVC)
@@ -40,4 +40,5 @@ endif()
 
 
   add_subdirectory("sandBox")
+
 

@@ -285,6 +285,7 @@ R"(#version 150
     overlay_fragment_shader_string,
     {},
     shader_overlay_lines);
+
   create_shader_program(
     overlay_vertex_shader_string,
     overlay_point_fragment_shader_string,

@@ -8,7 +8,7 @@
 
 #include "igl/igl_inline.h"
 #include <igl/get_seconds.h>
-
+#include "igl/opengl/glfw/renderer.h"
 
 static void glfw_error_callback(int error, const char* description)
 {
@@ -67,16 +67,16 @@ Display::Display(int windowWidth, int windowHeight, const std::string& title)
 			printf("Failed to load OpenGL and its extensions\n");
 			exit(EXIT_FAILURE);
 		}
-#if defined(DEBUG) || defined(_DEBUG)
-		printf("OpenGL Version %d.%d loaded\n", GLVersion.major, GLVersion.minor);
-		int major, minor, rev;
-		major = glfwGetWindowAttrib(window, GLFW_CONTEXT_VERSION_MAJOR);
-		minor = glfwGetWindowAttrib(window, GLFW_CONTEXT_VERSION_MINOR);
-		rev = glfwGetWindowAttrib(window, GLFW_CONTEXT_REVISION);
-		printf("OpenGL version received: %d.%d.%d\n", major, minor, rev);
-		printf("Supported OpenGL is %s\n", (const char*)glGetString(GL_VERSION));
-		printf("Supported GLSL is %s\n", (const char*)glGetString(GL_SHADING_LANGUAGE_VERSION));
-#endif
+//#if defined(DEBUG) || defined(_DEBUG)
+//		printf("OpenGL Version %d.%d loaded\n", GLVersion.major, GLVersion.minor);
+//		int major, minor, rev;
+//		major = glfwGetWindowAttrib(window, GLFW_CONTEXT_VERSION_MAJOR);
+//		minor = glfwGetWindowAttrib(window, GLFW_CONTEXT_VERSION_MINOR);
+//		rev = glfwGetWindowAttrib(window, GLFW_CONTEXT_REVISION);
+//		printf("OpenGL version received: %d.%d.%d\n", major, minor, rev);
+//		printf("Supported OpenGL is %s\n", (const char*)glGetString(GL_VERSION));
+//		printf("Supported GLSL is %s\n", (const char*)glGetString(GL_SHADING_LANGUAGE_VERSION));
+//#endif
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 		//Tamir: changes from here
 		// Initialize FormScreen
@@ -117,11 +117,13 @@ bool Display::launch_rendering(bool loop)
 	Renderer* renderer = (Renderer*)glfwGetWindowUserPointer(window);
 	glfwGetWindowSize(window, &windowWidth, &windowHeight);
 	renderer->post_resize(window, windowWidth, windowHeight);
-	
+	for(int i=0;i< renderer->GetScene()->data_list.size();i++)
+		renderer->core().toggle(renderer->GetScene()->data_list[i].show_lines);
 	while (!glfwWindowShouldClose(window))
 	{
 
 		double tic = igl::get_seconds();
+		renderer->Animate();
 		renderer->draw(window);
 		glfwSwapBuffers(window);
 		if (renderer->core().is_animating || frame_counter++ < num_extra_frames)
@@ -137,7 +139,7 @@ bool Display::launch_rendering(bool loop)
 		}
 		else
 		{
-			glfwWaitEvents();
+			glfwPollEvents();
 			frame_counter = 0;
 		}
 		if (!loop)

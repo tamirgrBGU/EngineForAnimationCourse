@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include <GLFW/glfw3.h>
-#include "igl/opengl/glfw/renderer.h"
+//#include "igl/opengl/glfw/renderer.h"
 #define EXIT_FAILURE 1
 struct GLFWwindow;
 
@@ -23,7 +23,7 @@ public:
 
 	
 	~Display();
-private:
+//private:
 	GLFWwindow* window;
 	//Renderer* renderer;
 	//int highdpi;  //relation between width and height?

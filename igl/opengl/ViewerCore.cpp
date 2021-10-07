@@ -101,17 +101,17 @@ IGL_INLINE void igl::opengl::ViewerCore::clear_framebuffers()
 }
 
 IGL_INLINE void igl::opengl::ViewerCore::draw(
-  Eigen::Matrix4f &worldMat,
+  const Eigen::Matrix4f &worldMat,
   ViewerData& data,
   bool update_matrices)
 {
   using namespace std;
   using namespace Eigen;
 
-  if (depth_test)
+  //if (depth_test)
     glEnable(GL_DEPTH_TEST);
-  else
-    glDisable(GL_DEPTH_TEST);
+  //else
+   // glDisable(GL_DEPTH_TEST);
 
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -140,7 +140,7 @@ IGL_INLINE void igl::opengl::ViewerCore::draw(
     look_at( camera_eye, camera_center, camera_up, view);
     view = view
       * (trackball_angle * Eigen::Scaling(camera_zoom * camera_base_zoom)
-      * Eigen::Translation3f(camera_translation + camera_base_translation)).matrix()* worldMat*data.MakeTrans();
+      * Eigen::Translation3f(camera_translation + camera_base_translation)).matrix()* worldMat*data.MakeTransScale();
 
     norm = view.inverse().transpose() ;
 
@@ -248,7 +248,7 @@ IGL_INLINE void igl::opengl::ViewerCore::UpdateUniforms(Eigen::Matrix4f &worldMa
 	
 }
 
-IGL_INLINE void igl::opengl::ViewerCore::draw_buffer(Eigen::Matrix4f &worldMat, ViewerData& data,
+IGL_INLINE void igl::opengl::ViewerCore::draw_buffer(const Eigen::Matrix4f &worldMat, ViewerData& data,
   bool update_matrices,
   Eigen::Matrix<unsigned char,Eigen::Dynamic,Eigen::Dynamic>& R,
   Eigen::Matrix<unsigned char,Eigen::Dynamic,Eigen::Dynamic>& G,

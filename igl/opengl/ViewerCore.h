@@ -72,11 +72,11 @@ public:
   // Draw everything
   //
   // data cannot be const because it is being set to "clean"
-  IGL_INLINE void draw(Eigen::Matrix4f &worldMat, ViewerData& data, bool update_matrices = true);
+  IGL_INLINE void draw(const Eigen::Matrix4f &worldMat, ViewerData& data, bool update_matrices = true);
   IGL_INLINE void UpdateUniforms(Eigen::Matrix4f &worldMat, ViewerData& data, bool update_matrices = true);
 
   IGL_INLINE void draw_buffer(
-	Eigen::Matrix4f &worldMat,
+	const Eigen::Matrix4f &worldMat,
     ViewerData& data,
     bool update_matrices,
     Eigen::Matrix<unsigned char,Eigen::Dynamic,Eigen::Dynamic>& R,

@@ -49,6 +49,7 @@ public:
   IGL_INLINE virtual void init(Viewer *_viewer)
   {
     viewer = _viewer;
+	
   }
 
   // This function is called before shutdown

@@ -4,8 +4,11 @@
 #include <functional>
 #include <igl/opengl/ViewerCore.h>
 #include <igl/opengl/glfw/Viewer.h>
-
+#include <igl/opengl/glfw/imgui/ImGuiMenu.h>
+#include <igl/opengl/glfw/imgui/ImGuiHelpers.h>
+#include <../imgui/imgui.h>
 struct GLFWwindow;
+
 
 class Renderer 
 {
@@ -13,7 +16,7 @@ public:
 	Renderer();
 	~Renderer();
 	IGL_INLINE void draw( GLFWwindow* window);
-	IGL_INLINE void init(igl::opengl::glfw::Viewer* scn);
+	IGL_INLINE void init(igl::opengl::glfw::Viewer* scn,int coresNum, igl::opengl::glfw::imgui::ImGuiMenu *_menu);
 	
 	//IGL_INLINE bool key_pressed(unsigned int unicode_key, int modifiers);
 
@@ -81,7 +84,8 @@ public:
 	// IGL_INLINE void select_hovered_core();
 
 	// Callbacks
-	 bool Picking(double x, double y);
+	 double Picking(double x, double y);
+	 inline void Animate() { scn->Animate(); };
 	IGL_INLINE bool key_pressed(unsigned int unicode_key, int modifier);
 	IGL_INLINE void resize(GLFWwindow* window,int w, int h); // explicitly set window size
 	IGL_INLINE void post_resize(GLFWwindow* window, int w, int h); // external resize due to user interaction
@@ -97,7 +101,10 @@ public:
 			(selected_core_index + core_list.size() + (unicode_key == ']' ? 1 : -1)) % core_list.size();
 
 	}
-
+	void TranslateCamera(Eigen::Vector3f amt);
+	void RotateCamera(float amtX, float amtY);
+	inline bool IsPicked() { return scn->isPicked; }
+	
 private:
 	// Stores all the viewing options
 	std::vector<igl::opengl::ViewerCore> core_list;
@@ -106,5 +113,10 @@ private:
 	int next_core_id;
 	float highdpi;
 	double xold, yold, xrel, yrel;
+	float depth;
+	unsigned int left_view, right_view;
+	double doubleVariable;
+	igl::opengl::glfw::imgui::ImGuiMenu* menu;
+	double z;
 };
 

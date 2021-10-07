@@ -363,7 +363,7 @@ IGL_INLINE bool igl::collapse_edge(
     // loop over original face neighbors
     for(auto n : N)
     {
-      if(F(n,0) != IGL_COLLAPSE_EDGE_NULL ||
+      if( F(n,0) != IGL_COLLAPSE_EDGE_NULL ||
           F(n,1) != IGL_COLLAPSE_EDGE_NULL ||
           F(n,2) != IGL_COLLAPSE_EDGE_NULL)
       {
@@ -374,7 +374,7 @@ IGL_INLINE bool igl::collapse_edge(
           // erase old entry
           Q.erase(Qit[ei]);
           // compute cost and potential placement
-          double cost;
+          double cost ;
           RowVectorXd place;
           cost_and_placement(ei,V,F,E,EMAP,EF,EI,cost,place);
           // Replace in queue

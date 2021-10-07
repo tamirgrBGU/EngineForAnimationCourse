@@ -17,6 +17,7 @@
 #include <memory>
 #include <vector>
 
+
 // Alec: This is a mesh class containing a variety of data types (normals,
 // overlays, material colors, etc.)
 //
@@ -42,7 +43,7 @@ class ViewerData : public Movable
 {
 public:
   ViewerData();
-
+  
   // Empty all fields
   IGL_INLINE void clear();
 
@@ -143,6 +144,7 @@ public:
 
   // Generates a default grid texture
   IGL_INLINE void grid_texture();
+  IGL_INLINE void image_texture(const std::string fileName );
 
   // Copy visualization options from one viewport to another
   //IGL_INLINE void copy_options(const ViewerCore &from, const ViewerCore &to);

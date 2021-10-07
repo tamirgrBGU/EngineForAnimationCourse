@@ -56,33 +56,18 @@ namespace opengl
 namespace glfw
 {
 
-  IGL_INLINE void Viewer::init()
+  void Viewer::Init(const std::string config)
   {
-   
+	  
 
   }
-
-  //IGL_INLINE void Viewer::init_plugins()
-  //{
-  //  // Init all plugins
-  //  for (unsigned int i = 0; i<plugins.size(); ++i)
-  //  {
-  //    plugins[i]->init(this);
-  //  }
-  //}
-
-  //IGL_INLINE void Viewer::shutdown_plugins()
-  //{
-  //  for (unsigned int i = 0; i<plugins.size(); ++i)
-  //  {
-  //    plugins[i]->shutdown();
-  //  }
-  //}
 
   IGL_INLINE Viewer::Viewer():
     data_list(1),
     selected_data_index(0),
-    next_data_id(1)
+    next_data_id(1),
+	isPicked(false),
+	isActive(false)
   {
     data_list.front().id = 0;
 
@@ -277,7 +262,7 @@ namespace glfw
 
     if (fname.length() == 0)
       return;
-
+    
     this->load_mesh_from_file(fname.c_str());
   }
 
@@ -362,7 +347,18 @@ namespace glfw
     return 0;
   }
 
- 
+  Eigen::Matrix4d Viewer::CalcParentsTrans(int indx) 
+  {
+	  Eigen::Matrix4d prevTrans = Eigen::Matrix4d::Identity();
+
+	  for (int i = indx; parents[i] >= 0; i = parents[i])
+	  {
+		  //std::cout << "parent matrix:\n" << scn->data_list[scn->parents[i]].MakeTrans() << std::endl;
+		  prevTrans = data_list[parents[i]].MakeTransd() * prevTrans;
+	  }
+
+	  return prevTrans;
+  }
 
 } // end namespace
 } // end namespace
