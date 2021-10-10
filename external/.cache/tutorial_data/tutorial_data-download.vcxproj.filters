@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\Dev\EngineIGLnew\external\.cache\tutorial_data\CMakeFiles\5b6b7384cdcf8a9ef5b998675c66a993\tutorial_data-download-mkdir.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Dev\EngineIGLnew\external\.cache\tutorial_data\CMakeFiles\5b6b7384cdcf8a9ef5b998675c66a993\tutorial_data-download-download.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Dev\EngineIGLnew\external\.cache\tutorial_data\CMakeFiles\5b6b7384cdcf8a9ef5b998675c66a993\tutorial_data-download-update.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Dev\EngineIGLnew\external\.cache\tutorial_data\CMakeFiles\5b6b7384cdcf8a9ef5b998675c66a993\tutorial_data-download-patch.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Dev\EngineIGLnew\external\.cache\tutorial_data\CMakeFiles\5b6b7384cdcf8a9ef5b998675c66a993\tutorial_data-download-configure.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Dev\EngineIGLnew\external\.cache\tutorial_data\CMakeFiles\5b6b7384cdcf8a9ef5b998675c66a993\tutorial_data-download-build.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Dev\EngineIGLnew\external\.cache\tutorial_data\CMakeFiles\5b6b7384cdcf8a9ef5b998675c66a993\tutorial_data-download-install.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Dev\EngineIGLnew\external\.cache\tutorial_data\CMakeFiles\5b6b7384cdcf8a9ef5b998675c66a993\tutorial_data-download-test.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Dev\EngineIGLnew\external\.cache\tutorial_data\CMakeFiles\d452c1ab7da23ef10a0f3eb6ce2cff61\tutorial_data-download-complete.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Dev\EngineIGLnew\external\.cache\tutorial_data\CMakeFiles\a871eeb0c29c4048412094ce3a1e4d62\tutorial_data-download.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Dev\EngineIGLnew\external\.cache\tutorial_data\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="C:\Dev\EngineIGLnew\external\.cache\tutorial_data\CMakeFiles\tutorial_data-download" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{AF611BE5-3909-34C2-B727-75337F535289}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

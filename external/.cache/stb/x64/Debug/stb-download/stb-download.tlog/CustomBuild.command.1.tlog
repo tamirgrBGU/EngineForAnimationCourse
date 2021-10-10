@@ -1,0 +1,162 @@
+^C:\DEV\ENGINEFORANIMATIONCOURSE\EXTERNAL\.CACHE\STB\CMAKEFILES\50D1F4993B968176E85C8BEE94448529\STB-DOWNLOAD-MKDIR.RULE
+setlocal
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E make_directory C:/Dev/EngineForAnimationCourse/cmake/../external/stb
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E make_directory C:/Dev/EngineForAnimationCourse/build/stb-build
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E make_directory C:/Dev/EngineForAnimationCourse/external/.cache/stb/stb-download-prefix
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E make_directory C:/Dev/EngineForAnimationCourse/external/.cache/stb/stb-download-prefix/tmp
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E make_directory C:/Dev/EngineForAnimationCourse/external/.cache/stb/stb-download-prefix/src/stb-download-stamp/Debug
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E make_directory C:/Dev/EngineForAnimationCourse/external/.cache/stb/stb-download-prefix/src
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E make_directory C:/Dev/EngineForAnimationCourse/external/.cache/stb/stb-download-prefix/src/stb-download-stamp
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E touch C:/Dev/EngineForAnimationCourse/external/.cache/stb/stb-download-prefix/src/stb-download-stamp/Debug/stb-download-mkdir
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\DEV\ENGINEFORANIMATIONCOURSE\EXTERNAL\.CACHE\STB\CMAKEFILES\50D1F4993B968176E85C8BEE94448529\STB-DOWNLOAD-DOWNLOAD.RULE
+setlocal
+cd C:\Dev\EngineForAnimationCourse\external
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -P C:/Dev/EngineForAnimationCourse/external/.cache/stb/stb-download-prefix/tmp/stb-download-gitclone.cmake
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E touch C:/Dev/EngineForAnimationCourse/external/.cache/stb/stb-download-prefix/src/stb-download-stamp/Debug/stb-download-download
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\DEV\ENGINEFORANIMATIONCOURSE\EXTERNAL\.CACHE\STB\CMAKEFILES\50D1F4993B968176E85C8BEE94448529\STB-DOWNLOAD-UPDATE.RULE
+setlocal
+cd C:\Dev\EngineForAnimationCourse\external\stb
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -P C:/Dev/EngineForAnimationCourse/external/.cache/stb/stb-download-prefix/tmp/stb-download-gitupdate.cmake
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\DEV\ENGINEFORANIMATIONCOURSE\EXTERNAL\.CACHE\STB\CMAKEFILES\50D1F4993B968176E85C8BEE94448529\STB-DOWNLOAD-PATCH.RULE
+setlocal
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E echo_append
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E touch C:/Dev/EngineForAnimationCourse/external/.cache/stb/stb-download-prefix/src/stb-download-stamp/Debug/stb-download-patch
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\DEV\ENGINEFORANIMATIONCOURSE\EXTERNAL\.CACHE\STB\CMAKEFILES\50D1F4993B968176E85C8BEE94448529\STB-DOWNLOAD-CONFIGURE.RULE
+setlocal
+cd C:\Dev\EngineForAnimationCourse\build\stb-build
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E echo_append
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E touch C:/Dev/EngineForAnimationCourse/external/.cache/stb/stb-download-prefix/src/stb-download-stamp/Debug/stb-download-configure
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\DEV\ENGINEFORANIMATIONCOURSE\EXTERNAL\.CACHE\STB\CMAKEFILES\50D1F4993B968176E85C8BEE94448529\STB-DOWNLOAD-BUILD.RULE
+setlocal
+cd C:\Dev\EngineForAnimationCourse\build\stb-build
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E echo_append
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E touch C:/Dev/EngineForAnimationCourse/external/.cache/stb/stb-download-prefix/src/stb-download-stamp/Debug/stb-download-build
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\DEV\ENGINEFORANIMATIONCOURSE\EXTERNAL\.CACHE\STB\CMAKEFILES\50D1F4993B968176E85C8BEE94448529\STB-DOWNLOAD-INSTALL.RULE
+setlocal
+cd C:\Dev\EngineForAnimationCourse\build\stb-build
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E echo_append
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E touch C:/Dev/EngineForAnimationCourse/external/.cache/stb/stb-download-prefix/src/stb-download-stamp/Debug/stb-download-install
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\DEV\ENGINEFORANIMATIONCOURSE\EXTERNAL\.CACHE\STB\CMAKEFILES\50D1F4993B968176E85C8BEE94448529\STB-DOWNLOAD-TEST.RULE
+setlocal
+cd C:\Dev\EngineForAnimationCourse\build\stb-build
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E echo_append
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E touch C:/Dev/EngineForAnimationCourse/external/.cache/stb/stb-download-prefix/src/stb-download-stamp/Debug/stb-download-test
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\DEV\ENGINEFORANIMATIONCOURSE\EXTERNAL\.CACHE\STB\CMAKEFILES\E0199ABD4F5142946DC0DB8DDAB10B26\STB-DOWNLOAD-COMPLETE.RULE
+setlocal
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E make_directory C:/Dev/EngineForAnimationCourse/external/.cache/stb/CMakeFiles/Debug
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E touch C:/Dev/EngineForAnimationCourse/external/.cache/stb/CMakeFiles/Debug/stb-download-complete
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E touch C:/Dev/EngineForAnimationCourse/external/.cache/stb/stb-download-prefix/src/stb-download-stamp/Debug/stb-download-done
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\DEV\ENGINEFORANIMATIONCOURSE\EXTERNAL\.CACHE\STB\CMAKEFILES\ABA08456388B92E938542AE9570660B8\STB-DOWNLOAD.RULE
+setlocal
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\DEV\ENGINEFORANIMATIONCOURSE\EXTERNAL\.CACHE\STB\CMAKELISTS.TXT
+setlocal
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -SC:/Dev/EngineForAnimationCourse/external/.cache/stb -BC:/Dev/EngineForAnimationCourse/external/.cache/stb --check-stamp-file C:/Dev/EngineForAnimationCourse/external/.cache/stb/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

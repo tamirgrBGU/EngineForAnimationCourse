@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\Dev\EngineForAnimationCourse\external\.cache\stb\CMakeFiles\50d1f4993b968176e85c8bee94448529\stb-download-mkdir.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Dev\EngineForAnimationCourse\external\.cache\stb\CMakeFiles\50d1f4993b968176e85c8bee94448529\stb-download-download.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Dev\EngineForAnimationCourse\external\.cache\stb\CMakeFiles\50d1f4993b968176e85c8bee94448529\stb-download-update.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Dev\EngineForAnimationCourse\external\.cache\stb\CMakeFiles\50d1f4993b968176e85c8bee94448529\stb-download-patch.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Dev\EngineForAnimationCourse\external\.cache\stb\CMakeFiles\50d1f4993b968176e85c8bee94448529\stb-download-configure.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Dev\EngineForAnimationCourse\external\.cache\stb\CMakeFiles\50d1f4993b968176e85c8bee94448529\stb-download-build.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Dev\EngineForAnimationCourse\external\.cache\stb\CMakeFiles\50d1f4993b968176e85c8bee94448529\stb-download-install.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Dev\EngineForAnimationCourse\external\.cache\stb\CMakeFiles\50d1f4993b968176e85c8bee94448529\stb-download-test.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Dev\EngineForAnimationCourse\external\.cache\stb\CMakeFiles\e0199abd4f5142946dc0db8ddab10b26\stb-download-complete.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Dev\EngineForAnimationCourse\external\.cache\stb\CMakeFiles\aba08456388b92e938542ae9570660b8\stb-download.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Dev\EngineForAnimationCourse\external\.cache\stb\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="C:\Dev\EngineForAnimationCourse\external\.cache\stb\CMakeFiles\stb-download" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{856026E9-594E-3E1E-AB3C-EA96EA33491A}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

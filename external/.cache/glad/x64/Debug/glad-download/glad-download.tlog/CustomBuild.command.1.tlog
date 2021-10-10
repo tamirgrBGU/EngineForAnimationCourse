@@ -1,0 +1,162 @@
+^C:\DEV\ENGINEFORANIMATIONCOURSE\EXTERNAL\.CACHE\GLAD\CMAKEFILES\A52847FCF3552B5D1106C42F39CEC573\GLAD-DOWNLOAD-MKDIR.RULE
+setlocal
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E make_directory C:/Dev/EngineForAnimationCourse/cmake/../external/glad
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E make_directory C:/Dev/EngineForAnimationCourse/build/glad-build
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E make_directory C:/Dev/EngineForAnimationCourse/external/.cache/glad/glad-download-prefix
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E make_directory C:/Dev/EngineForAnimationCourse/external/.cache/glad/glad-download-prefix/tmp
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E make_directory C:/Dev/EngineForAnimationCourse/external/.cache/glad/glad-download-prefix/src/glad-download-stamp/Debug
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E make_directory C:/Dev/EngineForAnimationCourse/external/.cache/glad/glad-download-prefix/src
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E make_directory C:/Dev/EngineForAnimationCourse/external/.cache/glad/glad-download-prefix/src/glad-download-stamp
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E touch C:/Dev/EngineForAnimationCourse/external/.cache/glad/glad-download-prefix/src/glad-download-stamp/Debug/glad-download-mkdir
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\DEV\ENGINEFORANIMATIONCOURSE\EXTERNAL\.CACHE\GLAD\CMAKEFILES\A52847FCF3552B5D1106C42F39CEC573\GLAD-DOWNLOAD-DOWNLOAD.RULE
+setlocal
+cd C:\Dev\EngineForAnimationCourse\external
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -P C:/Dev/EngineForAnimationCourse/external/.cache/glad/glad-download-prefix/tmp/glad-download-gitclone.cmake
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E touch C:/Dev/EngineForAnimationCourse/external/.cache/glad/glad-download-prefix/src/glad-download-stamp/Debug/glad-download-download
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\DEV\ENGINEFORANIMATIONCOURSE\EXTERNAL\.CACHE\GLAD\CMAKEFILES\A52847FCF3552B5D1106C42F39CEC573\GLAD-DOWNLOAD-UPDATE.RULE
+setlocal
+cd C:\Dev\EngineForAnimationCourse\external\glad
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -P C:/Dev/EngineForAnimationCourse/external/.cache/glad/glad-download-prefix/tmp/glad-download-gitupdate.cmake
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\DEV\ENGINEFORANIMATIONCOURSE\EXTERNAL\.CACHE\GLAD\CMAKEFILES\A52847FCF3552B5D1106C42F39CEC573\GLAD-DOWNLOAD-PATCH.RULE
+setlocal
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E echo_append
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E touch C:/Dev/EngineForAnimationCourse/external/.cache/glad/glad-download-prefix/src/glad-download-stamp/Debug/glad-download-patch
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\DEV\ENGINEFORANIMATIONCOURSE\EXTERNAL\.CACHE\GLAD\CMAKEFILES\A52847FCF3552B5D1106C42F39CEC573\GLAD-DOWNLOAD-CONFIGURE.RULE
+setlocal
+cd C:\Dev\EngineForAnimationCourse\build\glad-build
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E echo_append
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E touch C:/Dev/EngineForAnimationCourse/external/.cache/glad/glad-download-prefix/src/glad-download-stamp/Debug/glad-download-configure
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\DEV\ENGINEFORANIMATIONCOURSE\EXTERNAL\.CACHE\GLAD\CMAKEFILES\A52847FCF3552B5D1106C42F39CEC573\GLAD-DOWNLOAD-BUILD.RULE
+setlocal
+cd C:\Dev\EngineForAnimationCourse\build\glad-build
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E echo_append
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E touch C:/Dev/EngineForAnimationCourse/external/.cache/glad/glad-download-prefix/src/glad-download-stamp/Debug/glad-download-build
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\DEV\ENGINEFORANIMATIONCOURSE\EXTERNAL\.CACHE\GLAD\CMAKEFILES\A52847FCF3552B5D1106C42F39CEC573\GLAD-DOWNLOAD-INSTALL.RULE
+setlocal
+cd C:\Dev\EngineForAnimationCourse\build\glad-build
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E echo_append
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E touch C:/Dev/EngineForAnimationCourse/external/.cache/glad/glad-download-prefix/src/glad-download-stamp/Debug/glad-download-install
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\DEV\ENGINEFORANIMATIONCOURSE\EXTERNAL\.CACHE\GLAD\CMAKEFILES\A52847FCF3552B5D1106C42F39CEC573\GLAD-DOWNLOAD-TEST.RULE
+setlocal
+cd C:\Dev\EngineForAnimationCourse\build\glad-build
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E echo_append
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E touch C:/Dev/EngineForAnimationCourse/external/.cache/glad/glad-download-prefix/src/glad-download-stamp/Debug/glad-download-test
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\DEV\ENGINEFORANIMATIONCOURSE\EXTERNAL\.CACHE\GLAD\CMAKEFILES\1E95895E67DDACF60B58D4FB984559AC\GLAD-DOWNLOAD-COMPLETE.RULE
+setlocal
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E make_directory C:/Dev/EngineForAnimationCourse/external/.cache/glad/CMakeFiles/Debug
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E touch C:/Dev/EngineForAnimationCourse/external/.cache/glad/CMakeFiles/Debug/glad-download-complete
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E touch C:/Dev/EngineForAnimationCourse/external/.cache/glad/glad-download-prefix/src/glad-download-stamp/Debug/glad-download-done
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\DEV\ENGINEFORANIMATIONCOURSE\EXTERNAL\.CACHE\GLAD\CMAKEFILES\472D8AB8952453840FD48FC1EC6F25EB\GLAD-DOWNLOAD.RULE
+setlocal
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\DEV\ENGINEFORANIMATIONCOURSE\EXTERNAL\.CACHE\GLAD\CMAKELISTS.TXT
+setlocal
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -SC:/Dev/EngineForAnimationCourse/external/.cache/glad -BC:/Dev/EngineForAnimationCourse/external/.cache/glad --check-stamp-file C:/Dev/EngineForAnimationCourse/external/.cache/glad/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

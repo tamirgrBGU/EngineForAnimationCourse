@@ -1,0 +1,14 @@
+# Target labels
+ glfw-download
+# Source files and their labels
+C:/Dev/EngineForAnimationCourse/external/.cache/glfw/CMakeFiles/glfw-download
+C:/Dev/EngineForAnimationCourse/external/.cache/glfw/CMakeFiles/348a56fa66aa08285112e5836da14efb/glfw-download.rule
+C:/Dev/EngineForAnimationCourse/external/.cache/glfw/CMakeFiles/04854dc552b1d756b34806e04cfe8c47/glfw-download-complete.rule
+C:/Dev/EngineForAnimationCourse/external/.cache/glfw/CMakeFiles/e78e77f0bd680b46414144f1ef510be5/glfw-download-install.rule
+C:/Dev/EngineForAnimationCourse/external/.cache/glfw/CMakeFiles/e78e77f0bd680b46414144f1ef510be5/glfw-download-mkdir.rule
+C:/Dev/EngineForAnimationCourse/external/.cache/glfw/CMakeFiles/e78e77f0bd680b46414144f1ef510be5/glfw-download-download.rule
+C:/Dev/EngineForAnimationCourse/external/.cache/glfw/CMakeFiles/e78e77f0bd680b46414144f1ef510be5/glfw-download-update.rule
+C:/Dev/EngineForAnimationCourse/external/.cache/glfw/CMakeFiles/e78e77f0bd680b46414144f1ef510be5/glfw-download-patch.rule
+C:/Dev/EngineForAnimationCourse/external/.cache/glfw/CMakeFiles/e78e77f0bd680b46414144f1ef510be5/glfw-download-configure.rule
+C:/Dev/EngineForAnimationCourse/external/.cache/glfw/CMakeFiles/e78e77f0bd680b46414144f1ef510be5/glfw-download-build.rule
+C:/Dev/EngineForAnimationCourse/external/.cache/glfw/CMakeFiles/e78e77f0bd680b46414144f1ef510be5/glfw-download-test.rule

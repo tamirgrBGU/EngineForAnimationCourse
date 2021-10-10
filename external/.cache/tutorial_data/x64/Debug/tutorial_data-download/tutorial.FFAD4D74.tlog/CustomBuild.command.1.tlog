@@ -1,0 +1,162 @@
+^C:\DEV\ENGINEIGLNEW\EXTERNAL\.CACHE\TUTORIAL_DATA\CMAKEFILES\5B6B7384CDCF8A9EF5B998675C66A993\TUTORIAL_DATA-DOWNLOAD-MKDIR.RULE
+setlocal
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E make_directory C:/Dev/EngineIGLnew/cmake/../external/../tutorial/data
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E make_directory C:/Dev/EngineIGLnew/build/tutorial_data-build
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E make_directory C:/Dev/EngineIGLnew/external/.cache/tutorial_data/tutorial_data-download-prefix
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E make_directory C:/Dev/EngineIGLnew/external/.cache/tutorial_data/tutorial_data-download-prefix/tmp
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E make_directory C:/Dev/EngineIGLnew/external/.cache/tutorial_data/tutorial_data-download-prefix/src/tutorial_data-download-stamp/Debug
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E make_directory C:/Dev/EngineIGLnew/external/.cache/tutorial_data/tutorial_data-download-prefix/src
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E make_directory C:/Dev/EngineIGLnew/external/.cache/tutorial_data/tutorial_data-download-prefix/src/tutorial_data-download-stamp
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E touch C:/Dev/EngineIGLnew/external/.cache/tutorial_data/tutorial_data-download-prefix/src/tutorial_data-download-stamp/Debug/tutorial_data-download-mkdir
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\DEV\ENGINEIGLNEW\EXTERNAL\.CACHE\TUTORIAL_DATA\CMAKEFILES\5B6B7384CDCF8A9EF5B998675C66A993\TUTORIAL_DATA-DOWNLOAD-DOWNLOAD.RULE
+setlocal
+cd C:\Dev\EngineIGLnew\tutorial
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -P C:/Dev/EngineIGLnew/external/.cache/tutorial_data/tutorial_data-download-prefix/tmp/tutorial_data-download-gitclone.cmake
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E touch C:/Dev/EngineIGLnew/external/.cache/tutorial_data/tutorial_data-download-prefix/src/tutorial_data-download-stamp/Debug/tutorial_data-download-download
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\DEV\ENGINEIGLNEW\EXTERNAL\.CACHE\TUTORIAL_DATA\CMAKEFILES\5B6B7384CDCF8A9EF5B998675C66A993\TUTORIAL_DATA-DOWNLOAD-UPDATE.RULE
+setlocal
+cd C:\Dev\EngineIGLnew\tutorial\data
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -P C:/Dev/EngineIGLnew/external/.cache/tutorial_data/tutorial_data-download-prefix/tmp/tutorial_data-download-gitupdate.cmake
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\DEV\ENGINEIGLNEW\EXTERNAL\.CACHE\TUTORIAL_DATA\CMAKEFILES\5B6B7384CDCF8A9EF5B998675C66A993\TUTORIAL_DATA-DOWNLOAD-PATCH.RULE
+setlocal
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E echo_append
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E touch C:/Dev/EngineIGLnew/external/.cache/tutorial_data/tutorial_data-download-prefix/src/tutorial_data-download-stamp/Debug/tutorial_data-download-patch
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\DEV\ENGINEIGLNEW\EXTERNAL\.CACHE\TUTORIAL_DATA\CMAKEFILES\5B6B7384CDCF8A9EF5B998675C66A993\TUTORIAL_DATA-DOWNLOAD-CONFIGURE.RULE
+setlocal
+cd C:\Dev\EngineIGLnew\build\tutorial_data-build
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E echo_append
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E touch C:/Dev/EngineIGLnew/external/.cache/tutorial_data/tutorial_data-download-prefix/src/tutorial_data-download-stamp/Debug/tutorial_data-download-configure
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\DEV\ENGINEIGLNEW\EXTERNAL\.CACHE\TUTORIAL_DATA\CMAKEFILES\5B6B7384CDCF8A9EF5B998675C66A993\TUTORIAL_DATA-DOWNLOAD-BUILD.RULE
+setlocal
+cd C:\Dev\EngineIGLnew\build\tutorial_data-build
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E echo_append
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E touch C:/Dev/EngineIGLnew/external/.cache/tutorial_data/tutorial_data-download-prefix/src/tutorial_data-download-stamp/Debug/tutorial_data-download-build
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\DEV\ENGINEIGLNEW\EXTERNAL\.CACHE\TUTORIAL_DATA\CMAKEFILES\5B6B7384CDCF8A9EF5B998675C66A993\TUTORIAL_DATA-DOWNLOAD-INSTALL.RULE
+setlocal
+cd C:\Dev\EngineIGLnew\build\tutorial_data-build
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E echo_append
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E touch C:/Dev/EngineIGLnew/external/.cache/tutorial_data/tutorial_data-download-prefix/src/tutorial_data-download-stamp/Debug/tutorial_data-download-install
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\DEV\ENGINEIGLNEW\EXTERNAL\.CACHE\TUTORIAL_DATA\CMAKEFILES\5B6B7384CDCF8A9EF5B998675C66A993\TUTORIAL_DATA-DOWNLOAD-TEST.RULE
+setlocal
+cd C:\Dev\EngineIGLnew\build\tutorial_data-build
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E echo_append
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E touch C:/Dev/EngineIGLnew/external/.cache/tutorial_data/tutorial_data-download-prefix/src/tutorial_data-download-stamp/Debug/tutorial_data-download-test
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\DEV\ENGINEIGLNEW\EXTERNAL\.CACHE\TUTORIAL_DATA\CMAKEFILES\D452C1AB7DA23EF10A0F3EB6CE2CFF61\TUTORIAL_DATA-DOWNLOAD-COMPLETE.RULE
+setlocal
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E make_directory C:/Dev/EngineIGLnew/external/.cache/tutorial_data/CMakeFiles/Debug
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E touch C:/Dev/EngineIGLnew/external/.cache/tutorial_data/CMakeFiles/Debug/tutorial_data-download-complete
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E touch C:/Dev/EngineIGLnew/external/.cache/tutorial_data/tutorial_data-download-prefix/src/tutorial_data-download-stamp/Debug/tutorial_data-download-done
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\DEV\ENGINEIGLNEW\EXTERNAL\.CACHE\TUTORIAL_DATA\CMAKEFILES\A871EEB0C29C4048412094CE3A1E4D62\TUTORIAL_DATA-DOWNLOAD.RULE
+setlocal
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\DEV\ENGINEIGLNEW\EXTERNAL\.CACHE\TUTORIAL_DATA\CMAKELISTS.TXT
+setlocal
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -SC:/Dev/EngineIGLnew/external/.cache/tutorial_data -BC:/Dev/EngineIGLnew/external/.cache/tutorial_data --check-stamp-file C:/Dev/EngineIGLnew/external/.cache/tutorial_data/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

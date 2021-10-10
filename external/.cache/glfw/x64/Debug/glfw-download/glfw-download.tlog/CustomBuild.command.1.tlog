@@ -1,0 +1,162 @@
+^C:\DEV\ENGINEFORANIMATIONCOURSE\EXTERNAL\.CACHE\GLFW\CMAKEFILES\E78E77F0BD680B46414144F1EF510BE5\GLFW-DOWNLOAD-MKDIR.RULE
+setlocal
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E make_directory C:/Dev/EngineForAnimationCourse/cmake/../external/glfw
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E make_directory C:/Dev/EngineForAnimationCourse/build/glfw-build
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E make_directory C:/Dev/EngineForAnimationCourse/external/.cache/glfw/glfw-download-prefix
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E make_directory C:/Dev/EngineForAnimationCourse/external/.cache/glfw/glfw-download-prefix/tmp
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E make_directory C:/Dev/EngineForAnimationCourse/external/.cache/glfw/glfw-download-prefix/src/glfw-download-stamp/Debug
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E make_directory C:/Dev/EngineForAnimationCourse/external/.cache/glfw/glfw-download-prefix/src
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E make_directory C:/Dev/EngineForAnimationCourse/external/.cache/glfw/glfw-download-prefix/src/glfw-download-stamp
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E touch C:/Dev/EngineForAnimationCourse/external/.cache/glfw/glfw-download-prefix/src/glfw-download-stamp/Debug/glfw-download-mkdir
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\DEV\ENGINEFORANIMATIONCOURSE\EXTERNAL\.CACHE\GLFW\CMAKEFILES\E78E77F0BD680B46414144F1EF510BE5\GLFW-DOWNLOAD-DOWNLOAD.RULE
+setlocal
+cd C:\Dev\EngineForAnimationCourse\external
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -P C:/Dev/EngineForAnimationCourse/external/.cache/glfw/glfw-download-prefix/tmp/glfw-download-gitclone.cmake
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E touch C:/Dev/EngineForAnimationCourse/external/.cache/glfw/glfw-download-prefix/src/glfw-download-stamp/Debug/glfw-download-download
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\DEV\ENGINEFORANIMATIONCOURSE\EXTERNAL\.CACHE\GLFW\CMAKEFILES\E78E77F0BD680B46414144F1EF510BE5\GLFW-DOWNLOAD-UPDATE.RULE
+setlocal
+cd C:\Dev\EngineForAnimationCourse\external\glfw
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -P C:/Dev/EngineForAnimationCourse/external/.cache/glfw/glfw-download-prefix/tmp/glfw-download-gitupdate.cmake
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\DEV\ENGINEFORANIMATIONCOURSE\EXTERNAL\.CACHE\GLFW\CMAKEFILES\E78E77F0BD680B46414144F1EF510BE5\GLFW-DOWNLOAD-PATCH.RULE
+setlocal
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E echo_append
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E touch C:/Dev/EngineForAnimationCourse/external/.cache/glfw/glfw-download-prefix/src/glfw-download-stamp/Debug/glfw-download-patch
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\DEV\ENGINEFORANIMATIONCOURSE\EXTERNAL\.CACHE\GLFW\CMAKEFILES\E78E77F0BD680B46414144F1EF510BE5\GLFW-DOWNLOAD-CONFIGURE.RULE
+setlocal
+cd C:\Dev\EngineForAnimationCourse\build\glfw-build
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E echo_append
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E touch C:/Dev/EngineForAnimationCourse/external/.cache/glfw/glfw-download-prefix/src/glfw-download-stamp/Debug/glfw-download-configure
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\DEV\ENGINEFORANIMATIONCOURSE\EXTERNAL\.CACHE\GLFW\CMAKEFILES\E78E77F0BD680B46414144F1EF510BE5\GLFW-DOWNLOAD-BUILD.RULE
+setlocal
+cd C:\Dev\EngineForAnimationCourse\build\glfw-build
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E echo_append
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E touch C:/Dev/EngineForAnimationCourse/external/.cache/glfw/glfw-download-prefix/src/glfw-download-stamp/Debug/glfw-download-build
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\DEV\ENGINEFORANIMATIONCOURSE\EXTERNAL\.CACHE\GLFW\CMAKEFILES\E78E77F0BD680B46414144F1EF510BE5\GLFW-DOWNLOAD-INSTALL.RULE
+setlocal
+cd C:\Dev\EngineForAnimationCourse\build\glfw-build
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E echo_append
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E touch C:/Dev/EngineForAnimationCourse/external/.cache/glfw/glfw-download-prefix/src/glfw-download-stamp/Debug/glfw-download-install
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\DEV\ENGINEFORANIMATIONCOURSE\EXTERNAL\.CACHE\GLFW\CMAKEFILES\E78E77F0BD680B46414144F1EF510BE5\GLFW-DOWNLOAD-TEST.RULE
+setlocal
+cd C:\Dev\EngineForAnimationCourse\build\glfw-build
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E echo_append
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E touch C:/Dev/EngineForAnimationCourse/external/.cache/glfw/glfw-download-prefix/src/glfw-download-stamp/Debug/glfw-download-test
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\DEV\ENGINEFORANIMATIONCOURSE\EXTERNAL\.CACHE\GLFW\CMAKEFILES\04854DC552B1D756B34806E04CFE8C47\GLFW-DOWNLOAD-COMPLETE.RULE
+setlocal
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E make_directory C:/Dev/EngineForAnimationCourse/external/.cache/glfw/CMakeFiles/Debug
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E touch C:/Dev/EngineForAnimationCourse/external/.cache/glfw/CMakeFiles/Debug/glfw-download-complete
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -E touch C:/Dev/EngineForAnimationCourse/external/.cache/glfw/glfw-download-prefix/src/glfw-download-stamp/Debug/glfw-download-done
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\DEV\ENGINEFORANIMATIONCOURSE\EXTERNAL\.CACHE\GLFW\CMAKEFILES\348A56FA66AA08285112E5836DA14EFB\GLFW-DOWNLOAD.RULE
+setlocal
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\DEV\ENGINEFORANIMATIONCOURSE\EXTERNAL\.CACHE\GLFW\CMAKELISTS.TXT
+setlocal
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -SC:/Dev/EngineForAnimationCourse/external/.cache/glfw -BC:/Dev/EngineForAnimationCourse/external/.cache/glfw --check-stamp-file C:/Dev/EngineForAnimationCourse/external/.cache/glfw/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

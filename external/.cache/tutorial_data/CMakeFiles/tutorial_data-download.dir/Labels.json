@@ -1,0 +1,46 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "C:/Dev/EngineIGLnew/external/.cache/tutorial_data/CMakeFiles/tutorial_data-download"
+		},
+		{
+			"file" : "C:/Dev/EngineIGLnew/external/.cache/tutorial_data/CMakeFiles/a871eeb0c29c4048412094ce3a1e4d62/tutorial_data-download.rule"
+		},
+		{
+			"file" : "C:/Dev/EngineIGLnew/external/.cache/tutorial_data/CMakeFiles/d452c1ab7da23ef10a0f3eb6ce2cff61/tutorial_data-download-complete.rule"
+		},
+		{
+			"file" : "C:/Dev/EngineIGLnew/external/.cache/tutorial_data/CMakeFiles/5b6b7384cdcf8a9ef5b998675c66a993/tutorial_data-download-install.rule"
+		},
+		{
+			"file" : "C:/Dev/EngineIGLnew/external/.cache/tutorial_data/CMakeFiles/5b6b7384cdcf8a9ef5b998675c66a993/tutorial_data-download-mkdir.rule"
+		},
+		{
+			"file" : "C:/Dev/EngineIGLnew/external/.cache/tutorial_data/CMakeFiles/5b6b7384cdcf8a9ef5b998675c66a993/tutorial_data-download-download.rule"
+		},
+		{
+			"file" : "C:/Dev/EngineIGLnew/external/.cache/tutorial_data/CMakeFiles/5b6b7384cdcf8a9ef5b998675c66a993/tutorial_data-download-update.rule"
+		},
+		{
+			"file" : "C:/Dev/EngineIGLnew/external/.cache/tutorial_data/CMakeFiles/5b6b7384cdcf8a9ef5b998675c66a993/tutorial_data-download-patch.rule"
+		},
+		{
+			"file" : "C:/Dev/EngineIGLnew/external/.cache/tutorial_data/CMakeFiles/5b6b7384cdcf8a9ef5b998675c66a993/tutorial_data-download-configure.rule"
+		},
+		{
+			"file" : "C:/Dev/EngineIGLnew/external/.cache/tutorial_data/CMakeFiles/5b6b7384cdcf8a9ef5b998675c66a993/tutorial_data-download-build.rule"
+		},
+		{
+			"file" : "C:/Dev/EngineIGLnew/external/.cache/tutorial_data/CMakeFiles/5b6b7384cdcf8a9ef5b998675c66a993/tutorial_data-download-test.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"tutorial_data-download"
+		],
+		"name" : "tutorial_data-download"
+	}
+}
