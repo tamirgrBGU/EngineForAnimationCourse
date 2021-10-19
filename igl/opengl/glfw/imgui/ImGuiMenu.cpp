@@ -9,10 +9,10 @@
 //#include "ImGuiMenu.h"
 //#include "ImGuiHelpers.h"
 #include <igl/project.h>
-#include "igl/opengl/glfw/imgui/ImGuiHelpers.h"
+#include "ImGuiHelpers.h"
 
-#include "igl/opengl/glfw/imgui/ImGuiMenu.h"
-#include "../imgui/imgui.h"
+#include "ImGuiMenu.h"
+#include "../imgui.h"
 #include "igl/opengl/glfw/imgui/imgui_impl_glfw.h"
 #include "igl/opengl/glfw/imgui/imgui_impl_opengl3.h"
 
