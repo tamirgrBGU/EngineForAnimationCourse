@@ -15,7 +15,7 @@
 #include "../per_vertex_normals.h"
 #include "igl/png/texture_from_png.h"
 #include <iostream>
-#include "external/stb/igl_stb_image.h"
+//#include "external/stb/igl_stb_image.h"
 
 IGL_INLINE igl::opengl::ViewerData::ViewerData()
 : dirty(MeshGL::DIRTY_ALL),

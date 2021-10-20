@@ -1,0 +1,2 @@
+C:/Dev/EngineForAnimationCourse/tutorial/data/sphere.obj
+C:/Dev/EngineForAnimationCourse/tutorial/data/cube.obj
