@@ -227,6 +227,7 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
     float p = ImGui::GetStyle().FramePadding.x;
     if (ImGui::Button("Load##Mesh", ImVec2((w-p)/2.f, 0)))
     {
+        int savedIndx = viewer->selected_data_index;
       viewer->open_dialog_load_mesh();
       if (viewer->data_list.size() > viewer->parents.size())
       {
@@ -234,6 +235,7 @@ IGL_INLINE void ImGuiMenu::draw_viewer_menu(igl::opengl::glfw::Viewer *viewer, s
           viewer->data_list.back().set_visible(false, 1);
           viewer->data_list.back().set_visible(true, 2);
           viewer->data_list.back().show_faces = 3;
+          viewer->selected_data_index = savedIndx;
       }
     }
     ImGui::SameLine(0, p);

@@ -152,7 +152,10 @@ namespace glfw
       }
 
       data().set_mesh(V,F);
-      data().set_uv(UV_V,UV_F);
+      if (UV_V.rows() > 0)
+      {
+          data().set_uv(UV_V, UV_F);
+      }
 
     }
     else
