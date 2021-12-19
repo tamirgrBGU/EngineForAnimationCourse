@@ -36,7 +36,7 @@ void SandBox::Init(const std::string &config)
 			data().point_size = 10;
 			data().line_width = 2;
 			data().set_visible(false, 1);
-
+			//data().SetCenterOfRotation(Eigen::Vector3d(10,0, 0));
 			
 		}
 		nameFileout.close();

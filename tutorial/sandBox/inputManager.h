@@ -100,6 +100,7 @@ void glfw_window_size(GLFWwindow* window, int width, int height)
 static void glfw_key_callback(GLFWwindow* window, int key, int scancode, int action, int modifier)
 {
 	Renderer* rndr = (Renderer*) glfwGetWindowUserPointer(window);
+	Eigen::Vector3d tmp;
 	SandBox* scn = (SandBox*)rndr->GetScene();
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GL_TRUE);
@@ -163,6 +164,10 @@ static void glfw_key_callback(GLFWwindow* window, int key, int scancode, int act
 		case 's':
 		case 'S':
 			rndr->TranslateCamera(Eigen::Vector3f(0, 0, -0.03f));
+			break;
+		case GLFW_KEY_C:
+			tmp = (scn->data().MakeTransScaled().inverse() * Eigen::Vector4d(0, 0, 0, 1)).head<3>();
+			scn->data().SetCenterOfRotation(tmp);
 			break;
 		case GLFW_KEY_UP:
 			rndr->TranslateCamera(Eigen::Vector3f(0, 0.01f,0));

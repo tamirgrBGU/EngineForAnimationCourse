@@ -13,7 +13,11 @@ public:
 	Eigen::Matrix4d MakeTransd();
 	Eigen::Matrix4d MakeTransScaled();
 	void MyTranslate(Eigen::Vector3d amt, bool preRotation);
+	void TranslateInSystem(Eigen::Matrix3d rot, Eigen::Vector3d amt);
+	Eigen::Matrix3d GetRotation() { return Tout.rotation(); }
+	void SetCenterOfRotation(Eigen::Vector3d amt);
 	void MyRotate(Eigen::Vector3d rotAxis, double angle);
+	void RotateInSystem(Eigen::Vector3d rotAxis, double angle);
 	void MyRotate(const Eigen::Matrix3d &rot);
 	void MyScale(Eigen::Vector3d amt);
 

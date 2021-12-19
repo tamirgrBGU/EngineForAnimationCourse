@@ -22,12 +22,13 @@ Eigen::Matrix4d Movable::MakeTransScaled()
 	return (Tout.matrix() * Tin.matrix());
 }
 
+
 Eigen::Matrix4d Movable::MakeTransd()
 {
 	Eigen::Matrix4d mat = Eigen::Matrix4d::Identity();
 	mat.col(3) << Tin.translation(), 1;
 
-	return (Tout.matrix() * mat);
+	return (Tout.matrix() * Tin.matrix());
 }
 
 void Movable::MyTranslate(Eigen::Vector3d amt, bool preRotation)
@@ -36,12 +37,28 @@ void Movable::MyTranslate(Eigen::Vector3d amt, bool preRotation)
 	if(preRotation)
 		Tout.pretranslate(amt);
 	else
-		Tout.translate(amt);
+		Tin.pretranslate(amt);
+}
+void Movable::TranslateInSystem(Eigen::Matrix3d rot, Eigen::Vector3d amt)
+{
+	Tout.pretranslate(rot.transpose()*amt);
+}
+
+void Movable::SetCenterOfRotation(Eigen::Vector3d amt)
+{
+	Tout.pretranslate(amt);
+	Tin.pretranslate(-amt);
 }
 //angle in radians
 void Movable::MyRotate(Eigen::Vector3d rotAxis, double angle)
 {
 	Tout.rotate(Eigen::AngleAxisd(angle, rotAxis.normalized()));
+}
+
+void Movable::RotateInSystem(Eigen::Vector3d rotAxis, double angle)
+{
+	
+	Tout.rotate(Eigen::AngleAxisd(angle, Tout.rotation().transpose()*(rotAxis.normalized())));
 }
 
 void Movable::MyRotate(const Eigen::Matrix3d& rot)

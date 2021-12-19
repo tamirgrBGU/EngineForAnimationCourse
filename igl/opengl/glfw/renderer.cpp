@@ -158,15 +158,15 @@ void Renderer::MouseProcessing(int button)
 			double xToMove = -(double)xrel / core().viewport[3] * (z+2*near) * (far) / (far + 2*near) * 2.0 * tanf(angle / 360 * M_PI) / (core().camera_zoom * core().camera_base_zoom);
 			double yToMove = (double)yrel / core().viewport[3] *(z+2*near) * (far ) / (far+ 2*near) * 2.0 * tanf(angle / 360 * M_PI) / (core().camera_zoom * core().camera_base_zoom);
 		
-			scn->data().MyTranslate( Eigen::Vector3d(xToMove, 0, 0), true);
-			scn->data().MyTranslate( Eigen::Vector3d(0, yToMove, 0), true);
-			scn->WhenTranslate();
+			scn->data().TranslateInSystem(scn->GetRotation(), Eigen::Vector3d(xToMove, 0, 0));
+			scn->data().TranslateInSystem(scn->GetRotation(), Eigen::Vector3d(0, yToMove, 0));
+
 		}
 		else
 		{
-			scn->data().MyRotate(scn->data().MakeTransd().block<3,3>(0,0) );
+			scn->data().RotateInSystem(Eigen::Vector3d(1,0,0),yrel/100.0 );
 
-			scn->data().MyRotate(scn->data().MakeTransd().block<3, 3>(0, 0));
+			scn->data().RotateInSystem(Eigen::Vector3d(0, 1, 0), xrel / 100.0);
 
 		}
 	}
@@ -176,7 +176,6 @@ void Renderer::MouseProcessing(int button)
 		{
 			float near = core().camera_dnear, far = core().camera_dfar, angle = core().camera_view_angle;
 			float z = far + 0.5f * (near - far);
-			
 
 			double xToMove = -(double)xrel / core().viewport[3] * far / z * near * 2.0f * tanf(angle / 360 * M_PI) / (core().camera_zoom * core().camera_base_zoom);
 			double yToMove = (double)yrel / core().viewport[3] * far / z * near * 2.0f * tanf(angle / 360 * M_PI) / (core().camera_zoom * core().camera_base_zoom);
@@ -186,8 +185,9 @@ void Renderer::MouseProcessing(int button)
 		}
 		else
 		{
-			scn->MyRotate(scn->MakeTransd().block<3, 3>(0, 0));
-			scn->MyRotate(scn->MakeTransd().block<3, 3>(0, 0));
+			scn->RotateInSystem(Eigen::Vector3d(1, 0, 0), yrel / 100.0);
+
+			scn->RotateInSystem(Eigen::Vector3d(0, 1, 0), xrel / 100.0);
 
 		}
 	}
