@@ -1,3 +1,0 @@
-C:/Dev/EngineForAnimationCourse/external/.cache/imgui/CMakeFiles/imgui-download.dir
-C:/Dev/EngineForAnimationCourse/external/.cache/imgui/CMakeFiles/ALL_BUILD.dir
-C:/Dev/EngineForAnimationCourse/external/.cache/imgui/CMakeFiles/ZERO_CHECK.dir

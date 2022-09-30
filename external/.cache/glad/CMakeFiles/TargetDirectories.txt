@@ -1,3 +1,0 @@
-C:/Dev/EngineForAnimationCourse/external/.cache/glad/CMakeFiles/glad-download.dir
-C:/Dev/EngineForAnimationCourse/external/.cache/glad/CMakeFiles/ALL_BUILD.dir
-C:/Dev/EngineForAnimationCourse/external/.cache/glad/CMakeFiles/ZERO_CHECK.dir
