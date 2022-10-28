@@ -75,7 +75,7 @@ use is listed.
   2013.
 [#libigl]: Original data produced by libigl authors, http://libigl.github.io/libigl/
 [#mpi]: Max Planck Institute at Saarbrucken.
-[#pauly]: Modeled by Mark Pauly, "Shape Modeling with Point-Sampled Geometry"
+[#pauly]: Modeled by Mark Pauly, "Model Modeling with Point-Sampled Geometry"
 [#shrec]: SHREC 2009 Dataset,
   http://www.itl.nist.gov/iad/vug/sharp/benchmark/shrecPartial/data.html
 [#sorkine_2004]: Olga Sorkine, Daniel Cohen-Or, [Least-squares

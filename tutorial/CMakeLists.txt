@@ -28,5 +28,4 @@ endif()
 
 add_subdirectory(Demo)
 
-add_subdirectory(Test)
-
+add_subdirectory(Example1)

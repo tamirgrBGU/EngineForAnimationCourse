@@ -1,14 +1,9 @@
-/*
- * VertexArray.cpp
-
- *
- *  Created on: 22 de dez de 2017
- *      Author: Casa
- */
-#define GLEW_STATIC
-
 #include "VertexArray.h"
 #include "gl.h"
+
+
+namespace cg3d
+{
 
 VertexArray::VertexArray()
 {
@@ -24,7 +19,7 @@ void VertexArray::AddBuffer(const VertexBuffer &vb, int attribNum, int count, in
 {
     //vb.Bind();
     glEnableVertexAttribArray(attribNum);
-    glVertexAttribPointer(attribNum, count, type, GL_FALSE, 0, 0);
+    glVertexAttribPointer(attribNum, count, type, GL_FALSE, 0, nullptr);
 }
 
 void VertexArray::Bind() const
@@ -32,8 +27,9 @@ void VertexArray::Bind() const
     glBindVertexArray(m_RendererID);
 }
 
-void VertexArray::Unbind() const
+void VertexArray::Unbind()
 {
     glBindVertexArray(0);
 }
 
+} // namespace cg3d

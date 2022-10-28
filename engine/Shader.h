@@ -4,38 +4,40 @@
 #include <unordered_map>
 #include <Eigen/Core>
 
-using namespace std;
+
+namespace cg3d
+{
 
 class Shader
 {
 public:
 
-    const string name;
+    std::string name;
 
     /**
-        @brief Create shader object from the GLSL code in the given string
+        @brief Create shader object from the GLSL code in the given std::string
         @param name     - the name of the shader object
-        @param contents - a string containing the code of the shader
+        @param contents - a std::string containing the code of the shader
         @param type     - the shader type
     **/
-    Shader(const string& name, unsigned int type, const string& contents);
+    Shader(std::string name, unsigned int type, const std::string& contents);
 
     /**
         @brief Create shader object from the GLSL code in the given file
         @param type     - the shader type
         @param file     - name of shader file to read
     **/
-    Shader(unsigned int type, const string& file) : Shader(file, type, ReadFile(file)) {}
+    Shader(unsigned int type, const std::string& file) : Shader(file, type, ReadFile(file)) {}
 
-    static shared_ptr<const Shader> GetFixedColorFragmentShader();
+    static std::shared_ptr<const Shader> GetFixedColorFragmentShader();
+    static std::shared_ptr<const Shader> GetBasicVertexShader();
+    static std::shared_ptr<const Shader> GetBasicFragmentShader();
+    static std::shared_ptr<const Shader> GetOverlayVertexShader();
+    static std::shared_ptr<const Shader> GetOverlayFragmentShader();
+    static std::shared_ptr<const Shader> GetOverlayPointsFragmentShader();
+    static std::shared_ptr<const Shader> GetFullWindowQuadVertexShader();
 
-    static shared_ptr<const Shader> GetOverlayVertexShader();
-
-    static shared_ptr<const Shader> GetOverlayFragmentShader();
-
-    static shared_ptr<const Shader> GetOverlayPointsFragmentShader();
-
-    unsigned int GetHandle() const;
+    [[nodiscard]] inline unsigned int GetHandle() const { return handle; };
 
     ~Shader();
 
@@ -44,10 +46,9 @@ public:
     Shader(const Shader &shader) = delete;
 
 private:
-
     unsigned int handle;
-
-    static void CheckCompileStatus(const string& name, unsigned int shader);
-
-    static string ReadFile(const string& fileName);
+    static void CheckCompileStatus(unsigned int shader);
+    static std::string ReadFile(const std::string& fileName);
 };
+
+} // namespace cg3d

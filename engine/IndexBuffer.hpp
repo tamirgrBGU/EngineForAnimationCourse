@@ -1,47 +1,25 @@
-/*
- * VertexBuffer.hpp
- *
- *  Created on: 13 de dez de 2017
- *      Author: Casa
- */
+#pragma once
 
-#ifndef SRC_INDEXBUFFER_HPP_
-#define SRC_INDEXBUFFER_HPP_
+
+namespace cg3d
+{
 
 class IndexBuffer
 {
-private:
-    unsigned int m_RendererID;
-    unsigned int m_Count;
+    unsigned int m_RendererID = 0;
+    unsigned int m_Count = 0;
+
 public:
     IndexBuffer(const unsigned int *data, unsigned int count);
-
     IndexBuffer();
-
     void Init(const unsigned int *data, unsigned int count);
-
     IndexBuffer(const IndexBuffer &ib);
-
     ~IndexBuffer();
-
-
     void Bind() const;
-
-    void Unbind() const;
-
-    inline unsigned int GetCount()
-    {
-        return m_Count;
-    }
-
-    inline unsigned int GetRender()
-    {
-        return m_RendererID;
-    }
-
-
-    void ChangeData(const void *data, unsigned int count);
+    static void Unbind() ;
+    inline unsigned int GetCount() const { return m_Count; }
+    inline unsigned int GetRender() const { return m_RendererID; }
+    static void ChangeData(const void *data, unsigned int count);
 };
 
-
-#endif /* SRC_VERTEXBUFFER_HPP_ */
+} // namespace cg3d

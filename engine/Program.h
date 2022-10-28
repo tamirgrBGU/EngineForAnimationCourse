@@ -1,12 +1,11 @@
 #pragma once
 
-#include <string>
-#include <unordered_map>
-#include <Eigen/Core>
 #include "Shader.h"
+#include <string>
 
-using namespace std;
-using namespace Eigen;
+
+namespace cg3d
+{
 
 class Program
 {
@@ -17,7 +16,7 @@ public:
         @param fileName - name of the files without extension (extension .vs and .glsl is appended)
         @param overlay  - true for full overlay data, false for partial data
     **/
-    explicit Program(const string &fileName, bool overlay = false, bool warnings = true);
+    explicit Program(const std::string &fileName, bool overlay = false, bool warnings = true);
 
 /**
 	 @brief Create a program object from the given vertex and fragment shader objects
@@ -25,7 +24,7 @@ public:
 	 @param fragmentShader	- a fragment shader object
 	 @param overlay			- true for full overlay data, false for partial data
  **/
-    Program(shared_ptr<const Shader> vertexShader, shared_ptr<const Shader> fragmentShader, bool overlay, bool warnings);
+    Program(std::shared_ptr<const Shader> vertexShader, std::shared_ptr<const Shader> fragmentShader, bool overlay, bool warnings);
 
     /**
         @brief BindColorBuffer the program object
@@ -34,7 +33,10 @@ public:
 
     inline unsigned int GetHandle() const { return handle; }
 
-    inline shared_ptr<const Shader> GetVertexShader() const { return vertexShader; }
+    inline std::shared_ptr<const Shader> GetVertexShader() const
+    {
+        return vertexShader;
+    }
 
     ~Program();
 
@@ -43,54 +45,33 @@ public:
        Mapping methods between Eigen and OpenGL shader language uniforms
        See @ref https://docs.gl/gl4/glUniform
     **/
-    void SetUniform1f(const string &name, float v0) const;
-
-    void SetUniform2f(const string &name, float v0, float v1) const;
-
-    void SetUniform3f(const string &name, float v0, float v1, float v2) const;
-
-    void SetUniform4f(const string &name, float v0, float v1, float v2, float v3) const;
-
-    void SetUniform1i(const string &name, int v0) const;
-
-    void SetUniform2i(const string &name, int v0, int v1) const;
-
-    void SetUniform3i(const string &name, int v0, int v1, int v2) const;
-
-    void SetUniform4i(const string &name, int v0, int v1, int v2, int v3) const;
-
-    void SetUniform1ui(const string &name, unsigned int v0) const;
-
-    void SetUniform2ui(const string &name, unsigned int v0, unsigned int v1) const;
-
-    void SetUniform3ui(const string &name, unsigned int v0, unsigned int v1, unsigned int v2) const;
-
-    void SetUniform4ui(const string &name, unsigned int v0, unsigned int v1, unsigned int v2, unsigned int v3) const;
-
-    void SetUniform2fv(const string &name, int count, const Vector2f *vectors) const;
-
-    void SetUniform3fv(const string &name, int count, const Vector3f *vectors) const;
-
-    void SetUniform4fv(const string &name, int count, const Vector4f *vectors) const;
-
-    void SetUniform2iv(const string &name, int count, const Vector2i *vectors) const;
-
-    void SetUniform3iv(const string &name, int count, const Vector3i *vectors) const;
-
-    void SetUniform4iv(const string &name, int count, const Vector4i *vectors) const;
-
-    void SetUniformMatrix2f(const string &name, const Matrix2f *matrix) const;
-
-    void SetUniformMatrix3f(const string &name, const Matrix3f *matrix) const;
-
-    void SetUniformMatrix4f(const string &name, const Matrix4f *matrix) const;
-
-    void SetUniformMatrix2fv(const string &name, int count, const Matrix2f *matrices) const;
-
-    void SetUniformMatrix3fv(const string &name, int count, const Matrix3f *matrices) const;
-
-    void SetUniformMatrix4fv(const string &name, int count, const Matrix4f *matrices) const;
+    void SetUniform1f(const std::string &name, float v0) const;
+    void SetUniform2f(const std::string &name, float v0, float v1) const;
+    void SetUniform3f(const std::string &name, float v0, float v1, float v2) const;
+    void SetUniform4f(const std::string &name, float v0, float v1, float v2, float v3) const;
+    void SetUniform1i(const std::string &name, int v0) const;
+    void SetUniform2i(const std::string &name, int v0, int v1) const;
+    void SetUniform3i(const std::string &name, int v0, int v1, int v2) const;
+    void SetUniform4i(const std::string &name, int v0, int v1, int v2, int v3) const;
+    void SetUniform1ui(const std::string &name, unsigned int v0) const;
+    void SetUniform2ui(const std::string &name, unsigned int v0, unsigned int v1) const;
+    void SetUniform3ui(const std::string &name, unsigned int v0, unsigned int v1, unsigned int v2) const;
+    void SetUniform4ui(const std::string &name, unsigned int v0, unsigned int v1, unsigned int v2, unsigned int v3) const;
+    void SetUniform2fv(const std::string &name, int count, const Eigen::Vector2f *vectors) const;
+    void SetUniform3fv(const std::string &name, int count, const Eigen::Vector3f *vectors) const;
+    void SetUniform4fv(const std::string &name, int count, const Eigen::Vector4f *vectors) const;
+    void SetUniform2iv(const std::string &name, int count, const Eigen::Vector2i *vectors) const;
+    void SetUniform3iv(const std::string &name, int count, const Eigen::Vector3i *vectors) const;
+    void SetUniform4iv(const std::string &name, int count, const Eigen::Vector4i *vectors) const;
+    void SetUniformMatrix2f(const std::string &name, const Eigen::Matrix2f *matrix) const;
+    void SetUniformMatrix3f(const std::string &name, const Eigen::Matrix3f *matrix) const;
+    void SetUniformMatrix4f(const std::string &name, const Eigen::Matrix4f *matrix) const;
+    void SetUniformMatrix2fv(const std::string &name, int count, const Eigen::Matrix2f *matrices) const;
+    void SetUniformMatrix3fv(const std::string &name, int count, const Eigen::Matrix3f *matrices) const;
+    void SetUniformMatrix4fv(const std::string &name, int count, const Eigen::Matrix4f *matrices) const;
 ///@}
+
+    static std::shared_ptr<const Program> GetFullWindowFixedColorQuadProgram();
 
     // disable copy constructor and assignment operator
     void operator=(const Program &shader) = delete;
@@ -99,12 +80,12 @@ public:
 
 private:
 
-    int GetUniformLocation(const string &name) const;
+    int GetUniformLocation(const std::string &name) const;
 
-    shared_ptr<const Shader> vertexShader;
-    shared_ptr<const Shader> fragmentShader;
+    std::shared_ptr<const Shader> vertexShader;
+    std::shared_ptr<const Shader> fragmentShader;
     unsigned int handle;
-    mutable unordered_map<string, int> uniformLocationCache;
+    mutable std::unordered_map<std::string, int> uniformLocationCache;
     bool warnings;
 
     enum class Attributes
@@ -124,3 +105,5 @@ private:
         OV_COLOR,
     };
 };
+
+} // namespace cg3d

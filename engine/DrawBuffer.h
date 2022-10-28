@@ -1,11 +1,10 @@
-//
-// Created by hedi1 on 24/01/2022.
-//
-
-#ifndef ENGINEREWORK_DRAWBUFFER_H
-#define ENGINEREWORK_DRAWBUFFER_H
+#pragma once
 
 #include <Eigen/Core>
+
+
+namespace cg3d
+{
 
 class DrawBuffer
 {
@@ -17,9 +16,7 @@ class DrawBuffer
     bool isStencil;
 
     void CreateDepthStencilBufferAttachment(int width, int height, unsigned int texId);
-
     void CreateColorBufferAttachment(int width, int height, unsigned int texId);
-
 
 public:
     //NOTE: old engine
@@ -34,20 +31,14 @@ public:
     };
 
     DrawBuffer();
-
     DrawBuffer(int width, int height, unsigned int texId);
-
     void resize(int width, int height, unsigned int texId);
-
     void Bind();
-
     void UnBind();
-
-    ~DrawBuffer(void);
+    ~DrawBuffer();
 
     //NOTE: needed for the new one
     void clearFrameBuffers(Eigen::Vector4i viewport, Eigen::Vector4f background_color);
-
 };
 
-#endif //ENGINEREWORK_DRAWBUFFER_H
+} // namespace cg3d

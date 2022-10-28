@@ -1,38 +1,25 @@
-/*
- * VertexBuffer.hpp
- *
- *  Created on: 13 de dez de 2017
- *      Author: Casa
- */
+#pragma once
 
-#ifndef SRC_VERTEXBUFFER_HPP_
-#define SRC_VERTEXBUFFER_HPP_
+
+namespace cg3d
+{
 
 class VertexBuffer
 {
-private:
+    unsigned int m_RendererID = 0;
+    bool isDynamic = false;
 
-    unsigned int m_RendererID;
-    bool isDynamic;
 public:
-    VertexBuffer(const VertexBuffer &vb);
 
-    VertexBuffer(const void *data, unsigned int size, bool dynamic = false);
-
+    VertexBuffer(const VertexBuffer& vb);
+    VertexBuffer(const void* data, unsigned int size, bool dynamic = false);
     ~VertexBuffer();
-
-    void ChangeData(const void *data, unsigned int size);
-
+    void ChangeData(const void* data, unsigned int size) const;
     void Bind() const;
-
-    void Unbind() const;
-
-    void copy();
-
-    void Init(const void *data, unsigned int size, bool dynamic);
-
+    static void Unbind() ;
+    void copy() const;
+    void Init(const void* data, unsigned int size, bool dynamic);
     VertexBuffer();
 };
 
-
-#endif /* SRC_VERTEXBUFFER_HPP_ */
+} // namespace cg3d

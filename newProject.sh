@@ -8,6 +8,5 @@ echo "add_subdirectory("$name")" >> $currnt_dir/tutorial/CMakeLists.txt
 
 sed "s/Demo/$name/gi" $currnt_dir/tutorial/Demo/CMakeLists.txt > $currnt_dir/tutorial/$name/CMakeLists.txt
 sed "s/Demo/$name/gi" $currnt_dir/tutorial/Demo/Demo.cpp > $currnt_dir/tutorial/$name/$name.cpp
-sed "s/Demo/$name/gi" $currnt_dir/tutorial/Demo/Demo.h > $currnt_dir/tutorial/$name/$name.h
-sed "s/Demo/$name/gi" $currnt_dir/tutorial/Demo/InputManager.h > $currnt_dir/tutorial/$name/InputManager.h
-sed "s/Demo/$name/gi" $currnt_dir/tutorial/Demo/main.cpp > $currnt_dir/tutorial/$name/main.cpp
+sed "s/Demo/$name/gi" $currnt_dir/tutorial/Demo/BasicScene.h > $currnt_dir/tutorial/$name/BasicScene.h
+sed "s/Demo/$name/gi" $currnt_dir/tutorial/Demo/BasicScene.cpp > $currnt_dir/tutorial/$name/BasicScene.cpp

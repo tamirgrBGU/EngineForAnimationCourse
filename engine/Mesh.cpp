@@ -1,70 +1,17 @@
 #include "Mesh.h"
-#include "OBJ_Loader.h"
 #include <utility>
-
-using std::make_shared;
-
-Mesh::Mesh(const string &name, MatrixXd V, MatrixXi F, MatrixXd V_normals, MatrixXd V_uv) :
-        name(name), V(std::move(V)), F(std::move(F)), V_normals(std::move(V_normals)), V_uv(std::move(V_uv)) {}
-
-Mesh::Mesh(const string &file) : Mesh(LoadFile(file)) {} // using copy elision
+#include "ObjLoader.h"
 
 
-Mesh Mesh::LoadFile(const string& name, istream& in)
+namespace cg3d
 {
-    objl::Loader loader;
-    loader.LoadFile(in);
-    return LoadFile(name, loader);
-}
 
-Mesh Mesh::LoadFile(const string &file)
+Mesh::Mesh(std::string name, Eigen::MatrixXd vertices, Eigen::MatrixXi faces, Eigen::MatrixXd vertexNormals, Eigen::MatrixXd textureCoords)
+        : name(std::move(name)), data{{vertices, faces, vertexNormals, textureCoords}} {}
+
+const std::shared_ptr<Mesh>& Mesh::Plane()
 {
-    objl::Loader loader;
-    loader.LoadFile(file);
-    return LoadFile(file, loader);
-}
-
-Mesh Mesh::LoadFile(const string& name, objl::Loader& loader)
-{
-    // currently using only a single mesh (the first one loaded)
-    const auto &vertices = loader.LoadedMeshes[0].Vertices;
-    const auto &indices = loader.LoadedMeshes[0].Indices;
-
-    MatrixXd V(vertices.size(), 3);
-    MatrixXi F(indices.size() / 3, 3);
-    MatrixXd V_normals(vertices.size(), 3);
-    MatrixXd V_uv(vertices.size(), 2);
-
-    // import the vertices data
-    int i = 0;
-    for (const auto &vertex: vertices) {
-        V(i, 0) = vertex.Position.X;
-        V(i, 1) = vertex.Position.Y;
-        V(i, 2) = vertex.Position.Z;
-        V_normals(i, 0) = vertex.Normal.X;
-        V_normals(i, 1) = vertex.Normal.Y;
-        V_normals(i, 2) = vertex.Normal.Z;
-        V_uv(i, 0) = vertex.TextureCoordinate.X;
-        V_uv(i, 1) = vertex.TextureCoordinate.Y;
-        i++;
-    }
-
-    // import the faces data
-    F.resize(int(indices.size()) / 3, 3);
-    i = 0;
-    for (auto index: indices) {
-        F(i / 3, i % 3) = int(index);
-        i++;
-    }
-
-    // TODO: TAL: add face normals?
-
-    return {name, V, F, V_normals, V_uv};
-}
-
-shared_ptr<const Mesh> Mesh::Plane()
-{
-    static auto data = istringstream(R"(
+    static auto data = std::istringstream(R"(
 v 1.000000 1.000000 0.000000
 v -1.000000 1.000000 0.000000
 v 1.000000 -1.000000 0.000000
@@ -79,14 +26,14 @@ f 2/1/1 3/2/1 1/3/1
 f 2/1/1 4/4/1 3/2/1
         )");
 
-    static const auto MESH = make_shared<Mesh>(LoadFile("Plane", data));
+    static const auto MESH = ObjLoader::MeshFromObj("Plane", data);
 
     return MESH;
 }
 
-shared_ptr<const Mesh> Mesh::Cube()
+const std::shared_ptr<Mesh>& Mesh::Cube()
 {
-    static auto data = istringstream(R"(
+    static auto data = std::istringstream(R"(
 # This file uses centimeters as units for non-parametric coordinates.
 v -0.500000 -0.500000 0.500000
 v 0.500000 -0.500000 0.500000
@@ -114,14 +61,14 @@ f 7/1 1/2 5/3
 f 5/3 1/2 3/4
         )");
 
-    static const auto MESH = make_shared<Mesh>(LoadFile("Cube", data));
+    static const auto MESH = ObjLoader::MeshFromObj("Cube", data);
 
     return MESH;
 }
 
-shared_ptr<const Mesh> Mesh::Octahedron()
+const std::shared_ptr<Mesh>& Mesh::Octahedron()
 {
-    static auto data = istringstream(R"(
+    static auto data = std::istringstream(R"(
 v 0.000000 1.000000 0.000000
 v 1.000000 0.000000 0.000000
 v 0.000000 0.000000 -1.000000
@@ -139,14 +86,14 @@ f 6 5 4
 f 6 2 5
         )");
 
-    static const auto MESH = make_shared<Mesh>(LoadFile("Octahedron", data));
+    static const auto MESH = ObjLoader::MeshFromObj("Octahedron", data);
 
     return MESH;
 }
 
-shared_ptr<const Mesh> Mesh::Tetrahedron()
+const std::shared_ptr<Mesh>& Mesh::Tetrahedron()
 {
-    static auto data = istringstream(R"(
+    static auto data = std::istringstream(R"(
 v 1 0 0
 v 0 1 0
 v 0 0 1
@@ -157,14 +104,14 @@ f 3 1 2
 f 1 3 4
         )");
 
-    static const auto MESH = make_shared<Mesh>(LoadFile("Tetrahedron", data));
+    static const auto MESH = ObjLoader::MeshFromObj("Tetrahedron", data);
 
     return MESH;
 }
 
-shared_ptr<const Mesh> Mesh::Cylinder()
+const std::shared_ptr<Mesh>& Mesh::Cylinder()
 {
-    static auto data = istringstream(R"(
+    static auto data = std::istringstream(R"(
 # This file uses centimeters as units for non-parametric coordinates.
 
 v -0.800000 -0.403499 -0.131105
@@ -375,7 +322,9 @@ f 39/63 40/82 42/84
 f 40/82 21/81 42/84
         )");
 
-    static const auto MESH = make_shared<Mesh>(LoadFile("Cylinder", data));
+    static const auto MESH = ObjLoader::MeshFromObj("Cylinder", data);
 
     return MESH;
 }
+
+} // namespace cg3d

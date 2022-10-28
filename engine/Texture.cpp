@@ -1,17 +1,20 @@
 #include "Texture.h"
 #include "gl.h"
 #include "Debug.h"
-#include "stb_image.h"
 #include <iostream>
 #include <cassert>
 #include <utility>
 
-using namespace std;
+#include "stb/stb_image.h"
 
-Texture::Texture(const string &file, const int dim) : name(file), type(dim == 1 ? GL_TEXTURE_1D : dim == 3 ? GL_TEXTURE_CUBE_MAP : GL_TEXTURE_2D)
+
+namespace cg3d
+{
+
+Texture::Texture(const std::string& file, int dim) : name(file), type(DimToType(dim))
 {
     int width, height, numComponents;
-    unsigned char *data;
+    unsigned char* data;
 
     assert(dim > 0 && dim < 4);
 
@@ -48,9 +51,9 @@ Texture::Texture(const string &file, const int dim) : name(file), type(dim == 1 
             glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
             glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
             {
-                string directions[] = {"Right", "Left", "Top", "Bottom", "Front", "Back"};
+                std::string directions[] = {"Right", "Left", "Top", "Bottom", "Front", "Back"};
                 for (int i = 0; i < 6; i++) {
-                    string fullFileName = file + directions[i] + ".bmp";
+                    std::string fullFileName = file + directions[i] + ".bmp";
                     debug("loading cube map texture file '", fullFileName, "'");
                     data = LoadFromFile(fullFileName, &width, &height, &numComponents);
                     glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
@@ -58,7 +61,7 @@ Texture::Texture(const string &file, const int dim) : name(file), type(dim == 1 
             }
             break;
         default:
-            throw range_error(string("invalid texture dimensions: ") + to_string(dim));
+            throw std::range_error(std::string("invalid texture dimensions: ") + std::to_string(dim));
     }
     glBindTexture(type, 0);
     stbi_image_free(data);
@@ -66,15 +69,27 @@ Texture::Texture(const string &file, const int dim) : name(file), type(dim == 1 
     debug("created ", dim == 1 ? "1D" : dim == 3 ? "cube map" : "2D", " texture object ", handle, " of size ", width, "x", height, " pixels");
 }
 
-Texture::Texture(string name, int internalformat, int width, int height, unsigned int format, unsigned int type, const void* data)
-    : name(std::move(name)), type(type)
+int Texture::DimToType(int dim)
 {
+    return dim == 1 ? GL_TEXTURE_1D : dim == 3 ? GL_TEXTURE_CUBE_MAP : GL_TEXTURE_2D;
+}
+
+Texture::Texture(std::string name, int width, int height, int dim, const void* data)
+        : Texture(std::move(name), GL_RGBA, width, height, GL_RGBA, DimToType(dim), data) {}
+
+Texture::Texture(std::string name, int internalformat, int width, int height, unsigned int format, unsigned int type, const void* data)
+        : name(std::move(name)), type(type)
+{
+    assert(type == GL_TEXTURE_2D); // currently only 2D is supported
+
     glGenTextures(1, &handle);
     glBindTexture(type, handle);
-    if (type == GL_TEXTURE_2D) { // TODO: TAL: support other than 2D here...?
-        glTexImage2D(GL_TEXTURE_2D, 0, internalformat, width, height, 0, format, GL_UNSIGNED_INT, data);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    if (type == GL_TEXTURE_2D) { // todo: support textures other than 2D
+        glTexImage2D(GL_TEXTURE_2D, 0, internalformat, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     }
     glBindTexture(type, 0);
 
@@ -86,10 +101,10 @@ Texture::~Texture()
     glDeleteTextures(1, &handle);
 }
 
-unsigned char* Texture::LoadFromFile(const string& fileName, int* width, int* height, int* numComponents)
+unsigned char* Texture::LoadFromFile(const std::string& fileName, int* width, int* height, int* numComponents)
 {
-    unsigned char *data = stbi_load(fileName.c_str(), width, height, numComponents, 4);
-    if (data == nullptr) throw runtime_error(fileName + " stbi_load error");
+    unsigned char* data = stbi_load(fileName.c_str(), width, height, numComponents, 4);
+    if (data == nullptr) throw std::runtime_error(fileName + " stbi_load error");
     return data;
 }
 
@@ -104,3 +119,5 @@ void Texture::Unbind(int slot) const
     glActiveTexture(GL_TEXTURE0 + slot);
     glBindTexture(type, 0);
 }
+
+} // namespace cg3d

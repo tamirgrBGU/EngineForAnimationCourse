@@ -1,43 +1,46 @@
 #include "Material.h"
 
-using std::make_shared;
-using std::move;
+#include <utility>
 
-Material::Material(shared_ptr<const Program> _program, bool overlay) :
-    program(std::move(_program)),
-    fixedColorProgram(make_shared<const Program>(std::move(program->GetVertexShader()), std::move(Shader::GetFixedColorFragmentShader()), overlay, false))
-{}
 
-Material::Material(const string& shaderFileName, bool overlay) : Material(make_shared<Program>(shaderFileName, overlay, true)) {}
+namespace cg3d
+{
 
-void Material::AddTexture(int slot, shared_ptr<Texture> texture)
+Material::Material(std::string name, std::shared_ptr<const Program> _program, bool overlay) : name(std::move(name)), program(std::move(_program)),
+        fixedColorProgram(make_shared<const Program>(std::move(program->GetVertexShader()), std::move(Shader::GetFixedColorFragmentShader()), overlay, false)) {}
+
+Material::Material(std::string name, const std::string& shaderFileNameWithoutExtension, bool overlay) :
+        Material(std::move(name), std::make_shared<Program>(shaderFileNameWithoutExtension, overlay, true)) {}
+
+void Material::AddTexture(int slot, std::shared_ptr<Texture> texture)
 {
     textures.push_back(std::move(texture));
     textureSlots.push_back(slot);
 }
 
-void Material::AddTexture(int slot, const string& textureFileName, int dim)
+void Material::AddTexture(int slot, const std::string& textureFileName, int dim)
 {
-    AddTexture(slot, make_shared<Texture>(textureFileName, dim));
+    AddTexture(slot, std::make_shared<Texture>(textureFileName, dim));
 }
 
-shared_ptr<const Program> Material::BindProgram() const
+const Program* Material::BindProgram() const
 {
     program->Bind();
-    BindTextures();
-    return program;
+    return program.get();
 }
 
-shared_ptr<const Program> Material::BindFixedColorProgram() const
+const Program* Material::BindFixedColorProgram() const
 {
     fixedColorProgram->Bind();
-    return fixedColorProgram;
+    return fixedColorProgram.get();
 }
 
 void Material::BindTextures() const
 {
     for (int i = 0; i < textures.size(); i++) {
         textures[i]->Bind(textureSlots[i]);
-        program->SetUniform1i("sampler" + to_string(i + 1), textureSlots[i]);
+        program->SetUniform1i("sampler" + std::to_string(i + 1), textureSlots[i]);
     }
 }
+
+} // namespace cg3d

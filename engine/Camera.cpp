@@ -3,47 +3,44 @@
 #include "ortho.h"
 #include "PI.h"
 #include <iostream>
+#include <utility>
 
-shared_ptr<Camera> Camera::Create(const string& name, float fov, float relationWH, float near, float far, const shared_ptr<Movable>& parent)
+
+namespace cg3d
 {
-    auto camera = shared_ptr<Camera>(new Camera(name, fov, relationWH, near, far));
-    camera->SetParent(parent);
-    return camera;
+
+Camera::Camera(std::string name, double fov, double widthHeightRatio, double near, double far)
+        : Movable(std::move(name)), fov(fov), ratio(widthHeightRatio), near(near), far(far), length(2.0f)
+{
+    SetProjection(ratio);
 }
 
-Camera::Camera(const string& name, float fov, float relationWH, float near, float far) : Movable(name), fov(fov), near(near), far(far)
+void Camera::SetProjection(double widthHeightRatio)
 {
-    this->length = 2.0f;
-    this->near = near;
-    this->far = far;
-    SetProjection(fov, relationWH);
-}
-
-void Camera::SetProjection(float _fov, float relationWH)
-{
-    if (_fov > 0) {
-        float fH = float(tan(_fov / 360.0 * igl::PI)) * near;
-        float fW = fH * relationWH;
-        igl::frustum(-fW, fW, -fH, fH, near, far, projection);
-        fov = _fov;
+    if (fov > 0) {
+        double fH = double(tan(igl::PI * fov / 360.0)) * near;
+        double fW = fH * widthHeightRatio;
+        igl::frustum(float(-fW),float(fW), float(-fH),float(fH), float(near), float(far), projection);
     } else {
-        float camera_view_angle = 45.0;
-        float h = float(tan(camera_view_angle / 360.0 * igl::PI)) * (length);
-        igl::ortho(-h * relationWH, h * relationWH, -h, h, near, far, projection);
+        double camera_view_angle = 45.0;
+        double h = double(tan(camera_view_angle / 360.0 * igl::PI)) * length;
+        igl::ortho(float(-h * widthHeightRatio), float(h * widthHeightRatio), float(-h), float(h), float(near), float(far), projection);
     }
+    ratio = widthHeightRatio;
 }
 
 float Camera::CalcMoveCoeff(float depth, int width) const
 {
-    float z = far + depth * (near - far);
+    double z = far + depth * (near - far);
     if (fov > 0)
-        return float(double(width) / far * z * near / 2.0 / tan(fov / 360.0 * igl::PI)); // / camera z translate;
+        return float(double(width) / far * z / near / 2.0 / tan(fov / 360.0 * igl::PI) / ratio);
     else
         return float(0.5 * width);
 }
 
-void Camera::Draw(const Matrix4f& proj, const Matrix4f& view, const Matrix4f& normal, int viewportIndex, unsigned int flags)
+float Camera::CalcAngleCoeff(int width) const
 {
-    // TODO: TAL
+    return float(double(width) / fov / PI_DIV_180 / ratio);
 }
 
+} // namespace cg3d

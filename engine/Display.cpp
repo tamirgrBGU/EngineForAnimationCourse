@@ -1,22 +1,173 @@
-
-
 #include <chrono>
 #include <thread>
+#include <utility>
 
 #include "gl.h"
+#include "GLFW/glfw3.h"
 #include "Display.h"
 
-#include "igl_inline.h"
 #include <get_seconds.h>
 #include "Renderer.h"
+#include "Debug.h"
+#include "DebugHacks.h"
 
-void APIENTRY glDebugOutput(GLenum source,
-                            GLenum type,
-                            unsigned int id,
-                            GLenum severity,
-                            [[maybe_unused]] GLsizei length,
-                            const char *message,
-                            [[maybe_unused]] const void *userParam)
+
+namespace cg3d
+{
+
+Display::Display(std::string title, int width, int height, Renderer* renderer)
+        : name(std::move(title)), renderer(renderer), window(SetupWindowAndContext(title, width, height))
+{
+    SetupDebugCallback(); // will only work with opengl 4.3 or higher
+    PrintVersionInfo(window);
+    SetupCallbacks(window);
+    glfwSetWindowUserPointer(window, renderer);
+    WindowSizeCallback(window, width, height); // register window size in the renderer
+#ifdef _DEBUG
+    DebugHacks::Init(window);
+#endif
+}
+
+void Display::SetupCallbacks(GLFWwindow* window)
+{
+    glfwSetMouseButtonCallback(window, MouseCallback);
+    glfwSetCursorPosCallback(window, CursorPosCallback);
+    glfwSetScrollCallback(window, ScrollCallback);
+    glfwSetKeyCallback(window, KeyCallback);
+    glfwSetCharCallback(window, CharCallback);
+    glfwSetWindowSizeCallback(window, WindowSizeCallback);
+}
+
+void Display::PrintVersionInfo(GLFWwindow* window)
+{
+#if defined(DEBUG) || defined(_DEBUG)
+    debug("OpenGL Version ", GLVersion.major, ".", GLVersion.minor, " loaded");
+    int major, minor, rev;
+    major = glfwGetWindowAttrib(window, GLFW_CONTEXT_VERSION_MAJOR);
+    minor = glfwGetWindowAttrib(window, GLFW_CONTEXT_VERSION_MINOR);
+    rev = glfwGetWindowAttrib(window, GLFW_CONTEXT_REVISION);
+    debug("OpenGL version received: ", major, ".", minor, ".", rev);
+    debug("Supported OpenGL is ", (const char*) glGetString(GL_VERSION));
+    debug("Supported GLSL is ", (const char*) glGetString(GL_SHADING_LANGUAGE_VERSION));
+#endif
+}
+
+Display::MouseButtonsStates Display::GetMouseButtonsStates(GLFWwindow* window)
+{
+    MouseButtonsStates states{};
+
+    states.state[GLFW_MOUSE_BUTTON_LEFT] = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
+    states.state[GLFW_MOUSE_BUTTON_MIDDLE] = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_MIDDLE);
+    states.state[GLFW_MOUSE_BUTTON_RIGHT] = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT);
+
+    return states;
+}
+
+void Display::MouseCallback(GLFWwindow* window, int button, int action, int mods)
+{
+    auto renderer = static_cast<Renderer*>(glfwGetWindowUserPointer(window));
+    double x, y;
+    glfwGetCursorPos(window, &x, &y);
+    auto mouseButtonsStates = GetMouseButtonsStates(window);
+    mouseButtonsStates.state[button] = action; // for consistency (there is a tiny chance the state meanwhile changed)
+    renderer->MouseCallback(int(x), int(y), button, action, mods, mouseButtonsStates.state);
+}
+
+void Display::ScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
+{
+    auto renderer = static_cast<Renderer*>(glfwGetWindowUserPointer(window));
+    double x, y;
+    glfwGetCursorPos(window, &x, &y);
+    renderer->ScrollCallback(int(x), int(y), int(xoffset), int(yoffset), GetMouseButtonsStates(window).state);
+}
+
+void Display::CursorPosCallback(GLFWwindow* window, double xpos, double ypos)
+{
+    auto renderer = static_cast<Renderer*>(glfwGetWindowUserPointer(window));
+
+    renderer->CursorPosCallback(int(xpos), int(ypos), GetMouseButtonsStates(window).state);
+}
+
+void Display::KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+    auto renderer = static_cast<Renderer*>(glfwGetWindowUserPointer(window));
+    double x, y;
+    glfwGetCursorPos(window, &x, &y);
+    renderer->KeyCallback(int(x), int(y), key, scancode, action, mods);
+}
+
+void Display::CharCallback(GLFWwindow* window, unsigned int codepoint)
+{
+    auto renderer = static_cast<Renderer*>(glfwGetWindowUserPointer(window));
+    double x, y;
+    glfwGetCursorPos(window, &x, &y);
+    renderer->CharCallback(int(x), int(y), codepoint);
+}
+
+void Display::WindowSizeCallback(GLFWwindow* window, int width, int height)
+{
+    auto renderer = static_cast<Renderer*>(glfwGetWindowUserPointer(window));
+    glfwGetWindowSize(window, &width, &height);
+    renderer->WindowSizeCallback(width, height);
+}
+
+void Display::LaunchRendering(bool loop) const
+{
+    const int num_extra_frames = 5;
+    int frameCounter = 0;
+    int windowWidth, windowHeight;
+
+    // Main rendering loop
+    glfwGetWindowSize(window, &windowWidth, &windowHeight);
+
+    while (!glfwWindowShouldClose(window)) {
+        double tic = igl::get_seconds();
+
+        renderer->Draw();
+        SwapBuffers();
+        glfwPollEvents();
+
+        if (frameCounter++ < num_extra_frames) {
+            // in microseconds
+            double duration = 1000000. * (igl::get_seconds() - tic);
+            const double min_duration = 1000000. / 144.f;
+            if (duration < min_duration) {
+                std::this_thread::sleep_for(std::chrono::microseconds((int) (min_duration - duration)));
+            }
+        } else
+            frameCounter = 0;
+
+        if (!loop)
+            break;
+
+#ifdef __APPLE__
+        static bool first_time_hack = true;
+        if (first_time_hack) {
+            glfwHideWindow(window);
+            glfwShowWindow(window);
+            first_time_hack = false;
+        }
+#endif
+    }
+}
+
+void Display::SwapBuffers() const
+{
+    glfwSwapBuffers(window);
+}
+
+Display::~Display()
+{
+    glfwDestroyWindow(window);
+    glfwTerminate();
+}
+
+static void ErrorCallback(int error, const char* description)
+{
+    fputs(description, stderr);
+}
+
+void APIENTRY DebugMessageCallback(GLenum source, GLenum type, unsigned int id, GLenum severity, GLsizei length, const char* message, const void* userParam)
 {
     // ignore non-significant error/warning codes
     if (id == 131169 || id == 131185 || id == 131218 || id == 131204) return;
@@ -43,7 +194,7 @@ void APIENTRY glDebugOutput(GLenum source,
         case GL_DEBUG_SOURCE_OTHER:
             std::cerr << "Source: Other, ";
             break;
-    };
+    }
 
     switch (type) { // NOLINT(hicpp-multiway-paths-covered)
         case GL_DEBUG_TYPE_ERROR:
@@ -73,7 +224,7 @@ void APIENTRY glDebugOutput(GLenum source,
         case GL_DEBUG_TYPE_OTHER:
             std::cerr << "Type: Other, ";
             break;
-    };
+    }
 
     switch (severity) { // NOLINT(hicpp-multiway-paths-covered)
         case GL_DEBUG_SEVERITY_HIGH:
@@ -97,61 +248,53 @@ void APIENTRY glDebugOutput(GLenum source,
 #endif
 }
 
-static void glfw_error_callback([[maybe_unused]] int error, const char *description)
+void Display::SetupDebugCallback()
 {
-    fputs(description, stderr);
+    int contextFlags = 0;
+    glGetIntegerv(GL_CONTEXT_FLAGS, &contextFlags);
+    if (contextFlags & GL_CONTEXT_FLAG_DEBUG_BIT) {
+        debug("Debug context created");
+        glEnable(GL_DEBUG_OUTPUT);
+        glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+        glDebugMessageCallback(DebugMessageCallback, nullptr);
+        glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
+    }
 }
 
-Display::Display(int windowWidth, int windowHeight, const std::string &title, bool compatibilityMode)
+GLFWwindow* Display::CreateWindow(const std::string& title, int width, int height, bool tryWithDebug)
 {
-    bool resizable = true, fullscreen = false;
-    glfwSetErrorCallback(glfw_error_callback);
-
     if (!glfwInit())
         exit(EXIT_FAILURE);
 
     glfwWindowHint(GLFW_SAMPLES, 8);
 
-    if (compatibilityMode) {
+    if (tryWithDebug) {
+        glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
+    } else {
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    } else {
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-        glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
     }
 
-    #ifdef __APPLE__
-    		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-    #endif
-    //		if (fullscreen)
-    //		{
-    //			GLFWmonitor* monitor = glfwGetPrimaryMonitor();
-    //			const GLFWvidmode* mode = glfwGetVideoMode(monitor);
-    //			window = glfwCreateWindow(mode->width, mode->height, title.c_str(), monitor, nullptr);
-    //			windowWidth = mode->width;
-    //			windowHeight = mode->height;
-    //		}
-    //		else
-    //		{
-    // Set default windows width
-    //if (windowWidth <= 0 & core_list.size() == 1 && renderer->core().viewport[2] > 0)
-    //	windowWidth = renderer->core().viewport[2];
-    //else
-    //	if (windowWidth <= 0)
-    //	windowWidth = 1280;
-    //// Set default windows height
-    //if (windowHeight <= 0 & core_list.size() == 1 && renderer->core().viewport[3] > 0)
-    //	windowHeight = renderer->core().viewport[3];
-    //else if (windowHeight <= 0)
-    //	windowHeight = 800;
-    //			window = glfwCreateWindow(windowWidth, windowHeight, title.c_str(), nullptr, nullptr);
-    //		}
-    window = glfwCreateWindow(windowWidth, windowHeight, title.c_str(), nullptr, nullptr);
+#ifdef __APPLE__
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+#endif
+
+    return glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
+}
+
+GLFWwindow* Display::SetupWindowAndContext(const std::string& title, int width, int height)
+{
+    glfwSetErrorCallback(ErrorCallback);
+
+    auto window = CreateWindow(title, width, height, true);
     if (!window) {
         glfwTerminate();
-        exit(EXIT_FAILURE);
+        window = CreateWindow(title, width, height, false);
+        if (!window) { // failed to create the window both with and without debug
+            glfwTerminate();
+            exit(EXIT_FAILURE);
+        }
     }
     glfwMakeContextCurrent(window);
 
@@ -161,145 +304,9 @@ Display::Display(int windowWidth, int windowHeight, const std::string &title, bo
         exit(EXIT_FAILURE);
     }
 
-    int contextFlags = 0;
-    glGetIntegerv(GL_CONTEXT_FLAGS, &contextFlags);
-    if (contextFlags & GL_CONTEXT_FLAG_DEBUG_BIT) {
-        std::cerr << "Debug context created" << std::endl;
-        glEnable(GL_DEBUG_OUTPUT);
-        glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-        glDebugMessageCallback(glDebugOutput, NULL);
-        glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, NULL, GL_TRUE);
-    }
-
-    //#if defined(DEBUG) || defined(_DEBUG)
-    //		printf("OpenGL Version %d.%d loaded\n", GLVersion.major, GLVersion.minor);
-    //		int major, minor, rev;
-    //		major = glfwGetWindowAttrib(window, GLFW_CONTEXT_VERSION_MAJOR);
-    //		minor = glfwGetWindowAttrib(window, GLFW_CONTEXT_VERSION_MINOR);
-    //		rev = glfwGetWindowAttrib(window, GLFW_CONTEXT_REVISION);
-    //		printf("OpenGL version received: %d.%d.%d\n", major, minor, rev);
-    //		printf("Supported OpenGL is %s\n", (const char*)glGetString(GL_VERSION));
-    //		printf("Supported GLSL is %s\n", (const char*)glGetString(GL_SHADING_LANGUAGE_VERSION));
-    //#endif
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-    //Tamir: changes from here
-    // Initialize FormScreen
-    // __viewer = this;
-    // Register callbacks
-    //glfwSetKeyCallback(window, glfw_key_callback);
-    //glfwSetCursorPosCallback(window,glfw_mouse_move);
-    //glfwSetScrollCallback(window, glfw_mouse_scroll);
-    //glfwSetMouseButtonCallback(window, glfw_mouse_press);
-    //glfwSetWindowSizeCallback(window,glfw_window_size);
 
-
-    //glfwSetCharModsCallback(window,glfw_char_mods_callback);
-    //glfwSetDropCallback(window,glfw_drop_callback);
-    // Handle retina displays (windows and mac)
-    //int width, height;
-    //glfwGetFramebufferSize(window, &width, &height);
-    //int width_window, height_window;
-    //glfwGetWindowSize(window, &width_window, &height_window);
-    //highdpi = windowWidth/width_window;
-
-    //glfw_window_size(window,width_window,height_window);
-    //opengl.init();
-//		core().align_camera_center(data().V, data().F);
-    // Initialize IGL viewer
-//		init();
-
+    return window;
 }
 
-bool Display::LaunchRendering(bool loop)
-{
-    // glfwMakeContextCurrent(window);
-    // Rendering loop
-    const int num_extra_frames = 5;
-    int frame_counter = 0;
-    int windowWidth, windowHeight;
-    //main loop
-    Renderer *renderer = (Renderer *) glfwGetWindowUserPointer(window);
-    glfwGetWindowSize(window, &windowWidth, &windowHeight);
-    //	renderer->post_resize(window, windowWidth, windowHeight);
-    //	for(int i=0;i< renderer->GetScene()->data_list.size();i++)
-    //		renderer->core().toggle(renderer->GetScene()->data_list[i].show_lines);
-    while (!glfwWindowShouldClose(window)) {
-
-        double tic = igl::get_seconds();
-//		renderer->Animate();
-        renderer->Draw(window);
-        glfwSwapBuffers(window);
-        if (/*renderer->GetScene()->isActive ||*/ frame_counter++ < num_extra_frames) {//motion
-            glfwPollEvents();
-            // In microseconds
-            double duration = 1000000. * (igl::get_seconds() - tic);
-            const double min_duration = 1000000. / 144.f;
-            if (duration < min_duration) {
-                std::this_thread::sleep_for(std::chrono::microseconds((int) (min_duration - duration)));
-            }
-        } else {
-            glfwPollEvents();
-            frame_counter = 0;
-        }
-        if (!loop)
-            return !glfwWindowShouldClose(window);
-
-#ifdef __APPLE__
-        static bool first_time_hack = true;
-        if (first_time_hack) {
-            glfwHideWindow(window);
-            glfwShowWindow(window);
-            first_time_hack = false;
-        }
-#endif
-    }
-    return EXIT_SUCCESS;
-}
-
-void Display::AddKeyCallBack(void(*keyCallback)(GLFWwindow *, int, int, int, int))
-{
-    glfwSetKeyCallback(window, (void (*)(GLFWwindow *, int, int, int, int)) keyCallback);//{
-
-}
-
-void Display::AddMouseCallBacks(void (*mousebuttonfun)(GLFWwindow *, int, int, int),
-                                void (*scrollfun)(GLFWwindow *, double, double),
-                                void (*cursorposfun)(GLFWwindow *, double, double))
-{
-    glfwSetMouseButtonCallback(window, mousebuttonfun);
-    glfwSetScrollCallback(window, scrollfun);
-    glfwSetCursorPosCallback(window, cursorposfun);
-}
-
-void Display::AddResizeCallBack(void (*windowsizefun)(GLFWwindow *, int, int))
-{
-    glfwSetWindowSizeCallback(window, windowsizefun);
-}
-
-void Display::SetRenderer(void *userPointer)
-{
-
-    glfwSetWindowUserPointer(window, userPointer);
-
-}
-
-void *Display::GetScene()
-{
-    return glfwGetWindowUserPointer(window);
-}
-
-void Display::SwapBuffers()
-{
-    glfwSwapBuffers(window);
-}
-
-void Display::PollEvents()
-{
-    glfwPollEvents();
-}
-
-Display::~Display()
-{
-    glfwDestroyWindow(window);
-    glfwTerminate();
-}
+} // namespace cg3d

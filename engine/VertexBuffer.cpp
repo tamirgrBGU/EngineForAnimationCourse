@@ -1,18 +1,11 @@
-/*
- * VertexBuffer.cpp
- *
- *  Created on: 13 de dez de 2017
- *      Author: Casa
- */
-#define GLEW_STATIC
-
 #include "gl.h"
 #include "VertexBuffer.h"
 
-VertexBuffer::VertexBuffer()
-{
-}
 
+namespace cg3d
+{
+
+VertexBuffer::VertexBuffer() = default;
 
 VertexBuffer::VertexBuffer(const void *data, unsigned int size, bool dynamic)
 {
@@ -24,6 +17,7 @@ VertexBuffer::VertexBuffer(const void *data, unsigned int size, bool dynamic)
     else
         glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
 }
+
 
 void VertexBuffer::Init(const void *data, unsigned int size, bool dynamic)
 {
@@ -37,7 +31,6 @@ void VertexBuffer::Init(const void *data, unsigned int size, bool dynamic)
             glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
     }
 }
-
 
 VertexBuffer::VertexBuffer(const VertexBuffer &vb)
 {
@@ -56,7 +49,7 @@ VertexBuffer::VertexBuffer(const VertexBuffer &vb)
     glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
 }
 
-void VertexBuffer::copy()
+void VertexBuffer::copy() const
 {
     int size;
     glBindBuffer(GL_COPY_READ_BUFFER, m_RendererID);
@@ -70,7 +63,7 @@ VertexBuffer::~VertexBuffer()
     glDeleteBuffers(1, &m_RendererID);
 }
 
-void VertexBuffer::ChangeData(const void *data, unsigned int size)
+void VertexBuffer::ChangeData(const void *data, unsigned int size) const
 {
     if (isDynamic) {
         glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
@@ -83,7 +76,9 @@ void VertexBuffer::Bind() const
     glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
 }
 
-void VertexBuffer::Unbind() const
+void VertexBuffer::Unbind()
 {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
+
+} // namespace cg3d

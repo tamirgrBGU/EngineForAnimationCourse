@@ -239,7 +239,7 @@ if(LIBIGL_WITH_OPENGL)
 
   # glad module
   if(NOT TARGET glad)
-	add_subdirectory_with_folder(${LIBIGL_ROOT}/glad "lib" glad)
+	add_subdirectory_with_folder(${LIBIGL_ROOT}/external/glad "lib" glad)
     target_include_directories(igl_opengl ${IGL_SCOPE} ${LIBIGL_ROOT}/glad/include)
   endif()
   target_link_libraries(igl_opengl ${IGL_SCOPE} glad)

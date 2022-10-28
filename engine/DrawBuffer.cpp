@@ -1,34 +1,34 @@
-//
-// Created by hedi1 on 24/01/2022.
-//
-
 #include "DrawBuffer.h"
 #include "gl.h"
 #include <iostream>
+
+
+namespace cg3d
+{
 
 DrawBuffer::DrawBuffer()
 {
     frameBuffer = 0;
     renderBuffer = 0;
-    depthBuffer = 0;
+    //depthBuffer = 0;
     depthStencilBuffer = 0;
-    isStencil = false;
+    //isStencil = false;
 }
 
 DrawBuffer::DrawBuffer(int width, int height, unsigned int texId)
 {
-    bool fboUsed = true;
+    //bool fboUsed = true;
     CreateColorBufferAttachment(width, height, texId);
 
     CreateDepthStencilBufferAttachment(width, height, texId);
 
     GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
     if (status != GL_FRAMEBUFFER_COMPLETE) {
-        fboUsed = false;
+        //fboUsed = false;
         std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
     }
     UnBind();
-    isStencil = true;
+    //isStencil = true;
 }
 
 void DrawBuffer::Bind()
@@ -94,7 +94,7 @@ void DrawBuffer::resize(int width, int height, unsigned int texId)
 
 }
 
-DrawBuffer::~DrawBuffer(void)
+DrawBuffer::~DrawBuffer()
 {
     glDeleteFramebuffers(1, &frameBuffer);
     glDeleteFramebuffers(1, &renderBuffer);
@@ -116,3 +116,5 @@ void DrawBuffer::clearFrameBuffers(Eigen::Vector4i viewport, Eigen::Vector4f bac
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glDisable(GL_SCISSOR_TEST);
 }
+
+} // namespace cg3d

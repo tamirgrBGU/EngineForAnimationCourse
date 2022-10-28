@@ -1,25 +1,31 @@
 #pragma once
 
 #include "Movable.h"
-#include <igl_inline.h>
-#include <Eigen/Geometry>
 #include <Eigen/Core>
 
-class Camera : public Movable
+
+namespace cg3d
+{
+
+// igl programmers are idiots...
+#undef far
+#undef near
+
+class Camera : virtual public Movable
 {
 public:
-    static shared_ptr<Camera> Create(const string& name, float fov, float relationWH, float near, float far, const shared_ptr<Movable>& parent);
+
+    Camera(std::string name, double fov, double widthHeightRatio, double near, double far);
+    ~Camera() override = default;
 
     inline const Eigen::Matrix4f& GetViewProjection() const { return projection; }
 
-    void SetProjection(float _fov, float relationWH);
+    void SetProjection(double widthHeightRatio);
     float CalcMoveCoeff(float depth, int width) const;
 
-    Eigen::Matrix4f projection;
-    float fov, far, near, length;
-
-    void Draw(const Matrix4f& proj, const Matrix4f& view, const Matrix4f& normal, int viewportIndex, unsigned int flags) override;
-
-private:
-    Camera(const string& name, float fov, float relationWH, float near, float far);
+    float CalcAngleCoeff(int width) const;
+    Eigen::Matrix4f projection{Eigen::Matrix4f::Identity()};
+    double fov = 0, far = 0, near = 0, length = 0, ratio = 0;
 };
+
+} // namespace cg3d

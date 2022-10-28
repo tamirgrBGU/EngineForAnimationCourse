@@ -1,25 +1,23 @@
-#ifndef SRC_VERTEXARRAY_HPP_
-#define SRC_VERTEXARRAY_HPP_
+#pragma once
 
 #include "VertexBuffer.h"
 #include "IndexBuffer.hpp"
 
+
+namespace cg3d
+{
+
 class VertexArray
 {
-private:
-    unsigned int m_RendererID;
+    unsigned int m_RendererID = 0;
 
 public:
+
     VertexArray();
-
     ~VertexArray();
-
-    void AddBuffer(const VertexBuffer &vb, int attribNum, int count, int type);
-
+    static void AddBuffer(const VertexBuffer &vb, int attribNum, int count, int type);
     void Bind() const;
-
-    void Unbind() const;
+    static void Unbind() ;
 };
 
-
-#endif
+} // namespace cg3d

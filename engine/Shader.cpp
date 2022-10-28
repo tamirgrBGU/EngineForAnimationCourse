@@ -1,11 +1,16 @@
 #include <fstream>
+#include <utility>
 #include "Shader.h"
 #include "Debug.h"
 #include "gl.h"
 
-shared_ptr<const Shader> Shader::GetFixedColorFragmentShader()
+
+namespace cg3d
 {
-    static auto SHADER = make_shared<const Shader>(
+
+std::shared_ptr<const Shader> Shader::GetFixedColorFragmentShader()
+{
+    static auto SHADER = std::make_shared<const Shader>(
             "Fixed color fragment shader",
             GL_FRAGMENT_SHADER,
             R"(
@@ -21,11 +26,11 @@ void main()
     return SHADER;
 }
 
-shared_ptr<const Shader> Shader::GetOverlayVertexShader()
+std::shared_ptr<const Shader> Shader::GetOverlayVertexShader()
 {
-    static auto SHADER = make_shared<const Shader>(
+    static auto SHADER = std::make_shared<const Shader>(
             "Overlay vertex shader",
-            GL_FRAGMENT_SHADER,
+            GL_VERTEX_SHADER,
             R"(
 #version 330
 
@@ -47,9 +52,29 @@ void main()
     return SHADER;
 }
 
-shared_ptr<const Shader> Shader::GetOverlayFragmentShader()
+std::shared_ptr<const Shader> Shader::GetFullWindowQuadVertexShader()
 {
-    static auto SHADER = make_shared<const Shader>(
+    static auto SHADER = std::make_shared<const Shader>(
+            "Full window quad vertex shader",
+            GL_VERTEX_SHADER,
+            R"(
+#version 330
+out vec2 texCoords;
+void main()
+{
+    const vec2 vertices[3] = vec2[3](vec2(-1, -1), vec2(3, -1), vec2(-1, 3));
+    gl_Position = vec4(vertices[gl_VertexID], 0, 1);
+    texCoords = 0.5 * gl_Position.xy + vec2(0.5);
+}
+    		)");
+
+    return SHADER;
+}
+
+
+std::shared_ptr<const Shader> Shader::GetOverlayFragmentShader()
+{
+    static auto SHADER = std::make_shared<const Shader>(
             "Overlay fragment shader",
             GL_FRAGMENT_SHADER,
             R"(
@@ -66,9 +91,74 @@ void main()
     return SHADER;
 }
 
-shared_ptr<const Shader> Shader::GetOverlayPointsFragmentShader()
+std::shared_ptr<const Shader> Shader::GetBasicVertexShader()
 {
-    static auto SHADER = make_shared<const Shader>(
+    static auto SHADER = std::make_shared<const Shader>(
+            "Basic vertex shader",
+            GL_FRAGMENT_SHADER,
+            R"(
+#version 330
+
+attribute vec3 position;
+attribute vec3 normal;
+attribute vec4 Ka;
+attribute vec4 Kd;
+attribute vec4 Ks;
+attribute vec2 texcoord;
+
+out vec2 texCoord0;
+out vec3 normal0;
+out vec3 color0;
+out vec3 position0;
+
+uniform mat4 Proj;
+uniform mat4 View;
+uniform mat4 Model;
+
+void main()
+{
+	texCoord0 = texcoord;
+	color0 = vec3(Ka);
+	normal0 = (Model  * vec4(normal, 0.0)).xyz;
+	position0 = vec3(Proj * View * Model * vec4(position, 1.0));
+	gl_Position = Proj * View * Model * vec4(position, 1.0); // you must have gl_Position
+}
+    		)");
+
+    return SHADER;
+}
+
+std::shared_ptr<const Shader> Shader::GetBasicFragmentShader()
+{
+    static auto SHADER = std::make_shared<const Shader>(
+            "Basic fragment shader",
+            GL_FRAGMENT_SHADER,
+            R"(
+#version 330
+
+in vec2 texCoord0;
+in vec3 normal0;
+in vec3 color0;
+in vec3 position0;
+
+uniform vec4 lightColor;
+uniform sampler2D sampler1;
+uniform vec4 lightDirection;
+
+out vec4 Color;
+
+void main()
+{
+	Color = texture2D(sampler1, texCoord0)* vec4(color0,1.0);
+}
+    		)");
+
+    return SHADER;
+}
+
+std::shared_ptr<const Shader> Shader::GetOverlayPointsFragmentShader()
+{
+    static auto SHADER = std::make_shared<const Shader>(
             "Overlay points fragment shader",
             GL_FRAGMENT_SHADER,
             R"(
@@ -86,19 +176,14 @@ void main()
     return SHADER;
 }
 
-Shader::Shader(const string& name, unsigned int type, const string& contents)
+Shader::Shader(std::string _name, unsigned int type, const std::string& contents) : name(std::move(_name))
 {
     handle = glCreateShader(type);
-    const GLchar *p[1] = {contents.c_str()};
+    const GLchar* p[1] = {contents.c_str()};
     int lengths[1] = {(int) contents.length()};
     glShaderSource(handle, 1, p, lengths);
     glCompileShader(handle);
-    CheckCompileStatus(name, handle);
-}
-
-unsigned int Shader::GetHandle() const
-{
-    return handle;
+    CheckCompileStatus(handle);
 }
 
 Shader::~Shader()
@@ -107,24 +192,26 @@ Shader::~Shader()
     debug(name, "shader object ", handle, " was deleted");
 }
 
-void Shader::CheckCompileStatus(const string& name, unsigned int shader)
+void Shader::CheckCompileStatus(unsigned int shader)
 {
     GLchar info[1024] = {0};
     glGetShaderInfoLog(shader, sizeof(info), nullptr, info);
-    debug("shader ", shader, " compile status: ", info[0] == 0 ? "no warnings or errors" : string("\n") + info);
+    debug("shader ", shader, " compile status: ", info[0] == 0 ? "no warnings or errors" : std::string("\n") + info);
 }
 
-string Shader::ReadFile(const string &fileName)
+std::string Shader::ReadFile(const std::string& fileName)
 {
     debug("loading file ", fileName);
-    ifstream file(fileName);
+    std::ifstream file(fileName);
     if (!file.is_open())
-        throw invalid_argument("error opening file " + fileName);
+        throw std::invalid_argument("error opening file " + fileName);
 
-    file.seekg(0, ios::end);
-    int len = (int)file.tellg();
+    file.seekg(0, std::ios::end);
+    int len = (int) file.tellg();
     file.seekg(0);
-    string contents(len + 1, '\0');
+    std::string contents(len + 1, '\0');
     file.read(&contents[0], len);
     return contents;
 }
+
+} // namespace cg3d
