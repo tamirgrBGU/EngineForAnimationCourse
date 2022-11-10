@@ -33,11 +33,6 @@ public:
     static const std::shared_ptr<Mesh>& Tetrahedron();
     static const std::shared_ptr<Mesh>& Octahedron();
     static const std::shared_ptr<Mesh>& Cylinder();
-
-    [[nodiscard]] const Eigen::MatrixXd& GetVertices(int index = 0) const { return data[index].vertices; }
-    [[nodiscard]] const Eigen::MatrixXi& GetFaces(int index = 0) const { return data[index].faces; }
-    [[nodiscard]] const Eigen::MatrixXd& GetVertexNormals(int index = 0) const { return data[index].vertexNormals; }
-    [[nodiscard]] const Eigen::MatrixXd& GetTextureCoords(int index = 0) const { return data[index].textureCoords; }
 };
 
 } // namespace cg3d

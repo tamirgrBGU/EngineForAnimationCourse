@@ -5,7 +5,7 @@
 #include "PickVisitor.h"
 #include "Renderer.h"
 #include "GLFW/glfw3.h"
-#include "debug.h"
+#include "Utility.h"
 
 
 namespace cg3d
@@ -21,13 +21,6 @@ void Scene::Init(Visitor* visitor)
     visitor->Init();
 }
 
-void Scene::Accept(Visitor* visitor)
-{
-    Movable::Accept(visitor);
-
-    visitor->Visit(this);
-}
-
 void Scene::Update(const Program& program, const Eigen::Matrix4f& proj, const Eigen::Matrix4f& view, const Eigen::Matrix4f& model)
 {
     program.SetUniformMatrix4f("Proj", &proj);
@@ -40,10 +33,11 @@ void Scene::MouseCallback(Viewport* viewport, int x, int y, int button, int acti
     // note: there's a (small) chance the button state here precedes the mouse press/release event
 
     if (action == GLFW_PRESS) { // default mouse button press behavior
-        PickVisitor visitor(this);
-        renderer->RunVisitorOnViewportAtPos(x, y, &visitor); // pick using fixed colors hack
+        PickVisitor visitor;
+        visitor.Init();
+        renderer->RenderViewportAtPos(x, y, &visitor); // pick using fixed colors hack
         auto modelAndDepth = visitor.PickAtPos(x, renderer->GetWindowHeight() - y);
-        renderer->RunVisitorOnViewportAtPos(x, y); // draw again to avoid flickering
+        renderer->RenderViewportAtPos(x, y); // draw again to avoid flickering
         pickedModel = modelAndDepth.first ? std::dynamic_pointer_cast<Model>(modelAndDepth.first->shared_from_this()) : nullptr;
         pickedModelDepth = modelAndDepth.second;
         camera->GetRotation().transpose();

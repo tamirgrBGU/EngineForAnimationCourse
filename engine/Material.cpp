@@ -2,15 +2,14 @@
 
 #include <utility>
 
-
 namespace cg3d
 {
 
-Material::Material(std::string name, std::shared_ptr<const Program> _program, bool overlay) : name(std::move(name)), program(std::move(_program)),
-        fixedColorProgram(make_shared<const Program>(std::move(program->GetVertexShader()), std::move(Shader::GetFixedColorFragmentShader()), overlay, false)) {}
+Material::Material(std::string name, std::shared_ptr<Program> _program, bool overlay) : name(std::move(name)), program(std::move(_program)),
+        fixedColorProgram(std::make_shared<Program>(program->name + "_fixedColorShader", program->GetVertexShader(), Shader::GetFixedColorFragmentShader(), overlay, false)) {}
 
-Material::Material(std::string name, const std::string& shaderFileNameWithoutExtension, bool overlay) :
-        Material(std::move(name), std::make_shared<Program>(shaderFileNameWithoutExtension, overlay, true)) {}
+Material::Material(std::string name, const std::string& fileWithoutExt, bool overlay) :
+        Material(std::move(name), std::make_shared<Program>(fileWithoutExt, overlay, true)) {}
 
 void Material::AddTexture(int slot, std::shared_ptr<Texture> texture)
 {

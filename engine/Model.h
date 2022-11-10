@@ -14,37 +14,42 @@ class Model : virtual public Movable
 {
     friend class DrawVisitor;
 
+protected:
+    Model(const std::string& file, std::shared_ptr<Material> material);
+    Model(std::string name, const std::string& file, std::shared_ptr<Material> material);
+    Model(std::shared_ptr<Mesh> mesh, std::shared_ptr<Material> material);
+    Model(std::string name, std::shared_ptr<Mesh> mesh, std::shared_ptr<Material> material);
+    Model(std::string name, std::vector<std::shared_ptr<Mesh>> meshList, std::shared_ptr<Material> material);
+    Model(const Model& other) = default; // important: doesn't add itself to the parent's children (object isn't constructed yet)
+    Model(Model&&) = default; // important: doesn't add itself to the parent's children (object isn't constructed yet)
+    Model& operator=(const Model& other) = default;
+
 public:
+    template<typename... Args>
+    static std::shared_ptr<Model> Create(Args&&... args) {
+        return std::shared_ptr<Model>{new Model{std::forward<Args>(args)...}}; // NOLINT(modernize-make-shared)
+    }
+
     ~Model() override = default;
 
-    static std::shared_ptr<Model> Create(const std::string& file, std::shared_ptr<Material> material, const std::shared_ptr<Movable>& parent = nullptr);
-    static std::shared_ptr<Model> Create(std::string name, const std::string& file, std::shared_ptr<Material> material, const std::shared_ptr<Movable>& parent = nullptr);
-    static std::shared_ptr<Model> Create(std::shared_ptr<Mesh> mesh, std::shared_ptr<Material> material, const std::shared_ptr<Movable>& parent = nullptr);
-    static std::shared_ptr<Model> Create(std::string name, std::shared_ptr<Mesh> mesh, std::shared_ptr<Material> material, const std::shared_ptr<Movable>& parent = nullptr);
-    static std::shared_ptr<Model> Create(std::string name, std::vector<std::shared_ptr<Mesh>> meshList, std::shared_ptr<Material> material, const std::shared_ptr<Movable>& parent = nullptr);
+    void Accept(Visitor* visitor) override { visitor->Visit(this); };
 
-    void Accept(Visitor* visitor) override;
-
-    std::shared_ptr<const Material> material;
+    std::shared_ptr<Material> material;
+    bool isHidden = false;
     bool showFaces = true;
     bool showTextures = true;
     bool showWireframe = false;
-    bool isHidden = false;
     Eigen::Vector4f wireframeColor{0, 0, 0, 0};
     int meshIndex = 0;
 
+    inline std::shared_ptr<Mesh> GetMesh(int index = 0) const { return meshList[index]; }
     inline const std::vector<std::shared_ptr<Mesh>>& GetMeshList() const { return meshList; }
     void SetMeshList(std::vector<std::shared_ptr<Mesh>> _meshList);
-
-    // helper functions
-    static void UpdateDataAndBindMesh(igl::opengl::ViewerData& viewerData, const Program& program);
-    void UpdateDataAndDrawMeshes(const Program& program, bool _showFaces, bool bindTextures);
-
-protected:
-    // protected constructor (use factory method to create models)
-    Model(std::string name, std::vector<std::shared_ptr<Mesh>> meshList, std::shared_ptr<Material> material = nullptr);
+    void UpdateDataAndDrawMeshes(const Program& program, bool _showFaces, bool bindTextures); // helper function
 
 private:
+    static void UpdateDataAndBindMesh(igl::opengl::ViewerData& viewerData, const Program& program); // helper function
+
     static std::vector<igl::opengl::ViewerData> CreateViewerData(const std::shared_ptr<Mesh>& mesh);
     std::vector<std::shared_ptr<Mesh>> meshList;
     std::vector<std::vector<igl::opengl::ViewerData>> viewerDataListPerMesh;

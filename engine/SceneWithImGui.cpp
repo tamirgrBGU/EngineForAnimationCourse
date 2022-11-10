@@ -22,7 +22,6 @@ SceneWithImGui::SceneWithImGui(std::string name, Display* display) : Scene(std::
 void SceneWithImGui::Accept(Visitor* visitor)
 {
     Scene::Accept(visitor);
-
     DrawImGui();
 }
 

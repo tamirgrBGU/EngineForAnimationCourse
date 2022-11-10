@@ -11,7 +11,6 @@ namespace cg3d
 class Shader
 {
 public:
-
     std::string name;
 
     /**
@@ -29,13 +28,13 @@ public:
     **/
     Shader(unsigned int type, const std::string& file) : Shader(file, type, ReadFile(file)) {}
 
-    static std::shared_ptr<const Shader> GetFixedColorFragmentShader();
-    static std::shared_ptr<const Shader> GetBasicVertexShader();
-    static std::shared_ptr<const Shader> GetBasicFragmentShader();
-    static std::shared_ptr<const Shader> GetOverlayVertexShader();
-    static std::shared_ptr<const Shader> GetOverlayFragmentShader();
-    static std::shared_ptr<const Shader> GetOverlayPointsFragmentShader();
-    static std::shared_ptr<const Shader> GetFullWindowQuadVertexShader();
+    static std::shared_ptr<Shader> GetFixedColorFragmentShader();
+    static std::shared_ptr<Shader> GetBasicVertexShader();
+    static std::shared_ptr<Shader> GetBasicFragmentShader();
+    static std::shared_ptr<Shader> GetOverlayVertexShader();
+    static std::shared_ptr<Shader> GetOverlayFragmentShader();
+    static std::shared_ptr<Shader> GetOverlayPointsFragmentShader();
+    static std::shared_ptr<Shader> GetFullWindowQuadVertexShader();
 
     [[nodiscard]] inline unsigned int GetHandle() const { return handle; };
 

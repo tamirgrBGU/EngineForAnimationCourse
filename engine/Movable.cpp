@@ -7,27 +7,75 @@
 namespace cg3d
 {
 
-Movable::Movable(const Movable& other) : enable_shared_from_this(other), name(other.name + " copy"), isStatic(other.isStatic), isPickable(other.isPickable),
-        lineWidth(other.lineWidth), aggregatedTransform(other.aggregatedTransform), Tin(other.Tin), Tout(other.Tout)
+Movable::Movable(const Movable& other) // NOLINT(misc-no-recursion)
+        : enable_shared_from_this(other), name(other.name + " copy"), isStatic(other.isStatic), isPickable(other.isPickable),
+          lineWidth(other.lineWidth), aggregatedTransform(other.aggregatedTransform), Tin(other.Tin), Tout(other.Tout)
 {
-    // todo: copy the children
+    for (const auto& child: other.children)
+        children.emplace_back(child->Clone());
 }
 
-std::shared_ptr<Movable> Movable::Create(std::string name, const std::shared_ptr<Movable>& parent)
+Movable& Movable::operator=(const Movable& other)
 {
-    auto movable = std::make_shared<Movable>(std::move(name));
-    movable->SetParent(parent);
-    return movable;
+    if (this != &other) {
+        name = other.name + "copy";
+        isStatic = other.isStatic;
+        isPickable = other.isPickable;
+        lineWidth = other.lineWidth;
+        aggregatedTransform = other.aggregatedTransform;
+        Tin = other.Tin;
+        Tout = other.Tout;
+    }
+
+    for (const auto& child: other.children)
+        children.emplace_back(child->Clone());
+
+    return *this;
+}
+
+std::shared_ptr<Movable> Movable::Clone() // NOLINT(misc-no-recursion)
+{
+    auto clone{std::shared_ptr<Movable>(new Movable{*this})};
+    if (auto p = parent.lock())
+        p->AddChild(clone);
+    return clone;
+}
+
+void Movable::AddChild(std::shared_ptr<Movable> child)
+{
+    // calling this method when already attached to the parent will push the child to the end
+    RemoveChild(child);
+    child->parent = shared_from_this();
+    children.emplace_back(std::move(child));
+}
+
+void Movable::AddChildren(const std::vector<std::shared_ptr<Movable>>& _children)
+{
+    for (const auto& child: _children)
+        AddChild(child);
+}
+
+void Movable::RemoveChild(const std::shared_ptr<Movable>& child)
+{
+    auto it = std::find(children.begin(), children.end(), child);
+    if (it != children.end())
+        children.erase(it);
+    child->parent.reset();
 }
 
 const Eigen::Vector3f& Movable::AxisVec(Axis axis)
 {
-    static const Eigen::Vector3f AxisVecX = Eigen::Vector3f::UnitX();
-    static const Eigen::Vector3f AxisVecY = Eigen::Vector3f::UnitY();
-    static const Eigen::Vector3f AxisVecZ = Eigen::Vector3f::UnitZ();
-    static const Eigen::Vector3f AxisVecAll = Eigen::Vector3f(1.0f, 1.0f, 1.0f).normalized();
+    static const Eigen::Vector3f vec[]{
+            Eigen::Vector3f::UnitX(),
+            Eigen::Vector3f::UnitY(),
+            Eigen::Vector3f::UnitZ(),
+            Eigen::Vector3f::UnitX() + Eigen::Vector3f::UnitY(),
+            Eigen::Vector3f::UnitX() + Eigen::Vector3f::UnitZ(),
+            Eigen::Vector3f::UnitY() + Eigen::Vector3f::UnitZ(),
+            Eigen::Vector3f::UnitX() + Eigen::Vector3f::UnitY() + Eigen::Vector3f::UnitZ()
+    };
 
-    return axis == Axis::X ? AxisVecX : axis == Axis::Y ? AxisVecY : axis == Axis::Z ? AxisVecZ : AxisVecAll;
+    return vec[static_cast<int>(axis)];
 }
 
 void Movable::PropagateTransform() // NOLINT(misc-no-recursion)
@@ -59,9 +107,9 @@ void Movable::Translate(float dist, Axis axis)
 {
     if (isStatic) return;
     Eigen::Vector3f vec(
-            axis == Axis::X || axis == Axis::All ? dist : 0.0f,
-            axis == Axis::Y || axis == Axis::All ? dist : 0.0f,
-            axis == Axis::Z || axis == Axis::All ? dist : 0.0f
+            axis == Axis::X || axis == Axis::XYZ ? dist : 0.0f,
+            axis == Axis::Y || axis == Axis::XYZ ? dist : 0.0f,
+            axis == Axis::Z || axis == Axis::XYZ ? dist : 0.0f
     );
 
     Translate(vec);
@@ -127,9 +175,9 @@ void Movable::Scale(float factor, Axis axis)
     if (abs(factor) < 1e-5) return; // factor is too small
 
     Eigen::Vector3f scaleVec(
-            axis == Axis::X || axis == Axis::All ? factor : 1.0f,
-            axis == Axis::Y || axis == Axis::All ? factor : 1.0f,
-            axis == Axis::Z || axis == Axis::All ? factor : 1.0f
+            axis == Axis::X || axis == Axis::XYZ ? factor : 1.0f,
+            axis == Axis::Y || axis == Axis::XYZ ? factor : 1.0f,
+            axis == Axis::Z || axis == Axis::XYZ ? factor : 1.0f
     );
 
     Scale(scaleVec);
@@ -144,38 +192,7 @@ void Movable::Scale(const Eigen::Vector3f& scaleVec)
 
 void Movable::Scale(float factor)
 {
-    Scale(factor, Axis::All);
-}
-
-void Movable::SetParent(const std::shared_ptr<Movable>& newParent, bool retransform)  // TODO: TAL: newParent shouldn't be a shared_ptr?
-{
-    const std::shared_ptr<Movable>& oldParent = parent.lock();
-    if (oldParent != newParent) {
-        auto self = this;
-        auto compareToThis = [self](std::shared_ptr<Movable> const& m) { return m.get() == self; };
-        if (oldParent != nullptr) { // detach from current parent if exists
-            auto it = std::find_if(oldParent->children.begin(), oldParent->children.end(), compareToThis);
-            if (it != oldParent->children.end())
-                oldParent->children.erase(it);
-        }
-        parent = newParent;
-        if (newParent) { // attach to new parent if exists and not already attached
-            if (std::find_if(newParent->children.begin(), newParent->children.end(), compareToThis) == newParent->children.end()) {
-                newParent->children.emplace_back(shared_from_this());
-                if (retransform) { // calculate current translation/rotation in relation to the new parent
-                    Tout.matrix() = newParent->aggregatedTransform.inverse() * aggregatedTransform;
-                    Tin = Eigen::Affine3f::Identity();
-                }
-                PropagateTransform();
-            }
-        }
-    }
-}
-
-void Movable::Accept(Visitor* visitor) // NOLINT(misc-no-recursion)
-{
-    for (const auto& child: children)
-        child->Accept(visitor);
+    Scale(factor, Axis::XYZ);
 }
 
 Eigen::Affine3f Movable::GetRotation(const Eigen::Matrix4f& _transform)

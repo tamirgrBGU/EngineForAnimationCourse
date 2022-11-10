@@ -8,6 +8,7 @@
 
 #include "Mesh.h"
 #include "Model.h"
+#include "Utility.h"
 #include <memory>
 #include <algorithm>
 
@@ -103,7 +104,7 @@ std::shared_ptr<Model> ObjLoader::ModelFromObj(std::string name, const std::stri
 {
     objl::Loader loader;
     loader.LoadFile(file);
-    return ModelFromObjLoader(std::move(name), loader, std::move(material));
+    return std::move(ModelFromObjLoader(std::move(name), loader, std::move(material)));
 }
 
 std::shared_ptr<Model> ObjLoader::ModelFromObjLoader(std::string name, objl::Loader& loader, std::shared_ptr<Material> material)

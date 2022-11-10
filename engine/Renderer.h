@@ -2,6 +2,7 @@
 
 #include <vector>
 #include "Viewport.h"
+#include "DrawVisitor.h"
 #include "GLFW/glfw3.h"
 
 
@@ -13,11 +14,13 @@ class Renderer
 public:
     void AddViewport(const std::shared_ptr<Scene>& scene);
     void AddViewport(const std::shared_ptr<Viewport>& viewport);
+    void RemoveViewport(const std::shared_ptr<Viewport>& remove);
 
-    static void RunVisitorOnViewport(Viewport* info, Visitor* visitor = nullptr);
-    void RunVisitorOnAllViewports(Visitor* visitor = nullptr);
-    void RunVisitorOnViewportAtPos(int x, int y, Visitor* visitor = nullptr);
-    void Draw() { RunVisitorOnAllViewports(); } // for clarity
+    void RenderViewport(Viewport* viewport);
+    void RenderViewport(Viewport* viewport, Visitor* visitor);
+    void RenderViewportAtPos(int x, int y, Visitor* visitor = nullptr);
+    void RenderAllViewports();
+    void Draw() { RenderAllViewports(); } // for clarity
 
     void MouseCallback(int x, int y, int button, int action, int mods, int buttonState[]);
     void ScrollCallback(int x, int y, int xoffset, int yoffset, int buttonState[]);
@@ -32,6 +35,7 @@ public:
 private:
     Viewport* FindViewportAtPos(int x, int y);
 
+    DrawVisitor defaultVisitor;
     std::vector<std::shared_ptr<Viewport>> viewports;
     Viewport* viewportAtMousePress = nullptr;
     Viewport* viewportAtKeyPress = nullptr;

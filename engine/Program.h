@@ -10,21 +10,23 @@ namespace cg3d
 class Program
 {
 public:
+    std::string name;
 
     /**
         @brief Create a program object with a vertex and fragment shader from 2 files
-        @param fileName - name of the files without extension (extension .vs and .glsl is appended)
+        @param file - name of the files without extension (extension .vs and .glsl is appended)
         @param overlay  - true for full overlay data, false for partial data
     **/
-    explicit Program(const std::string &fileName, bool overlay = false, bool warnings = true);
+    explicit Program(const std::string &file, bool overlay = false, bool warnings = true);
 
 /**
 	 @brief Create a program object from the given vertex and fragment shader objects
-	 @param vertexShader	- a vertex shader object
-	 @param fragmentShader	- a fragment shader object
+	 @param name            - the program name (for debug purposes)
+	 @param _vertexShader	- a vertex shader object
+	 @param _fragmentShader	- a fragment shader object
 	 @param overlay			- true for full overlay data, false for partial data
  **/
-    Program(std::shared_ptr<const Shader> vertexShader, std::shared_ptr<const Shader> fragmentShader, bool overlay, bool warnings);
+    Program(std::string name, std::shared_ptr<Shader> _vertexShader, std::shared_ptr<Shader> _fragmentShader, bool overlay, bool warnings);
 
     /**
         @brief BindColorBuffer the program object
@@ -32,12 +34,7 @@ public:
     void Bind() const;
 
     inline unsigned int GetHandle() const { return handle; }
-
-    inline std::shared_ptr<const Shader> GetVertexShader() const
-    {
-        return vertexShader;
-    }
-
+    inline std::shared_ptr<Shader> GetVertexShader() const { return vertexShader; }
     ~Program();
 
 ///@{
@@ -71,7 +68,7 @@ public:
     void SetUniformMatrix4fv(const std::string &name, int count, const Eigen::Matrix4f *matrices) const;
 ///@}
 
-    static std::shared_ptr<const Program> GetFullWindowFixedColorQuadProgram();
+    static std::shared_ptr<Program> GetFullWindowFixedColorQuadProgram();
 
     // disable copy constructor and assignment operator
     void operator=(const Program &shader) = delete;
@@ -82,8 +79,8 @@ private:
 
     int GetUniformLocation(const std::string &name) const;
 
-    std::shared_ptr<const Shader> vertexShader;
-    std::shared_ptr<const Shader> fragmentShader;
+    std::shared_ptr<Shader> vertexShader;
+    std::shared_ptr<Shader> fragmentShader;
     unsigned int handle;
     mutable std::unordered_map<std::string, int> uniformLocationCache;
     bool warnings;

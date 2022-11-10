@@ -3,18 +3,13 @@
 #include <GL.h>
 #include "Model.h"
 #include "Scene.h"
-#include "Debug.h"
+#include "Utility.h"
 
 
 namespace cg3d
 {
 
-void PickVisitor::Run(Camera* camera)
-{
-    Visitor::Run(camera);
-}
-
-void PickVisitor::Init()
+void PickVisitor::Run(Scene* _scene, Camera* camera)
 {
     // clear everything
     glDepthMask(GL_TRUE);
@@ -23,6 +18,8 @@ void PickVisitor::Init()
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
     glDisable(GL_STENCIL_TEST);
     glEnable(GL_DEPTH_TEST);
+
+    Visitor::Run(scene = _scene, camera);
 }
 
 std::pair<Model*, float> PickVisitor::PickAtPos(int x, int y)
@@ -38,6 +35,8 @@ std::pair<Model*, float> PickVisitor::PickAtPos(int x, int y)
 
 void PickVisitor::Visit(Model* model)
 {
+    Visitor::Visit(model); // draw children first
+
     // note: non-pickable models can still be picked in order to get the depth and such
     // the responsibility to *not* pick them up is on the caller's side
 
@@ -53,8 +52,6 @@ void PickVisitor::Visit(Model* model)
         program.SetUniform4f("fixedColor", r / 255.0f, g / 255.0f, b / 255.0f, 1.0f); // NOLINT(cppcoreguidelines-narrowing-conversions)
         model->UpdateDataAndDrawMeshes(program, true, false);
     }
-
-    Visitor::Visit(model);
 }
 
 } // namespace cg3d

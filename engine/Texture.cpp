@@ -1,6 +1,6 @@
 #include "Texture.h"
 #include "gl.h"
-#include "Debug.h"
+#include "Utility.h"
 #include <iostream>
 #include <cassert>
 #include <utility>

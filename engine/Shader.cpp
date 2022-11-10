@@ -1,16 +1,16 @@
 #include <fstream>
 #include <utility>
 #include "Shader.h"
-#include "Debug.h"
+#include "Utility.h"
 #include "gl.h"
 
 
 namespace cg3d
 {
 
-std::shared_ptr<const Shader> Shader::GetFixedColorFragmentShader()
+std::shared_ptr<Shader> Shader::GetFixedColorFragmentShader()
 {
-    static auto SHADER = std::make_shared<const Shader>(
+    static auto SHADER = std::make_shared<Shader>(
             "Fixed color fragment shader",
             GL_FRAGMENT_SHADER,
             R"(
@@ -26,9 +26,9 @@ void main()
     return SHADER;
 }
 
-std::shared_ptr<const Shader> Shader::GetOverlayVertexShader()
+std::shared_ptr<Shader> Shader::GetOverlayVertexShader()
 {
-    static auto SHADER = std::make_shared<const Shader>(
+    static auto SHADER = std::make_shared<Shader>(
             "Overlay vertex shader",
             GL_VERTEX_SHADER,
             R"(
@@ -52,9 +52,9 @@ void main()
     return SHADER;
 }
 
-std::shared_ptr<const Shader> Shader::GetFullWindowQuadVertexShader()
+std::shared_ptr<Shader> Shader::GetFullWindowQuadVertexShader()
 {
-    static auto SHADER = std::make_shared<const Shader>(
+    static auto SHADER = std::make_shared<Shader>(
             "Full window quad vertex shader",
             GL_VERTEX_SHADER,
             R"(
@@ -72,9 +72,9 @@ void main()
 }
 
 
-std::shared_ptr<const Shader> Shader::GetOverlayFragmentShader()
+std::shared_ptr<Shader> Shader::GetOverlayFragmentShader()
 {
-    static auto SHADER = std::make_shared<const Shader>(
+    static auto SHADER = std::make_shared<Shader>(
             "Overlay fragment shader",
             GL_FRAGMENT_SHADER,
             R"(
@@ -91,9 +91,9 @@ void main()
     return SHADER;
 }
 
-std::shared_ptr<const Shader> Shader::GetBasicVertexShader()
+std::shared_ptr<Shader> Shader::GetBasicVertexShader()
 {
-    static auto SHADER = std::make_shared<const Shader>(
+    static auto SHADER = std::make_shared<Shader>(
             "Basic vertex shader",
             GL_FRAGMENT_SHADER,
             R"(
@@ -128,9 +128,9 @@ void main()
     return SHADER;
 }
 
-std::shared_ptr<const Shader> Shader::GetBasicFragmentShader()
+std::shared_ptr<Shader> Shader::GetBasicFragmentShader()
 {
-    static auto SHADER = std::make_shared<const Shader>(
+    static auto SHADER = std::make_shared<Shader>(
             "Basic fragment shader",
             GL_FRAGMENT_SHADER,
             R"(
@@ -156,9 +156,9 @@ void main()
     return SHADER;
 }
 
-std::shared_ptr<const Shader> Shader::GetOverlayPointsFragmentShader()
+std::shared_ptr<Shader> Shader::GetOverlayPointsFragmentShader()
 {
-    static auto SHADER = std::make_shared<const Shader>(
+    static auto SHADER = std::make_shared<Shader>(
             "Overlay points fragment shader",
             GL_FRAGMENT_SHADER,
             R"(

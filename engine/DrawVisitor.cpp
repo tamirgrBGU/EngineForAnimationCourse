@@ -8,6 +8,19 @@
 
 namespace cg3d
 {
+void DrawVisitor::Run(Scene* _scene, Camera* camera)
+{
+    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+    glEnable(GL_DEPTH_TEST);
+
+    if (drawOutline) {
+        glEnable(GL_STENCIL_TEST);
+        glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
+        glStencilFunc(GL_ALWAYS, 1, 0xFF);
+    }
+
+    Visitor::Run(scene = _scene, camera);
+}
 
 void DrawVisitor::Init()
 {
@@ -15,32 +28,29 @@ void DrawVisitor::Init()
     unsigned int flags = GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT;
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
     glClearColor(0, 0, 0, 0);
-    glEnable(GL_DEPTH_TEST);
 
     // clear and set up the stencil buffer if outline is enabled
     if (drawOutline) {
-        glEnable(GL_STENCIL_TEST);
         glStencilMask(0xFF);
         glClearStencil(0);
         flags |= GL_STENCIL_BUFFER_BIT;
     }
 
     glClear(flags);
-
-    if (drawOutline) {
-        glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
-        glStencilFunc(GL_ALWAYS, 1, 0xFF);
-    }
 }
 
-void DrawVisitor::Visit(Scene* scene)
+void DrawVisitor::Visit(Scene* _scene)
 {
-    if (scene->pickedModel && drawOutline)
+    Visitor::Visit(_scene); // draw children first
+
+    if (_scene->pickedModel && drawOutline)
         DrawOutline();
 }
 
 void DrawVisitor::Visit(Model* model)
 {
+    Visitor::Visit(model); // draw children first
+
     if (!model->isHidden) {
         Eigen::Matrix4f modelTransform = model->isStatic ? model->aggregatedTransform : norm * model->aggregatedTransform;
         const Program* program = model->material->BindProgram();
@@ -60,8 +70,6 @@ void DrawVisitor::Visit(Model* model)
             model->UpdateDataAndDrawMeshes(*program, false, false);
         }
     }
-
-    Visitor::Visit(model);
 }
 
 void DrawVisitor::DrawOutline()

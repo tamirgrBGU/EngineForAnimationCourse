@@ -1,40 +1,45 @@
 #pragma once
 
-#include "ViewerData.h"
+#include <memory>
+
 #include "Program.h"
 #include "Mesh.h"
 #include "Material.h"
-
-
-namespace cg3d
-{
+#include "Visitor.h"
+#include "Eigen/Geometry"
 
 class Visitor;
 
-// helper macro for creating an object with the variable name as the first argument
-#define NewNamedObject(name, creator, ...) auto name = creator(#name, ##__VA_ARGS__)
-#define SetNamedObject(name, creator, ...) name = creator(#name, ##__VA_ARGS__)
+namespace cg3d
+{
 
 #define PI_DIV_180 0.017453292519943295769
 
 class Movable : public std::enable_shared_from_this<Movable>
 {
+protected:
+    explicit Movable(std::string name) : name(std::move(name)) {}
+    Movable(const Movable& other); // important: doesn't add itself to the parent's children (object isn't constructed yet)
+    Movable(Movable&&) = default; // important: doesn't add itself to the parent's children (object isn't constructed yet)
+    Movable& operator=(const Movable& other);
+
 public:
     std::string name;
 
-    enum class Axis
-    {
-        X, Y, Z, All, Reset
-    }; // TODO: TAL: make sense... (separate to 2 enums?)
+    template<typename... Args>
+    static std::shared_ptr<Movable> Create(Args&&... args) { return std::shared_ptr<Movable>(new Movable{std::forward<Args>(args)...}); };
 
-    explicit Movable(std::string name) : name(std::move(name)) {}
-    Movable(const Movable& other);
-    virtual ~Movable() { SetParent(nullptr); };
+    std::shared_ptr<Movable> Clone();
+    inline std::shared_ptr<Movable> ptr() { return shared_from_this(); };
+    virtual ~Movable() { if (auto p = parent.lock()) p->RemoveChild(ptr()); };
 
-    void SetParent(const std::shared_ptr<Movable>& m, bool retransform = false);
-    static std::shared_ptr<Movable> Create(std::string name, const std::shared_ptr<Movable>& parent);
+    enum class Axis { X, Y, Z, XY, XZ, YZ, XYZ };
 
-    virtual void Accept(Visitor* visitor);
+    virtual void Accept(Visitor* visitor) { visitor->Visit(this); }
+
+    void AddChild(std::shared_ptr<Movable> child);
+    void AddChildren(const std::vector<std::shared_ptr<Movable>>& _children);
+    void RemoveChild(const std::shared_ptr<Movable>& child);
 
     virtual void SetCenter(const Eigen::Vector3f& point);
 
@@ -56,6 +61,7 @@ public:
     virtual void Scale(const Eigen::Vector3f& scaleVec);
 
     inline void SetStatic(bool _isStatic = true) { isStatic = _isStatic; };
+
     inline void SetPickable(bool _isPickable = true) { isPickable = _isPickable; };
 
     virtual Eigen::Matrix4f GetAggregatedTransform() const;
@@ -64,11 +70,11 @@ public:
     virtual void PropagateTransform(); // recursively propagates the transform
     virtual Eigen::Affine3f GetTin() const;
     virtual Eigen::Affine3f GetTout() const;
-    virtual void SetTin(const Eigen::Affine3f &newTin);
-    virtual void SetTout(const Eigen::Affine3f &newTout);
-    virtual void SetTinTout(const Eigen::Affine3f &newTin, const Eigen::Affine3f& newTout);
+    virtual void SetTin(const Eigen::Affine3f& newTin);
+    virtual void SetTout(const Eigen::Affine3f& newTout);
+    virtual void SetTinTout(const Eigen::Affine3f& newTin, const Eigen::Affine3f& newTout);
 
-    // helper functions
+     //helper functions
     static const Eigen::Vector3f& AxisVec(Axis axis);
     static Eigen::Affine3f GetRotation(const Eigen::Matrix4f& transform);
     static Eigen::Affine3f GetTranslation(const Eigen::Matrix4f& transform);
@@ -82,6 +88,7 @@ public:
     bool isStatic = false;
     std::vector<std::shared_ptr<Movable>> children;
     std::weak_ptr<Movable> parent;
+    std::weak_ptr<Movable> scene;
 };
 
 } // namespace cg3d

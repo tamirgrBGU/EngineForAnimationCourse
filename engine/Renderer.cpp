@@ -1,5 +1,5 @@
 #include "Renderer.h"
-#include "Debug.h"
+#include "Utility.h"
 #include "DrawVisitor.h"
 #include "Scene.h"
 #include "GLFW/glfw3.h"
@@ -20,27 +20,34 @@ Viewport* Renderer::FindViewportAtPos(int x, int y)
     return nullptr;
 }
 
-void Renderer::RunVisitorOnViewport(Viewport* viewport, Visitor* visitor)
+void Renderer::RenderViewport(Viewport* viewport)
 {
-    if (!visitor)
-        visitor = viewport->visitor.get();
-
-    viewport->Bind();
-    visitor->Run(viewport->camera.get());
+    RenderViewport(viewport, viewport->visitor.get());
 }
 
-void Renderer::RunVisitorOnViewportAtPos(int x, int y, Visitor* visitor)
+void Renderer::RenderViewport(Viewport* viewport, Visitor* visitor)
+{
+    if (!visitor)
+        visitor = &defaultVisitor;
+
+    viewport->Bind();
+    visitor->Run(viewport->scene.get(), viewport->camera.get());
+}
+
+void Renderer::RenderViewportAtPos(int x, int y, Visitor* visitor)
 {
     auto viewport = FindViewportAtPos(x, y);
 
     if (viewport)
-        RunVisitorOnViewport(viewport, visitor ? visitor : viewport->visitor.get());
+        RenderViewport(viewport, visitor ? visitor : viewport->visitor.get());
 }
 
-void Renderer::RunVisitorOnAllViewports(Visitor* visitor)
+void Renderer::RenderAllViewports()
 {
+    defaultVisitor.Init();
+
     for (auto& viewport: viewports)
-        RunVisitorOnViewport(viewport.get(), visitor);
+        RenderViewport(viewport.get());
 }
 
 void Renderer::MouseCallback(int x, int y, int button, int action, int mods, int buttonState[])
@@ -84,7 +91,7 @@ void Renderer::KeyCallback(int x, int y, int key, int scancode, int action, int 
 {
     if (action != GLFW_PRESS && !viewportAtKeyPress) return;
 
-    // if the cursor is above a drawviewport area, set it as the target, otherwise select the first drawviewport
+    // if the cursor is in a viewport area, set it as the target, otherwise select the first viewport
     if (Viewport* viewport; action == GLFW_PRESS && (viewport = FindViewportAtPos(x, y)))
         viewportAtKeyPress = viewport;
 
@@ -129,9 +136,6 @@ void Renderer::AddViewport(const std::shared_ptr<Viewport>& viewport) // add sce
     if (!viewport->camera)
         viewport->camera = viewport->scene->camera;
 
-    if (!viewport->visitor)
-        viewport->visitor = std::make_shared<DrawVisitor>(viewport->scene.get());
-
     viewports.emplace_back(viewport);
 
     viewport->scene->AddViewportCallback(viewport.get());
@@ -139,9 +143,16 @@ void Renderer::AddViewport(const std::shared_ptr<Viewport>& viewport) // add sce
 
 void Renderer::AddViewport(const std::shared_ptr<Scene>& scene) // add scene with default camera and draw visitor
 {
-    auto viewport = std::make_shared<Viewport>(0, 0, 0, 0);
-    viewport->scene = scene;
+    auto viewport = std::make_shared<Viewport>(scene->name + "Viewport", 0, 0, 0, 0);
+    viewport->scene = dynamic_pointer_cast<Scene>(scene->shared_from_this());
     AddViewport(viewport);
+}
+
+void Renderer::RemoveViewport(const std::shared_ptr<Viewport>& remove)
+{
+    auto it = std::find_if(viewports.begin(), viewports.end(), [remove](auto& viewport) { return viewport.get() == remove.get(); });
+    if (it != viewports.end())
+        viewports.erase(it);
 }
 
 } // namespace cg3d

@@ -27,15 +27,17 @@ class Display;
 
 class Scene : public Movable, public igl::opengl::glfw::Viewer
 {
-public:
+protected:
     Scene(std::string name, Display* display);
 
+public:
+    ~Scene() override = default;
+    void Accept(Visitor* visitor) override { visitor->Visit(this); };
+
+    virtual void Init(Visitor* visitor);
     virtual void Update(const Program& program, const Eigen::Matrix4f& proj, const Eigen::Matrix4f& view, const Eigen::Matrix4f& model);
 
-    ~Scene() override = default;
-    void Init(Visitor* visitor);
-    void Accept(Visitor* visitor) override;
-    std::shared_ptr<Model> pickedModel = nullptr;
+    std::shared_ptr<Model> pickedModel;
     std::shared_ptr<Camera> camera;
 
     virtual void MouseCallback(Viewport* viewport, int x, int y, int button, int action, int mods, int buttonState[]);
@@ -43,7 +45,7 @@ public:
     virtual void CursorPosCallback(Viewport* viewport, int x, int y, bool dragging, int* buttonState);
     virtual void KeyCallback(Viewport* viewport, int x, int y, int key, int scancode, int action, int mods);
     virtual void CharCallback(Viewport* viewport, int x, int y, unsigned int codepoint);
-    virtual void ViewportSizeCallback(Viewport* viewport);;
+    virtual void ViewportSizeCallback(Viewport* viewport);
     virtual void AddViewportCallback(Viewport* viewport) {};
 
 protected:

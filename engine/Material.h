@@ -10,29 +10,30 @@ namespace cg3d
 
 class Material
 {
-    std::string name;
     std::vector<std::shared_ptr<Texture>> textures;
     std::vector<int> textureSlots;
 
 public:
 
-    const std::shared_ptr<const Program> program, fixedColorProgram;
+    std::string name;
+
+    const std::shared_ptr<Program> program, fixedColorProgram;
 
     /**
         @brief Create a material with a given program object
         @param name - object name (for debugging)
         @param program - shared pointer to the program object
     **/
-    explicit Material (std::string name, std::shared_ptr<const Program> program, bool overlay = false);
+    explicit Material(std::string name, std::shared_ptr<Program> program, bool overlay = false);
 
     /**
         @brief Create a program object from the shader files and use it to create a material object
         (use for convenience when the shader objects are exclusive to this material)
-        @param shaderFileNameWithoutExtension - filename (without extension) of the shaders
+        @param fileWithoutExt - filename (without extension) of the shaders
         @param overlay        - overlay of the program object
         @param programId      - id of the program object
     **/
-    explicit Material(std::string name, const std::string& shaderFileNameWithoutExtension, bool overlay = false);
+    explicit Material(std::string name, const std::string& fileWithoutExt, bool overlay = false);
 
     /**
         @brief Add a given texture object to the material
@@ -48,7 +49,7 @@ public:
         @param textureFileName - the name of the image file
         @param dim             - the dimensions of the texture data
     **/
-    void AddTexture(int slot, const std::string &textureFileName, int dim);
+    void AddTexture(int slot, const std::string& textureFileName, int dim);
 
     /**
         @brief Binds the main material program

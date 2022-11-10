@@ -9,7 +9,6 @@ namespace cg3d
 class Texture
 {
 public:
-
     std::string name;
 
     /**

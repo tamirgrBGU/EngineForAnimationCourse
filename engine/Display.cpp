@@ -8,7 +8,7 @@
 
 #include <get_seconds.h>
 #include "Renderer.h"
-#include "Debug.h"
+#include "Utility.h"
 #include "DebugHacks.h"
 
 
@@ -169,8 +169,8 @@ static void ErrorCallback(int error, const char* description)
 
 void APIENTRY DebugMessageCallback(GLenum source, GLenum type, unsigned int id, GLenum severity, GLsizei length, const char* message, const void* userParam)
 {
-    // ignore non-significant error/warning codes
-    if (id == 131169 || id == 131185 || id == 131218 || id == 131204) return;
+    // ignore non-significant error/warning codes (note: id 7 are "will soon be deprecated" warnings)
+    if (id == 131169 || id == 131185 || id == 131218 || id == 131204 || id == 7) return;
 
     std::cerr << "---------------" << std::endl;
     std::cerr << "Debug message (" << id << "): " << message << std::endl;

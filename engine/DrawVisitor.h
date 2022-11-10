@@ -1,3 +1,5 @@
+#pragma once
+
 #include "Visitor.h"
 #include "Camera.h"
 
@@ -11,9 +13,9 @@ namespace cg3d
 class DrawVisitor : public Visitor
 {
 public:
-    explicit DrawVisitor(Scene* scene) : Visitor(scene) {}
+    void Run(Scene* scene, Camera* camera) override;
     void Visit(Model* model) override;
-    void Visit(Scene* scene) override;
+    void Visit(Scene* _scene) override;
     void Init() override;
     bool drawOutline = true;
     float outlineLineWidth = 5;
@@ -22,6 +24,8 @@ public:
 
 private:
     void DrawOutline();
+
+    Scene* scene;
 };
 
 } // namespace cg3d
