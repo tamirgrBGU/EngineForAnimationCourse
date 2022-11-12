@@ -12,5 +12,6 @@ public:
     void Update(const cg3d::Program& program, const Eigen::Matrix4f& proj, const Eigen::Matrix4f& view, const Eigen::Matrix4f& model) override;
 
 private:
+    std::shared_ptr<Movable> root;
     std::shared_ptr<cg3d::Model> cyl, sphere1 ,cube;
 };

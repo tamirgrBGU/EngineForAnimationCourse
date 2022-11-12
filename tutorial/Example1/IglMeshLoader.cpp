@@ -1,5 +1,6 @@
 #include "IglMeshLoader.h"
 //#include <per_vertex_normals.h>
+#include <barycentric_coordinates.h>
 #include <vector>
 
 #pragma warning(push, 3)
@@ -66,6 +67,7 @@ std::shared_ptr<Mesh> IglLoader::MeshLoader(std::string name, const std::vector<
     for (const auto& file: files) {
         igl::read_triangle_mesh(file,vertices,faces);
         igl::per_vertex_normals(vertices,faces,vertexNormals);
+        textureCoords = Eigen::MatrixXd::Zero(vertices.rows(),2);
         // std::vector<MeshData> moreData;
         //MeshData moreData;
         //moreData.vertices = vertices;
