@@ -60,9 +60,17 @@ bool Connector::simplifyMesh(igl::opengl::glfw::Viewer *viewer, int numberOfFace
             Eigen::MatrixXd vertexNormals;
             igl::per_vertex_normals(V,F,vertexNormals);
             Eigen::MatrixXd textureCoords = Eigen::MatrixXd::Zero(V.rows(),2);
-            mesh->data.push_back({V, F, vertexNormals, textureCoords});
-             ++originalModel->meshIndex;
-             viewer->draw();
+            std::vector<cg3d::MeshData> newMeshDataList;
+            newMeshDataList.push_back({V, F, vertexNormals, textureCoords});
+            for(auto md : originalModel->GetMeshList()[0]->data) {
+                newMeshDataList.push_back(md);
+            }
+            std::vector<std::shared_ptr<cg3d::Mesh>> newMeshList = {std::make_shared<cg3d::Mesh>("modified mash", newMeshDataList)};
+            for(auto m : originalModel->GetMeshList()) {
+                newMeshList.push_back(m);
+            }
+
+            originalModel->SetMeshList(newMeshList);
             return true;
         } else {
             return false;
