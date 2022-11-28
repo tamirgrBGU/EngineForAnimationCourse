@@ -2,6 +2,7 @@
 
 #include "Shader.h"
 #include <string>
+#include <memory>
 
 
 namespace cg3d

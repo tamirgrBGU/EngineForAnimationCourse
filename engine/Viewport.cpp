@@ -1,5 +1,5 @@
 #include "Viewport.h"
-#include <GL.h>
+#include <gl.h>
 
 
 namespace cg3d

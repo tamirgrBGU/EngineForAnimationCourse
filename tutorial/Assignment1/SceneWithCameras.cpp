@@ -216,11 +216,9 @@ void SceneWithCameras::KeyCallback(Viewport* _viewport, int x, int y, int key, i
 {
     if (action == GLFW_PRESS || action == GLFW_REPEAT)
     {
-        if (key == GLFW_KEY_SPACE) {
-            onSpace();
-        }
-//        if (key == GLFW_KEY_SPACE)
-//            SetActive(!IsActive());
+
+        if (key == GLFW_KEY_SPACE)
+            SetActive(!IsActive());
 
         // keys 1-9 are objects 1-9 (objects[0] - objects[8]), key 0 is object 10 (objects[9])
         if (key >= GLFW_KEY_0 && key <= GLFW_KEY_9) {
@@ -247,13 +245,3 @@ void SceneWithCameras::AddViewportCallback(Viewport* _viewport)
     Scene::AddViewportCallback(viewport);
 }
 
-void SceneWithCameras::onSpace() {
-    std::shared_ptr<Model> model;
-    if(pickedModel == nullptr) model = cube1;
-    else model = pickedModel;
-    for(auto &m : model->GetMeshList()) {
-        Connector c(m);
-        c.init(this);
-        c.simplifyTenPercent(this);
-    }
-}

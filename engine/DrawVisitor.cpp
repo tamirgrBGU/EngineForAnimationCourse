@@ -1,4 +1,4 @@
-#include <GL.h>
+#include <gl.h>
 #include "DrawVisitor.h"
 #include "Visitor.h"
 #include "Scene.h"

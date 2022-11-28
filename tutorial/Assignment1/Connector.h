@@ -11,6 +11,7 @@
 
 #include "glfw/Viewer.h"
 #include "Mesh.h"
+#include "Model.h"
 
 #ifndef ENGINEREWORK_CONNECTOR_H
 #define ENGINEREWORK_CONNECTOR_H
@@ -28,11 +29,11 @@ private:
     Eigen::MatrixXd C;
     int num_collapsed;
     bool simplify(igl::opengl::glfw::Viewer *viewer, int numberOfFacesToDelete);
+    bool simplifyMesh(igl::opengl::glfw::Viewer *viewer, int numberOfFacesToDelete, std::shared_ptr<cg3d::Mesh> mesh);
 
 public:
-    Connector(const std::string& filename);
-    Connector(std::shared_ptr<cg3d::Mesh> mesh);
-    void init(igl::opengl::glfw::Viewer *viewer);
+    Connector(std::shared_ptr<cg3d::Model> model);
+    std::shared_ptr<cg3d::Model> originalModel;
     bool simplifyTenPercent(igl::opengl::glfw::Viewer *viewer);
 
     Eigen::MatrixXd V;

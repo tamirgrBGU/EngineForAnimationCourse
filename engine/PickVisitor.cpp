@@ -1,6 +1,6 @@
 #include "PickVisitor.h"
 
-#include <GL.h>
+#include <gl.h>
 #include "Model.h"
 #include "Scene.h"
 #include "Utility.h"

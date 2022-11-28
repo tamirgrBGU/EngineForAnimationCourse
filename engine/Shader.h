@@ -3,6 +3,7 @@
 #include <string>
 #include <unordered_map>
 #include <Eigen/Core>
+#include <memory>
 
 
 namespace cg3d
