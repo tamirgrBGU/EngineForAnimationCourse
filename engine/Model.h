@@ -43,7 +43,7 @@ public:
     int meshIndex = 0;
 
     inline std::shared_ptr<Mesh> GetMesh(int index = 0) const { return meshList[index]; }
-    inline std::vector<std::shared_ptr<Mesh>>& GetMeshList() { return meshList; }
+    inline const std::vector<std::shared_ptr<Mesh>>& GetMeshList() const { return meshList; }
     void SetMeshList(std::vector<std::shared_ptr<Mesh>> _meshList);
     void UpdateDataAndDrawMeshes(const Program& program, bool _showFaces, bool bindTextures); // helper function
 

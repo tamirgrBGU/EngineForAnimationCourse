@@ -22,6 +22,7 @@ void BasicScene::Init(float fov, int width, int height, float near, float far)
     background->Scale(120, Axis::XYZ);
     background->SetPickable(false);
     background->SetStatic();
+    this->core().is_animating = true;
 
  
     auto program = std::make_shared<Program>("shaders/basicShader");
@@ -90,10 +91,12 @@ void BasicScene::decreaseQuality() {
 void BasicScene::KeyCallback(Viewport* _viewport, int x, int y, int key, int scancode, int action, int mods) {
     if (action == GLFW_PRESS || action == GLFW_REPEAT) {
 
-        if (key == GLFW_KEY_SPACE)
+        if (key == GLFW_KEY_SPACE) {
             decreaseQuality();
-        else if(key == GLFW_KEY_BACKSPACE)
+        }
+        else if(key == GLFW_KEY_BACKSPACE) {
             increaseQuality();
+        }
         else if(key == GLFW_KEY_ENTER)
             draw();
     }
@@ -103,5 +106,5 @@ void BasicScene::increaseQuality() {
     if(pickedModel == nullptr || pickedModel->GetMeshList().size() == 1) return;
     pickedModel->GetMeshList().pop_back();
     --pickedModel->meshIndex;
-    draw();
+    //draw();
 }
