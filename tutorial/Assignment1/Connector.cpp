@@ -57,12 +57,13 @@ bool Connector::simplifyMesh(igl::opengl::glfw::Viewer *viewer, int numberOfFace
 
         if(something_collapsed)
         {
+            viewer->data().clear();
             Eigen::MatrixXd vertexNormals;
             igl::per_vertex_normals(V,F,vertexNormals);
             Eigen::MatrixXd textureCoords = Eigen::MatrixXd::Zero(V.rows(),2);
             mesh->data.push_back({V, F, vertexNormals, textureCoords});
              ++originalModel->meshIndex;
-             viewer->draw();
+             //viewer->draw();
             return true;
         } else {
             return false;
