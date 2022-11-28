@@ -62,6 +62,7 @@ bool Connector::simplifyMesh(igl::opengl::glfw::Viewer *viewer, int numberOfFace
             Eigen::MatrixXd textureCoords = Eigen::MatrixXd::Zero(V.rows(),2);
             mesh->data.push_back({V, F, vertexNormals, textureCoords});
              ++originalModel->meshIndex;
+             viewer->draw();
             return true;
         } else {
             return false;
@@ -71,7 +72,7 @@ bool Connector::simplifyMesh(igl::opengl::glfw::Viewer *viewer, int numberOfFace
 }
 
 bool Connector::simplify(igl::opengl::glfw::Viewer *viewer, int numberOfFacesToDelete) {
-    simplifyMesh(viewer, numberOfFacesToDelete, originalModel->GetMeshList()[0]);
+    return simplifyMesh(viewer, numberOfFacesToDelete, originalModel->GetMeshList()[0]);
 }
 
 bool Connector::simplifyTenPercent(igl::opengl::glfw::Viewer *viewer) {
