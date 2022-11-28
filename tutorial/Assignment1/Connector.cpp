@@ -84,6 +84,6 @@ bool Connector::simplify(igl::opengl::glfw::Viewer *viewer, int numberOfFacesToD
 }
 
 bool Connector::simplifyTenPercent(igl::opengl::glfw::Viewer *viewer) {
-    int facesToDelete =  std::ceil(Q.size()*0.01);
+    int facesToDelete =  std::ceil(Q.size()*0.1);
     return simplify(viewer,facesToDelete);
 }

@@ -104,7 +104,10 @@ void BasicScene::KeyCallback(Viewport* _viewport, int x, int y, int key, int sca
 
 void BasicScene::increaseQuality() {
     if(pickedModel == nullptr || pickedModel->GetMeshList().size() == 1) return;
-    pickedModel->GetMeshList().pop_back();
-    --pickedModel->meshIndex;
-    //draw();
+    auto meshList = pickedModel->GetMeshList();
+    std::vector<std::shared_ptr<Mesh>> newMeshList;
+    for(int i=1; i<meshList.size(); i++) {
+        newMeshList.push_back(meshList[i]);
+    }
+    pickedModel->SetMeshList(newMeshList);
 }
