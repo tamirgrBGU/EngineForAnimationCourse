@@ -92,9 +92,9 @@ void BasicScene::KeyCallback(Viewport* _viewport, int x, int y, int key, int sca
 
         if (key == GLFW_KEY_SPACE)
             decreaseQuality();
-        else if(action == GLFW_KEY_BACKSPACE)
+        else if(key == GLFW_KEY_BACKSPACE)
             increaseQuality();
-        else if(action == GLFW_KEY_ENTER)
+        else if(key == GLFW_KEY_ENTER)
             draw();
     }
 }
