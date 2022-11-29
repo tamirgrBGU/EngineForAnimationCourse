@@ -66,9 +66,9 @@ bool Connector::simplifyMesh(igl::opengl::glfw::Viewer *viewer, int numberOfFace
                 newMeshDataList.push_back(md);
             }
             std::vector<std::shared_ptr<cg3d::Mesh>> newMeshList = {std::make_shared<cg3d::Mesh>("modified mash", newMeshDataList)};
-            for(auto m : originalModel->GetMeshList()) {
-                newMeshList.push_back(m);
-            }
+//            for(auto m : originalModel->GetMeshList()) {
+//                newMeshList.push_back(m);
+//            }
 
             originalModel->SetMeshList(newMeshList);
             return true;
