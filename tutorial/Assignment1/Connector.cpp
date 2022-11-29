@@ -62,10 +62,10 @@ std::shared_ptr<cg3d::Mesh> Connector::simplifyMesh(igl::opengl::glfw::Viewer *v
             Eigen::MatrixXd textureCoords = Eigen::MatrixXd::Zero(V.rows(),2);
             std::vector<cg3d::MeshData> newMeshDataList;
             newMeshDataList.push_back({V, F, vertexNormals, textureCoords});
-            for(auto md : originalMesh->data) {
-                newMeshDataList.push_back(md);
-            }
-            std::shared_ptr<cg3d::Mesh> newMesh = std::make_shared<cg3d::Mesh>("modified mash", newMeshDataList);
+//            for(auto md : originalMesh->data) {
+//                newMeshDataList.push_back(md);
+//            }
+            std::shared_ptr<cg3d::Mesh> newMesh = std::make_shared<cg3d::Mesh>("modified mesh", newMeshDataList);
             return newMesh;
         } else {
             return nullptr;
