@@ -29,7 +29,7 @@ private:
     Eigen::MatrixXd C;
     int num_collapsed;
     bool simplify(igl::opengl::glfw::Viewer *viewer, int numberOfFacesToDelete);
-    bool simplifyMesh(igl::opengl::glfw::Viewer *viewer, int numberOfFacesToDelete, std::shared_ptr<cg3d::Mesh> mesh);
+    std::shared_ptr<cg3d::Mesh> simplifyMesh(igl::opengl::glfw::Viewer *viewer, int numberOfFacesToDelete, std::shared_ptr<cg3d::Mesh> mesh);
 
 public:
     Connector(std::shared_ptr<cg3d::Model> model);

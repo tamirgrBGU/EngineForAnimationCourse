@@ -82,8 +82,14 @@ void BasicScene::Update(const Program& program, const Eigen::Matrix4f& proj, con
 
 void BasicScene::decreaseQuality() {
     if(pickedModel == nullptr) return;
+    if(previousMeshLists.find(pickedModel->name) == previousMeshLists.end()) {
+        previousMeshLists[pickedModel->name] = {};
+    }
+    previousMeshLists[pickedModel->name].push(pickedModel->GetMeshList());
     Connector c(pickedModel);
-    c.simplifyTenPercent(this);
+    if(!c.simplifyTenPercent(this)) {
+        previousMeshLists[pickedModel->name].pop();
+    }
 
 }
 
@@ -103,11 +109,8 @@ void BasicScene::KeyCallback(Viewport* _viewport, int x, int y, int key, int sca
 }
 
 void BasicScene::increaseQuality() {
-    if(pickedModel == nullptr || pickedModel->GetMeshList().size() == 1) return;
-    auto meshList = pickedModel->GetMeshList();
-    std::vector<std::shared_ptr<Mesh>> newMeshList;
-    for(int i=1; i<meshList.size(); i++) {
-        newMeshList.push_back(meshList[i]);
-    }
-    pickedModel->SetMeshList(newMeshList);
+    if(pickedModel == nullptr || previousMeshLists[pickedModel->name].empty()) return;
+    pickedModel->SetMeshList(previousMeshLists[pickedModel->name].top());
+    previousMeshLists[pickedModel->name].pop();
+
 }

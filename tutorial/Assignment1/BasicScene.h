@@ -4,7 +4,7 @@
 
 #include <utility>
 #include "Connector.h"
-
+#include <stack>
 class BasicScene : public cg3d::Scene
 {
 public:
@@ -17,6 +17,7 @@ public:
 private:
     std::shared_ptr<Movable> root;
     std::shared_ptr<cg3d::Model> cyl, sphere1 ,cube;
+    std::unordered_map<std::string, std::stack<std::vector<std::shared_ptr<cg3d::Mesh>>>> previousMeshLists;
     void decreaseQuality();
     void increaseQuality();
 

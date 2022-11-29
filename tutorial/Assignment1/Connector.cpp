@@ -36,7 +36,7 @@ Connector::Connector(std::shared_ptr<cg3d::Model> model): originalModel(model) {
     num_collapsed = 0;
 }
 
-bool Connector::simplifyMesh(igl::opengl::glfw::Viewer *viewer, int numberOfFacesToDelete, std::shared_ptr<cg3d::Mesh> mesh) {
+std::shared_ptr<cg3d::Mesh> Connector::simplifyMesh(igl::opengl::glfw::Viewer *viewer, int numberOfFacesToDelete, std::shared_ptr<cg3d::Mesh> mesh) {
 
 
     // If animating then collapse 10% of edges
@@ -65,22 +65,29 @@ bool Connector::simplifyMesh(igl::opengl::glfw::Viewer *viewer, int numberOfFace
             for(auto md : originalModel->GetMeshList()[0]->data) {
                 newMeshDataList.push_back(md);
             }
-            std::vector<std::shared_ptr<cg3d::Mesh>> newMeshList = {std::make_shared<cg3d::Mesh>("modified mash", newMeshDataList)};
-//            for(auto m : originalModel->GetMeshList()) {
-//                newMeshList.push_back(m);
-//            }
-
-            originalModel->SetMeshList(newMeshList);
-            return true;
+            std::shared_ptr<cg3d::Mesh> newMesh = std::make_shared<cg3d::Mesh>("modified mash", newMeshDataList);
+            return newMesh;
         } else {
-            return false;
+            return nullptr;
         }
     }
-    return false;
+    return nullptr;
 }
 
 bool Connector::simplify(igl::opengl::glfw::Viewer *viewer, int numberOfFacesToDelete) {
-    return simplifyMesh(viewer, numberOfFacesToDelete, originalModel->GetMeshList()[0]);
+    bool shouldWork = false;
+    std::vector<std::shared_ptr<cg3d::Mesh>> newMeshList;
+    for(auto mesh : originalModel->GetMeshList()) {
+        auto newMesh = simplifyMesh(viewer, numberOfFacesToDelete, mesh);
+        if(newMesh != nullptr) {
+            shouldWork = true;
+            newMeshList.push_back(newMesh);
+        } else {
+            newMeshList.push_back(mesh);
+        }
+    }
+    originalModel->SetMeshList(newMeshList);
+    return shouldWork;
 }
 
 bool Connector::simplifyTenPercent(igl::opengl::glfw::Viewer *viewer) {
