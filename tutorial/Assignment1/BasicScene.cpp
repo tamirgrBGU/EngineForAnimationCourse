@@ -85,9 +85,21 @@ void BasicScene::decreaseQuality() {
     if(previousMeshLists.find(pickedModel->name) == previousMeshLists.end()) {
         previousMeshLists[pickedModel->name] = {};
     }
+    std::vector<std::shared_ptr<cg3d::Mesh>> newMeshList;
+    bool simplified = false;
+    for(auto mesh : pickedModel->GetMeshList()) {
+        Connector c(mesh);
+        auto newMesh = c.simplifyTenPercent(this);
+        if(newMesh != nullptr) {
+            newMeshList.push_back(newMesh);
+            simplified = true;
+        } else {
+            newMeshList.push_back(mesh);
+        }
+    }
+    pickedModel->SetMeshList(newMeshList);
     previousMeshLists[pickedModel->name].push(pickedModel->GetMeshList());
-    Connector c(pickedModel);
-    if(!c.simplifyTenPercent(this)) {
+    if(!simplified) {
         previousMeshLists[pickedModel->name].pop();
     }
 

@@ -28,13 +28,13 @@ private:
     igl::min_heap< std::tuple<double,int,int> > Q;
     Eigen::MatrixXd C;
     int num_collapsed;
-    bool simplify(igl::opengl::glfw::Viewer *viewer, int numberOfFacesToDelete);
-    std::shared_ptr<cg3d::Mesh> simplifyMesh(igl::opengl::glfw::Viewer *viewer, int numberOfFacesToDelete, std::shared_ptr<cg3d::Mesh> mesh);
+    std::shared_ptr<cg3d::Mesh>  simplify(igl::opengl::glfw::Viewer *viewer, int numberOfFacesToDelete);
+    std::shared_ptr<cg3d::Mesh> simplifyMesh(igl::opengl::glfw::Viewer *viewer, int numberOfFacesToDelete);
 
 public:
-    Connector(std::shared_ptr<cg3d::Model> model);
-    std::shared_ptr<cg3d::Model> originalModel;
-    bool simplifyTenPercent(igl::opengl::glfw::Viewer *viewer);
+    Connector(std::shared_ptr<cg3d::Mesh> mesh);
+    std::shared_ptr<cg3d::Mesh> originalMesh;
+    std::shared_ptr<cg3d::Mesh> simplifyTenPercent(igl::opengl::glfw::Viewer *viewer);
 
     Eigen::MatrixXd V;
     Eigen::MatrixXi F;

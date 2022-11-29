@@ -7,9 +7,9 @@
 #include "Model.h"
 
 
-Connector::Connector(std::shared_ptr<cg3d::Model> model): originalModel(model) {
-    V = model->GetMesh(0)->data[0].vertices;
-    F = model->GetMesh(0)->data[0].faces;
+Connector::Connector(std::shared_ptr<cg3d::Mesh> mesh): originalMesh(mesh) {
+    V = mesh->data[0].vertices;
+    F = mesh->data[0].faces;
     igl::edge_flaps(F,E,EMAP,EF,EI);
     C.resize(E.rows(),V.cols());
     Eigen::VectorXd costs(E.rows());
@@ -36,7 +36,7 @@ Connector::Connector(std::shared_ptr<cg3d::Model> model): originalModel(model) {
     num_collapsed = 0;
 }
 
-std::shared_ptr<cg3d::Mesh> Connector::simplifyMesh(igl::opengl::glfw::Viewer *viewer, int numberOfFacesToDelete, std::shared_ptr<cg3d::Mesh> mesh) {
+std::shared_ptr<cg3d::Mesh> Connector::simplifyMesh(igl::opengl::glfw::Viewer *viewer, int numberOfFacesToDelete) {
 
 
     // If animating then collapse 10% of edges
@@ -62,7 +62,7 @@ std::shared_ptr<cg3d::Mesh> Connector::simplifyMesh(igl::opengl::glfw::Viewer *v
             Eigen::MatrixXd textureCoords = Eigen::MatrixXd::Zero(V.rows(),2);
             std::vector<cg3d::MeshData> newMeshDataList;
             newMeshDataList.push_back({V, F, vertexNormals, textureCoords});
-            for(auto md : originalModel->GetMeshList()[0]->data) {
+            for(auto md : originalMesh->data) {
                 newMeshDataList.push_back(md);
             }
             std::shared_ptr<cg3d::Mesh> newMesh = std::make_shared<cg3d::Mesh>("modified mash", newMeshDataList);
@@ -74,23 +74,13 @@ std::shared_ptr<cg3d::Mesh> Connector::simplifyMesh(igl::opengl::glfw::Viewer *v
     return nullptr;
 }
 
-bool Connector::simplify(igl::opengl::glfw::Viewer *viewer, int numberOfFacesToDelete) {
-    bool shouldWork = false;
+std::shared_ptr<cg3d::Mesh> Connector::simplify(igl::opengl::glfw::Viewer *viewer, int numberOfFacesToDelete) {
     std::vector<std::shared_ptr<cg3d::Mesh>> newMeshList;
-    for(auto mesh : originalModel->GetMeshList()) {
-        auto newMesh = simplifyMesh(viewer, numberOfFacesToDelete, mesh);
-        if(newMesh != nullptr) {
-            shouldWork = true;
-            newMeshList.push_back(newMesh);
-        } else {
-            newMeshList.push_back(mesh);
-        }
-    }
-    originalModel->SetMeshList(newMeshList);
-    return shouldWork;
+   return simplifyMesh(viewer, numberOfFacesToDelete);
+
 }
 
-bool Connector::simplifyTenPercent(igl::opengl::glfw::Viewer *viewer) {
+std::shared_ptr<cg3d::Mesh> Connector::simplifyTenPercent(igl::opengl::glfw::Viewer *viewer) {
     int facesToDelete =  std::ceil(Q.size()*0.1);
     return simplify(viewer,facesToDelete);
 }
