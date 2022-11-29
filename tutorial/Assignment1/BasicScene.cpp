@@ -97,8 +97,9 @@ void BasicScene::decreaseQuality() {
             newMeshList.push_back(mesh);
         }
     }
-    pickedModel->SetMeshList(newMeshList);
     previousMeshLists[pickedModel->name].push(pickedModel->GetMeshList());
+    pickedModel->SetMeshList(newMeshList);
+
     if(!simplified) {
         previousMeshLists[pickedModel->name].pop();
     }
