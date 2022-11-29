@@ -109,7 +109,8 @@ void BasicScene::KeyCallback(Viewport* _viewport, int x, int y, int key, int sca
 }
 
 void BasicScene::increaseQuality() {
-    if(pickedModel == nullptr || previousMeshLists[pickedModel->name].empty()) return;
+    if(pickedModel == nullptr || previousMeshLists.find(pickedModel->name) == previousMeshLists.end() ||
+        previousMeshLists[pickedModel->name].empty()) return;
     pickedModel->SetMeshList(previousMeshLists[pickedModel->name].top());
     previousMeshLists[pickedModel->name].pop();
 
