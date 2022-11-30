@@ -21,6 +21,9 @@ class ConnectorException : public std::exception {};
 
 class Connector {
 private:
+    Eigen::MatrixXd V, OV;
+    Eigen::MatrixXi F, OF;
+    Eigen::VectorXi EQ;
     Eigen::MatrixXi E;
     Eigen::VectorXi EMAP;
     Eigen::MatrixXi EF;
@@ -35,10 +38,9 @@ public:
     Connector(std::shared_ptr<cg3d::Mesh> mesh);
     std::shared_ptr<cg3d::Mesh> originalMesh;
     std::shared_ptr<cg3d::Mesh> simplifyTenPercent(igl::opengl::glfw::Viewer *viewer);
+    std::shared_ptr<cg3d::Mesh> reset(igl::opengl::glfw::Viewer *viewer);
 
-    Eigen::MatrixXd V;
-    Eigen::MatrixXi F;
-    Eigen::VectorXi EQ;
+
 
 
 

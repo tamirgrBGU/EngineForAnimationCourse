@@ -46,7 +46,7 @@ void Scene::MouseCallback(Viewport* viewport, int x, int y, int button, int acti
 
         if (pickedModel)
             debug("found ", pickedModel->isPickable ? "pickable" : "non-pickable", " model at pos ", x, ", ", y, ": ",
-                  pickedModel->name, ", depth: ", pickedModelDepth);
+                  pickedModel->name, ", depth: ", pickedModelDepth, ", faces: ", pickedModel->GetMesh(0)->data[0].faces.rows());
         else
             debug("found nothing at pos ", x, ", ", y);
 

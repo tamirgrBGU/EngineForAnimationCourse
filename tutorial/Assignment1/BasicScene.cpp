@@ -82,30 +82,43 @@ void BasicScene::Update(const Program& program, const Eigen::Matrix4f& proj, con
 
 void BasicScene::decreaseQuality() {
     if(pickedModel == nullptr) return;
-    if(previousMeshLists.find(pickedModel->name) == previousMeshLists.end()) {
-        previousMeshLists[pickedModel->name] = {};
+    if(connectors.find(pickedModel->name) == connectors.end()) {
+        initConnectors(pickedModel);
     }
+    std::vector<std::shared_ptr<Connector>> modelConnectors = connectors[pickedModel->name];
+
     std::vector<std::shared_ptr<cg3d::Mesh>> newMeshList;
-    bool simplified = false;
-    for(auto mesh : pickedModel->GetMeshList()) {
-        Connector c(mesh);
-        auto newMesh = c.simplifyTenPercent(this);
+    for(int i=0; i<pickedModel->GetMeshList().size(); i++) {
+        auto newMesh = modelConnectors[i]->simplifyTenPercent(this);
         if(newMesh != nullptr) {
             newMeshList.push_back(newMesh);
-            simplified = true;
         } else {
-            newMeshList.push_back(mesh);
+            newMeshList.push_back(pickedModel->GetMesh(i));
         }
     }
-    previousMeshLists[pickedModel->name].push(pickedModel->GetMeshList());
     pickedModel->SetMeshList(newMeshList);
-
-    if(!simplified) {
-        previousMeshLists[pickedModel->name].pop();
-    }
 
 }
 
+void BasicScene::increaseQuality() {
+    if(pickedModel == nullptr || connectors.find(pickedModel->name) == connectors.end()) return;
+    std::vector<std::shared_ptr<cg3d::Mesh>> newMeshList;
+    for(auto connector : connectors[pickedModel->name]) {
+        newMeshList.push_back(connector->reset(this));
+    }
+    pickedModel->SetMeshList(newMeshList);
+}
+
+void BasicScene::initConnectors(std::shared_ptr<cg3d::Model> model) {
+    std::vector<std::shared_ptr<Connector>> connectorsList;
+    for(auto mesh : model->GetMeshList()) {
+        auto connector = std::make_shared<Connector>(mesh);
+        connector->reset(this);
+        connectorsList.push_back(connector);
+    }
+    connectors[model->name] = connectorsList;
+
+}
 
 void BasicScene::KeyCallback(Viewport* _viewport, int x, int y, int key, int scancode, int action, int mods) {
     if (action == GLFW_PRESS || action == GLFW_REPEAT) {
@@ -119,12 +132,4 @@ void BasicScene::KeyCallback(Viewport* _viewport, int x, int y, int key, int sca
         else if(key == GLFW_KEY_ENTER)
             draw();
     }
-}
-
-void BasicScene::increaseQuality() {
-    if(pickedModel == nullptr || previousMeshLists.find(pickedModel->name) == previousMeshLists.end() ||
-        previousMeshLists[pickedModel->name].empty()) return;
-    pickedModel->SetMeshList(previousMeshLists[pickedModel->name].top());
-    previousMeshLists[pickedModel->name].pop();
-
 }

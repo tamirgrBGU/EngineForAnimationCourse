@@ -8,8 +8,13 @@
 
 
 Connector::Connector(std::shared_ptr<cg3d::Mesh> mesh): originalMesh(mesh) {
-    V = mesh->data[0].vertices;
-    F = mesh->data[0].faces;
+    OV = mesh->data[0].vertices;
+    OF = mesh->data[0].faces;
+}
+
+std::shared_ptr<cg3d::Mesh> Connector::reset(igl::opengl::glfw::Viewer *viewer) {
+    V = OV;
+    F = OF;
     igl::edge_flaps(F,E,EMAP,EF,EI);
     C.resize(E.rows(),V.cols());
     Eigen::VectorXd costs(E.rows());
@@ -34,11 +39,17 @@ Connector::Connector(std::shared_ptr<cg3d::Mesh> mesh): originalMesh(mesh) {
     }
 
     num_collapsed = 0;
+    Eigen::MatrixXd vertexNormals;
+    igl::per_vertex_normals(V,F,vertexNormals);
+    Eigen::MatrixXd textureCoords = Eigen::MatrixXd::Zero(V.rows(),2);
+    std::vector<cg3d::MeshData> newMeshDataList;
+    newMeshDataList.push_back({V, F, vertexNormals, textureCoords});
+    std::shared_ptr<cg3d::Mesh> newMesh = std::make_shared<cg3d::Mesh>("modified mesh", newMeshDataList);
+    return newMesh;
 }
 
+
 std::shared_ptr<cg3d::Mesh> Connector::simplifyMesh(igl::opengl::glfw::Viewer *viewer, int numberOfFacesToDelete) {
-
-
     // If animating then collapse 10% of edges
     if(!Q.empty())
     {
@@ -62,9 +73,6 @@ std::shared_ptr<cg3d::Mesh> Connector::simplifyMesh(igl::opengl::glfw::Viewer *v
             Eigen::MatrixXd textureCoords = Eigen::MatrixXd::Zero(V.rows(),2);
             std::vector<cg3d::MeshData> newMeshDataList;
             newMeshDataList.push_back({V, F, vertexNormals, textureCoords});
-//            for(auto md : originalMesh->data) {
-//                newMeshDataList.push_back(md);
-//            }
             std::shared_ptr<cg3d::Mesh> newMesh = std::make_shared<cg3d::Mesh>("modified mesh", newMeshDataList);
             return newMesh;
         } else {
@@ -81,6 +89,7 @@ std::shared_ptr<cg3d::Mesh> Connector::simplify(igl::opengl::glfw::Viewer *viewe
 }
 
 std::shared_ptr<cg3d::Mesh> Connector::simplifyTenPercent(igl::opengl::glfw::Viewer *viewer) {
-    int facesToDelete =  std::ceil(Q.size()*0.1);
+    int facesToDelete =  std::ceil(Q.size()*0.01);
     return simplify(viewer,facesToDelete);
 }
+

@@ -17,7 +17,9 @@ public:
 private:
     std::shared_ptr<Movable> root;
     std::shared_ptr<cg3d::Model> cyl, sphere1 ,cube;
-    std::unordered_map<std::string, std::stack<std::vector<std::shared_ptr<cg3d::Mesh>>>> previousMeshLists;
+    std::unordered_map<std::string, std::vector<std::shared_ptr<Connector>>> connectors;
+    void initConnectors(std::shared_ptr<cg3d::Model> model);
+    //std::unordered_map<std::string, std::stack<std::vector<std::shared_ptr<cg3d::Mesh>>>> previousMeshLists;
     void decreaseQuality();
     void increaseQuality();
 
