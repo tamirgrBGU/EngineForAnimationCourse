@@ -3,6 +3,7 @@ build
 external/*
 !external/glad
 !external/OBJ_Loader
+/cmake-build-debug*/
 igl/doc
 .vs
 .idea
