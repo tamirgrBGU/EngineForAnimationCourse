@@ -33,19 +33,13 @@ private:
     int num_collapsed;
     std::shared_ptr<cg3d::Mesh>  simplify(igl::opengl::glfw::Viewer *viewer, int numberOfFacesToDelete);
     std::shared_ptr<cg3d::Mesh> simplifyMesh(igl::opengl::glfw::Viewer *viewer, int numberOfFacesToDelete);
-    std::unordered_map<std::pair<int, int>, Eigen::Matrix<double, 4, 4>> Qs;
+    std::map<std::pair<int, int>, Eigen::Matrix<double, 4, 4>> Qs;
 
 public:
     Connector(std::shared_ptr<cg3d::Mesh> mesh);
     std::shared_ptr<cg3d::Mesh> originalMesh;
     std::shared_ptr<cg3d::Mesh> simplifyTenPercent(igl::opengl::glfw::Viewer *viewer);
     std::shared_ptr<cg3d::Mesh> reset(igl::opengl::glfw::Viewer *viewer);
-
-
-
-
-
-
 };
 
 
