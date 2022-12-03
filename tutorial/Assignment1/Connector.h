@@ -28,11 +28,12 @@ private:
     Eigen::VectorXi EMAP;
     Eigen::MatrixXi EF;
     Eigen::MatrixXi EI;
-    igl::min_heap< std::tuple<double,int,int> > Q;
+    igl::min_heap< std::tuple<double,int,int> > queue;
     Eigen::MatrixXd C;
     int num_collapsed;
     std::shared_ptr<cg3d::Mesh>  simplify(igl::opengl::glfw::Viewer *viewer, int numberOfFacesToDelete);
     std::shared_ptr<cg3d::Mesh> simplifyMesh(igl::opengl::glfw::Viewer *viewer, int numberOfFacesToDelete);
+    std::unordered_map<std::pair<int, int>, Eigen::Matrix<double, 4, 4>> Qs;
 
 public:
     Connector(std::shared_ptr<cg3d::Mesh> mesh);

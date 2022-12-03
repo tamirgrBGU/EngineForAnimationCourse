@@ -19,8 +19,8 @@ std::shared_ptr<cg3d::Mesh> Connector::reset(igl::opengl::glfw::Viewer *viewer) 
     C.resize(E.rows(),V.cols());
     Eigen::VectorXd costs(E.rows());
     // https://stackoverflow.com/questions/2852140/priority-queue-clear-method
-    // Q.clear();
-    Q = {};
+    // queue.clear();
+    queue = {};
     EQ = Eigen::VectorXi::Zero(E.rows());
     {
         Eigen::VectorXd costs(E.rows());
@@ -34,7 +34,7 @@ std::shared_ptr<cg3d::Mesh> Connector::reset(igl::opengl::glfw::Viewer *viewer) 
         },10000);
         for(int e = 0;e<E.rows();e++)
         {
-            Q.emplace(costs(e),e,0);
+            queue.emplace(costs(e), e, 0);
         }
     }
 
@@ -51,14 +51,14 @@ std::shared_ptr<cg3d::Mesh> Connector::reset(igl::opengl::glfw::Viewer *viewer) 
 
 std::shared_ptr<cg3d::Mesh> Connector::simplifyMesh(igl::opengl::glfw::Viewer *viewer, int numberOfFacesToDelete) {
     // If animating then collapse 10% of edges
-    if(!Q.empty())
+    if(!queue.empty())
     {
         bool something_collapsed = false;
         // collapse edge
         const int max_iter = std::ceil(numberOfFacesToDelete);
         for(int j = 0;j<max_iter;j++)
         {
-            if(!igl::collapse_edge(igl::shortest_edge_and_midpoint,V,F,E,EMAP,EF,EI,Q,EQ,C))
+            if(!igl::collapse_edge(igl::shortest_edge_and_midpoint, V, F, E, EMAP, EF, EI, queue, EQ, C))
             {
                 break;
             }
@@ -89,7 +89,7 @@ std::shared_ptr<cg3d::Mesh> Connector::simplify(igl::opengl::glfw::Viewer *viewe
 }
 
 std::shared_ptr<cg3d::Mesh> Connector::simplifyTenPercent(igl::opengl::glfw::Viewer *viewer) {
-    int facesToDelete =  std::ceil(Q.size()*0.01);
+    int facesToDelete =  std::ceil(queue.size() * 0.01);
     return simplify(viewer,facesToDelete);
 }
 
