@@ -35,6 +35,9 @@ private:
     std::shared_ptr<cg3d::Mesh> simplifyMesh(igl::opengl::glfw::Viewer *viewer, int numberOfFacesToDelete);
       igl::decimate_cost_and_placement_callback costAndPlacementCallback;
     void calculateCallBack();
+    std::map<int, Eigen::MatrixXd> Qs;
+    std::map<int, Eigen::MatrixXd> VTags;
+    std::map<int, Eigen::MatrixXd> QTags;
 
 public:
     Connector(std::shared_ptr<cg3d::Mesh> mesh);

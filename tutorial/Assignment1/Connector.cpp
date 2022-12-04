@@ -58,7 +58,7 @@ std::shared_ptr<cg3d::Mesh> Connector::reset(igl::opengl::glfw::Viewer *viewer) 
 std::shared_ptr<cg3d::Mesh> Connector::simplifyMesh(igl::opengl::glfw::Viewer *viewer, int numberOfFacesToDelete) {
     // If animating then collapse 10% of edges
     calculateCallBack();
-
+    int collapsedBefore = num_collapsed;
 
     if(!queue.empty())
     {
@@ -67,10 +67,20 @@ std::shared_ptr<cg3d::Mesh> Connector::simplifyMesh(igl::opengl::glfw::Viewer *v
         const int max_iter = std::ceil(numberOfFacesToDelete);
         for(int j = 0;j<max_iter;j++)
         {
+            auto next = queue.top();
+            auto cost = std::get<0>(next);
+            auto v1Index = std::get<1>(next);
+            auto v2Index = std::get<2>(next);
+            auto v1 = V.row(v2Index);
+            auto v2 = V.row(v2Index);
             if(!igl::collapse_edge(costAndPlacementCallback, V, F, E, EMAP, EF, EI, queue, EQ, C))
             {
                 break;
             }
+            std::cout << "Collapsed edge in: (" << v1 << "), (" << v2 << ") with cost: " << cost << std::endl;
+            std::cout << "New position is: (" << VTags[v1Index](0, 0) << " " << VTags[v1Index](1, 0) << " " <<  VTags[v1Index](2, 0) << "), (" <<
+                VTags[v2Index](0, 0) << " " << VTags[v2Index](1, 0) << " " << VTags[v2Index](2, 0)  << ")" << std::endl;
+
             something_collapsed = true;
             num_collapsed++;
         }
@@ -82,6 +92,7 @@ std::shared_ptr<cg3d::Mesh> Connector::simplifyMesh(igl::opengl::glfw::Viewer *v
             Eigen::MatrixXd textureCoords = Eigen::MatrixXd::Zero(V.rows(),2);
             std::vector<cg3d::MeshData> newMeshDataList;
             newMeshDataList.push_back({V, F, vertexNormals, textureCoords});
+            std::cout << "Collapsed " << num_collapsed - collapsedBefore << std::endl;
             std::shared_ptr<cg3d::Mesh> newMesh = std::make_shared<cg3d::Mesh>("modified mesh", newMeshDataList);
             return newMesh;
         } else {
@@ -105,19 +116,13 @@ std::shared_ptr<cg3d::Mesh> Connector::simplifyTenPercent(igl::opengl::glfw::Vie
 void Connector::calculateCallBack() {
     Eigen::MatrixXd vertexNormals;
     igl::per_vertex_normals(V, F, vertexNormals);
-    std::map<int, Eigen::MatrixXd> Qs;
-    std::map<int, Eigen::MatrixXd> VTags;
-    std::map<int, Eigen::MatrixXd> QTags;
-
-
-
     for(int i = 0; i<V.rows(); i++) {
         Eigen::MatrixXd normal = vertexNormals.row(i);
         Eigen::MatrixXd transposedNormal = normal.transpose();
         Eigen::MatrixXd vertex = V.row(i);
         Eigen::MatrixXd transposedVertex = vertex.transpose();
         Eigen::MatrixXd d = -(transposedNormal * vertex);
-        double dVal = d.row(0)[0];
+        double dVal = d(0,0);
         Eigen::MatrixXd m = (2.0*dVal*transposedNormal);
         Eigen::MatrixXd m2 = m*vertex;
         Eigen::MatrixXd dSquare = d * d;
@@ -163,7 +168,8 @@ void Connector::calculateCallBack() {
         if(lu.isInvertible()) {
             Eigen::MatrixXd inv = lu.inverse();
             Eigen::MatrixXd ones = Eigen::Vector4d(0, 0, 0, 1);
-            res = inv * ones;
+            Eigen::MatrixXd res2 = inv * ones;
+            res = res2;
         } else {
             Eigen::MatrixXd sum = (0.5 * static_cast<Eigen::MatrixXd>(V.row(i1) + V.row(i2)));
             res.x() = sum(0, 0);
@@ -177,7 +183,7 @@ void Connector::calculateCallBack() {
 
 
 
-    costAndPlacementCallback =  [QTags, VTags] (const int e, const Eigen::MatrixXd & V, const Eigen::MatrixXi & F, const Eigen::MatrixXi & E, const Eigen::VectorXi &EMAP,
+    costAndPlacementCallback =  [this] (const int e, const Eigen::MatrixXd & V, const Eigen::MatrixXi & F, const Eigen::MatrixXi & E, const Eigen::VectorXi &EMAP,
                                         const Eigen::MatrixXi & EF, const Eigen::MatrixXi &EI, double & cost, Eigen::RowVectorXd & p) {
         Eigen::MatrixXd qTag = QTags.at(e);
         Eigen::MatrixXd vTag = VTags.at(e);
@@ -190,4 +196,5 @@ void Connector::calculateCallBack() {
 
 
 }
+
 
