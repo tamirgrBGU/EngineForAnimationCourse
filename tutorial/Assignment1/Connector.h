@@ -33,7 +33,8 @@ private:
     int num_collapsed;
     std::shared_ptr<cg3d::Mesh>  simplify(igl::opengl::glfw::Viewer *viewer, int numberOfFacesToDelete);
     std::shared_ptr<cg3d::Mesh> simplifyMesh(igl::opengl::glfw::Viewer *viewer, int numberOfFacesToDelete);
-    std::map<std::pair<int, int>, Eigen::Matrix<double, 4, 4>> Qs;
+      igl::decimate_cost_and_placement_callback costAndPlacementCallback;
+    void calculateCallBack();
 
 public:
     Connector(std::shared_ptr<cg3d::Mesh> mesh);
