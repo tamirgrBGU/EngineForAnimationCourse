@@ -113,13 +113,54 @@ std::shared_ptr<cg3d::Mesh> Connector::simplifyTenPercent(igl::opengl::glfw::Vie
     return simplify(viewer,facesToDelete);
 }
 
+Eigen::MatrixXd to4D(Eigen::MatrixXd vec, bool isNormal= true) {
+    bool shouldTranspose = true;
+    Eigen::MatrixXd vecCopy;
+    if(vec.rows() == 1 && vec.cols() == 3) {
+        vecCopy = vec.transpose();
+        shouldTranspose = false;
+    } else {
+        vecCopy = vec;
+    }
+
+    Eigen::Vector4d res;
+    res.x() = vecCopy(0, 0);
+    res.y() = vecCopy(1, 0);
+    res.z() = vecCopy(2,0);
+    if(isNormal) {
+        res.w() = 0;
+    } else {
+        res.w() = 1;
+    }
+    if(shouldTranspose)
+        res = res.transpose();
+
+    return res.transpose();
+
+}
+
+Eigen::MatrixXd diag4D(double diagVal) {
+    Eigen::Matrix4d diag;
+    for(int i=0; i<4; i++) {
+        for(int j=0; j<4; j++) {
+            if(i==j) {
+                diag(i,j) = diagVal;
+            } else {
+                diag(i,j) = 0;
+            }
+        }
+    }
+    return diag;
+
+}
+
 void Connector::calculateCallBack() {
     Eigen::MatrixXd vertexNormals;
     igl::per_vertex_normals(V, F, vertexNormals);
     for(int i = 0; i<V.rows(); i++) {
-        Eigen::MatrixXd normal = vertexNormals.row(i);
+        Eigen::MatrixXd normal = to4D(vertexNormals.row(i));
         Eigen::MatrixXd transposedNormal = normal.transpose();
-        Eigen::MatrixXd vertex = V.row(i);
+        Eigen::MatrixXd vertex = to4D(V.row(i));
         Eigen::MatrixXd transposedVertex = vertex.transpose();
         Eigen::MatrixXd d = -(transposedNormal * vertex);
         double dVal = d(0,0);
@@ -130,31 +171,30 @@ void Connector::calculateCallBack() {
         Eigen::MatrixXd q1 = transposedVertex * (normal * transposedNormal) * vertex;
         Eigen::MatrixXd q2 = static_cast<Eigen::MatrixXd>(2 * (dVal*normal).transpose())*vertex;
 
-        double dValSquare = dVal*dVal;
-        Eigen::DiagonalMatrix<double, 3> diag(dValSquare, dValSquare, dValSquare);
+        Eigen::MatrixXd diag = diag4D(dVal*dVal);
         Eigen::MatrixXd q = static_cast<Eigen::MatrixXd>(q1 + q2) + static_cast<Eigen::MatrixXd>(diag);
 
 
+//
+//        Eigen::Matrix4d newQ;
+//        for(int k=0; k<3; k++) {
+//            for(int l=0; l<3; l++) {
+//                newQ(k, l) = q(k, l);
+//            }
+//        }
+//
+//
+//        newQ(3,0) = 0;
+//        newQ(3,1) = 0;
+//        newQ(3,2) = 0;
+//
+//        newQ(0, 3) = 0;
+//        newQ(1, 3) = 0;
+//        newQ(2, 3) = 0;
+//
+//        newQ(3,3) = 1;
 
-        Eigen::Matrix4d newQ;
-        for(int k=0; k<3; k++) {
-            for(int l=0; l<3; l++) {
-                newQ(k, l) = q(k, l);
-            }
-        }
-
-
-        newQ(3,0) = 0;
-        newQ(3,1) = 0;
-        newQ(3,2) = 0;
-
-        newQ(0, 3) = 0;
-        newQ(1, 3) = 0;
-        newQ(2, 3) = 0;
-
-        newQ(3,3) = 1;
-
-        Qs[i] = newQ;
+        Qs[i] = q;
     }
 
     for(int j = 0; j<E.rows(); j++) {
@@ -163,7 +203,16 @@ void Connector::calculateCallBack() {
 
         Eigen::MatrixXd qTag = Qs[i1] + Qs[i2];
         QTags[j] = qTag;
-        Eigen::FullPivLU<Eigen::MatrixXd> lu(qTag);
+
+        Eigen::Matrix4d newQ;
+        newQ.row(0) = newQ.row(0);
+        newQ.row(1) = newQ.row(1);
+        newQ.row(2) = newQ.row(2);
+        newQ(3, 0) = 0;
+        newQ(3, 1) = 0;
+        newQ(3, 2) = 0;
+        newQ(3, 3) = 1;
+        Eigen::FullPivLU<Eigen::MatrixXd> lu(newQ);
         Eigen::Vector4d res;
         if(lu.isInvertible()) {
             Eigen::MatrixXd inv = lu.inverse();
@@ -171,11 +220,8 @@ void Connector::calculateCallBack() {
             Eigen::MatrixXd res2 = inv * ones;
             res = res2;
         } else {
-            Eigen::MatrixXd sum = (0.5 * static_cast<Eigen::MatrixXd>(V.row(i1) + V.row(i2)));
-            res.x() = sum(0, 0);
-            res.y() = sum(0, 1);
-            res.z() = sum(0, 2);
-            res.w() = 1;
+            Eigen::MatrixXd sum = 0.5 * static_cast<Eigen::MatrixXd>(to4D(V.row(i1)) + to4D(V.row(i2)));
+            res = sum.transpose();
         }
 
         VTags[j] = res;
