@@ -13,5 +13,8 @@ public:
 
 private:
     std::shared_ptr<Movable> root;
-    std::shared_ptr<cg3d::Model> cyl, sphere1 ,cube;
+    std::shared_ptr<cg3d::Model> camel, sphere1 ,cube;
+    void CheckAndHandleCollusion(std::shared_ptr<cg3d::Model> model1, std::shared_ptr<cg3d::Model> model2);
+    void HandleCollusion(std::shared_ptr<cg3d::Model> model1, std::shared_ptr<cg3d::Model> model2);
+    static std::vector<Eigen::Vector3d> VerticesList(std::shared_ptr<cg3d::Model> model);
 };

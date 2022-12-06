@@ -5,6 +5,7 @@
 #include "IglMeshLoader.h"
 #include "igl/read_triangle_mesh.cpp"
 #include "igl/edge_flaps.h"
+#include "BoundingBox.h"
 
 // #include "AutoMorphingModel.h"
 
@@ -30,22 +31,23 @@ void BasicScene::Init(float fov, int width, int height, float near, float far)
  
     material->AddTexture(0, "textures/box0.bmp", 2);
     auto sphereMesh{IglLoader::MeshFromFiles("sphere_igl", "data/sphere.obj")};
-    auto cylMesh{IglLoader::MeshFromFiles("cyl_igl","data/camel_b.obj")};
+    auto camelMesh{IglLoader::MeshFromFiles("cyl_igl", "data/camel_b.obj")};
     auto cubeMesh{IglLoader::MeshFromFiles("cube_igl","data/cube.off")};
     
     sphere1 = Model::Create( "sphere",sphereMesh, material);
-    cyl = Model::Create( "cyl", cylMesh, material);
+    camel = Model::Create("camel", camelMesh, material);
     cube = Model::Create( "cube", cubeMesh, material);
     sphere1->Scale(2);
     sphere1->showWireframe = true;
     sphere1->Translate({-3,0,0});
-    cyl->Translate({3,0,0});
-    cyl->Scale(0.12f);
-    cyl->showWireframe = true;
+    camel->Translate({3, 0, 0});
+    //camel->Rotate(30, cg3d::Movable::Axis::Y);
+    camel->Scale(0.12f);
+    camel->showWireframe = true;
     cube->showWireframe = true;
     camera->Translate(20, Axis::Z);
     root->AddChild(sphere1);
-    root->AddChild(cyl);
+    root->AddChild(camel);
     root->AddChild(cube);
     
     auto mesh = cube->GetMeshList();
@@ -76,5 +78,82 @@ void BasicScene::Update(const Program& program, const Eigen::Matrix4f& proj, con
     Scene::Update(program, proj, view, model);
     program.SetUniform4f("lightColor", 1.0f, 1.0f, 1.0f, 0.5f);
     program.SetUniform4f("Kai", 1.0f, 1.0f, 1.0f, 1.0f);
+    std::vector<std::shared_ptr<Model>> rootModels;
+    for(auto child : root->children) {
+        std::shared_ptr<Model> model = std::dynamic_pointer_cast<Model>(child);
+        if(model != nullptr && !model->isHidden) {
+            rootModels.push_back(model);
+        }
+    }
+
+    for(int i=0; i < rootModels.size(); i++) {
+        for(int j=i+1; j < rootModels.size(); j++) {
+            CheckAndHandleCollusion(rootModels[i], rootModels[j]);
+        }
+    }
+
     //cube->Rotate(0.01f, Axis::All);
+}
+
+std::vector<Eigen::Vector3d> BasicScene::VerticesList(std::shared_ptr<cg3d::Model> model) {
+    std::vector<Eigen::Vector3d> points;
+
+   Eigen::Matrix4d transform = model->GetTransform().cast<double>();
+    for(auto mesh : model->GetMeshList()) {
+
+        for(const auto& meshData : mesh->data) {
+            for(int i=0; i<meshData.vertices.rows(); i++) {
+                Eigen::Vector4d vertex(meshData.vertices(i, 0), meshData.vertices(i, 1), meshData.vertices(i, 2), 1);
+                Eigen::Vector4d fixedVertex4d = transform * vertex;
+                Eigen::Vector3d fixedVertex3d(fixedVertex4d.x(), fixedVertex4d.y(), fixedVertex4d.z());
+
+                points.push_back(fixedVertex3d);
+            }
+        }
+    }
+    return points;
+}
+
+
+void BasicScene::CheckAndHandleCollusion(std::shared_ptr<cg3d::Model> model1, std::shared_ptr<cg3d::Model> model2) {
+    auto vList1 = VerticesList(model1);
+    auto vList2 = VerticesList(model2);
+
+    BoundingBox bb1(vList1);
+    BoundingBox bb2(vList2);
+    auto collusionRes = bb1.Collide(bb2);
+    bool collide = false;
+
+    if(collusionRes.has_value()) {
+        collide = true;
+    }
+
+
+//    while(collusionRes.has_value()) {
+//        BoundingBox collusionBox = collusionRes.value();
+//        int vList1SizeBefore = vList1.size();
+//        int vList2SizeBefore = vList2.size();
+//        vList1 = collusionBox.FilterIfOut(vList1);
+//        vList2 = collusionBox.FilterIfOut(vList2);
+//        if(vList1.size() < 2 || vList2.size() < 2) {
+//            collide = false;
+//            break;
+//        }
+//        if(vList1SizeBefore == vList1.size() && vList2SizeBefore == vList2.size()) {
+//            collide = true;
+//            break;
+//        }
+//        bb1 = BoundingBox(vList1);
+//        bb2 = BoundingBox(vList2);
+//        collusionRes = bb1.Collide(bb2);
+//    }
+
+    if(collide) {
+        HandleCollusion(model1, model2);
+    }
+
+}
+
+void BasicScene::HandleCollusion(std::shared_ptr<cg3d::Model> model1, std::shared_ptr<cg3d::Model> model2) {
+    std::cout << "Collusion detected between " << model1->name << " and " << model2->name << "!" << std::endl;
 }
