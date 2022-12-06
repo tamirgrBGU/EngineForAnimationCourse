@@ -133,14 +133,20 @@ void BasicScene::CheckAndHandleCollusion(std::shared_ptr<cg3d::Model> model1, st
         BoundingBox collusionBox = collusionRes.value();
         int vList1SizeBefore = vList1.size();
         int vList2SizeBefore = vList2.size();
-        vList1 = collusionBox.FilterIfOut(vList1);
-        vList2 = collusionBox.FilterIfOut(vList2);
+        if(vList1.size() >= 15)
+            vList1 = collusionBox.FilterIfOut(vList1);
+        if(vList2.size() >= 15)
+            vList2 = collusionBox.FilterIfOut(vList2);
 //        if(vList1.size() < 10 && vList2.size() < 10) {
 //            collide = true;
 //            break;
 //        }
+//        if(vList1.empty() || vList2.empty()) {
+//            collide = false;
+//            break;
+//        }
         if(vList1.size() < 2 || vList2.size() < 2) {
-            collide = true;
+            collide = !vList1.empty() && !vList2.empty();
             break;
         }
         if(vList1SizeBefore == vList1.size() && vList2SizeBefore == vList2.size()) {
