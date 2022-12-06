@@ -124,29 +124,33 @@ void BasicScene::CheckAndHandleCollusion(std::shared_ptr<cg3d::Model> model1, st
     auto collusionRes = bb1.Collide(bb2);
     bool collide = false;
 
-    if(collusionRes.has_value()) {
-        collide = true;
-    }
+//    if(collusionRes.has_value()) {
+//        collide = true;
+//    }
 
 
-//    while(collusionRes.has_value()) {
-//        BoundingBox collusionBox = collusionRes.value();
-//        int vList1SizeBefore = vList1.size();
-//        int vList2SizeBefore = vList2.size();
-//        vList1 = collusionBox.FilterIfOut(vList1);
-//        vList2 = collusionBox.FilterIfOut(vList2);
-//        if(vList1.size() < 2 || vList2.size() < 2) {
-//            collide = false;
-//            break;
-//        }
-//        if(vList1SizeBefore == vList1.size() && vList2SizeBefore == vList2.size()) {
+    while(collusionRes.has_value()) {
+        BoundingBox collusionBox = collusionRes.value();
+        int vList1SizeBefore = vList1.size();
+        int vList2SizeBefore = vList2.size();
+        vList1 = collusionBox.FilterIfOut(vList1);
+        vList2 = collusionBox.FilterIfOut(vList2);
+//        if(vList1.size() < 10 && vList2.size() < 10) {
 //            collide = true;
 //            break;
 //        }
-//        bb1 = BoundingBox(vList1);
-//        bb2 = BoundingBox(vList2);
-//        collusionRes = bb1.Collide(bb2);
-//    }
+        if(vList1.size() < 2 || vList2.size() < 2) {
+            collide = true;
+            break;
+        }
+        if(vList1SizeBefore == vList1.size() && vList2SizeBefore == vList2.size()) {
+            collide = true;
+            break;
+        }
+        bb1 = BoundingBox(vList1);
+        bb2 = BoundingBox(vList2);
+        collusionRes = bb1.Collide(bb2);
+    }
 
     if(collide) {
         HandleCollusion(model1, model2);
