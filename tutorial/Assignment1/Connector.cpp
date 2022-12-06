@@ -25,12 +25,14 @@ std::shared_ptr<cg3d::Mesh> Connector::reset(igl::opengl::glfw::Viewer *viewer) 
     queue = {};
     EQ = Eigen::VectorXi::Zero(E.rows());
     {
+        calculateCallBack();
         Eigen::VectorXd costs(E.rows());
+
         igl::parallel_for(E.rows(),[&](const int e)
         {
             double cost = e;
             Eigen::RowVectorXd p(1,3);
-            igl::shortest_edge_and_midpoint(e,V,F,E,EMAP,EF,EI,cost,p);
+            costAndPlacementCallback(e,V,F,E,EMAP,EF,EI,cost,p);
             C.row(e) = p;
             costs(e) = cost;
         },10000);
@@ -113,7 +115,7 @@ std::shared_ptr<cg3d::Mesh> Connector::simplifyTenPercent(igl::opengl::glfw::Vie
     return simplify(viewer,facesToDelete);
 }
 
-Eigen::MatrixXd to4D(Eigen::MatrixXd vec, bool isNormal= true) {
+Eigen::MatrixXd to4D(Eigen::MatrixXd vec, bool isNormal= false) {
     bool shouldTranspose = true;
     Eigen::MatrixXd vecCopy;
     if(vec.rows() == 1 && vec.cols() == 3) {
@@ -135,7 +137,7 @@ Eigen::MatrixXd to4D(Eigen::MatrixXd vec, bool isNormal= true) {
     if(shouldTranspose)
         res = res.transpose();
 
-    return res.transpose();
+    return res;
 
 }
 
@@ -150,7 +152,7 @@ Eigen::MatrixXd diag4D(double diagVal) {
             }
         }
     }
-    return diag;
+    return diag.transpose();
 
 }
 
@@ -169,50 +171,30 @@ void Connector::calculateCallBack() {
         Eigen::MatrixXd dSquare = d * d;
 
         Eigen::MatrixXd q1 = transposedVertex * (normal * transposedNormal) * vertex;
-        Eigen::MatrixXd q2 = static_cast<Eigen::MatrixXd>(2 * (dVal*normal).transpose())*vertex;
+        Eigen::MatrixXd q2 =  2*(dVal*vertex).transpose()*vertex;
 
-        Eigen::MatrixXd diag = diag4D(dVal*dVal);
-        Eigen::MatrixXd q = static_cast<Eigen::MatrixXd>(q1 + q2) + static_cast<Eigen::MatrixXd>(diag);
-
-
-//
-//        Eigen::Matrix4d newQ;
-//        for(int k=0; k<3; k++) {
-//            for(int l=0; l<3; l++) {
-//                newQ(k, l) = q(k, l);
-//            }
-//        }
-//
-//
-//        newQ(3,0) = 0;
-//        newQ(3,1) = 0;
-//        newQ(3,2) = 0;
-//
-//        newQ(0, 3) = 0;
-//        newQ(1, 3) = 0;
-//        newQ(2, 3) = 0;
-//
-//        newQ(3,3) = 1;
+        Eigen::MatrixXd q = diag4D( q1(0,0))  + diag4D(q2(0,0)) + diag4D(dVal*dVal);
 
         Qs[i] = q;
     }
 
     for(int j = 0; j<E.rows(); j++) {
-        int i1 = E.row(j)[0];
-        int i2 = E.row(j)[1];
+        int i1 = E(j,0);
+        int i2 = E(j,1);
 
         Eigen::MatrixXd qTag = Qs[i1] + Qs[i2];
         QTags[j] = qTag;
 
-        Eigen::Matrix4d newQ;
-        newQ.row(0) = newQ.row(0);
-        newQ.row(1) = newQ.row(1);
-        newQ.row(2) = newQ.row(2);
-        newQ(3, 0) = 0;
-        newQ(3, 1) = 0;
-        newQ(3, 2) = 0;
-        newQ(3, 3) = 1;
-        Eigen::FullPivLU<Eigen::MatrixXd> lu(newQ);
+        Eigen::Matrix4d matrixToInv;
+        matrixToInv.row(0) = qTag.row(0);
+        matrixToInv.row(1) = qTag.row(1);
+        matrixToInv.row(2) = qTag.row(2);
+        matrixToInv(3, 0) = 0;
+        matrixToInv(3, 1) = 0;
+        matrixToInv(3, 2) = 0;
+        matrixToInv(3, 3) = 1;
+
+        Eigen::FullPivLU<Eigen::MatrixXd> lu(matrixToInv);
         Eigen::Vector4d res;
         if(lu.isInvertible()) {
             Eigen::MatrixXd inv = lu.inverse();
@@ -221,7 +203,7 @@ void Connector::calculateCallBack() {
             res = res2;
         } else {
             Eigen::MatrixXd sum = 0.5 * static_cast<Eigen::MatrixXd>(to4D(V.row(i1)) + to4D(V.row(i2)));
-            res = sum.transpose();
+            res = sum;
         }
 
         VTags[j] = res;

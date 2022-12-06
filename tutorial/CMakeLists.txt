@@ -29,5 +29,6 @@ endif()
 add_subdirectory(Demo)
 
 add_subdirectory(Assignment1)
+add_subdirectory(Assignment2)
 add_subdirectory(Example1)
 
