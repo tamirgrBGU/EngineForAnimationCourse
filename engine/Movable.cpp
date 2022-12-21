@@ -81,10 +81,10 @@ const Eigen::Vector3f& Movable::AxisVec(Axis axis)
 void Movable::PropagateTransform() // NOLINT(misc-no-recursion)
 {
     if (auto p = parent.lock()) // use the aggregatedTransform of the parent
-        aggregatedTransform = p->aggregatedTransform * Tout.matrix() * Tin.matrix();
-    else // there is no parent
+        aggregatedTransform = p->aggregatedTransform * Tout.matrix() * Eigen::Affine3f{Eigen::Translation3f(Tin.translation())}.matrix();
+    else // there is no parent 
         aggregatedTransform = Tout.matrix() * Tin.matrix();
-
+    
     for (const auto& child: children)
         child->PropagateTransform();
 }
@@ -136,13 +136,13 @@ void Movable::Rotate(const Eigen::Matrix3f& rot)
 
 void Movable::Rotate(float angle, Axis axis)
 {
-    Rotate(angle, AxisVec(axis));
+    Rotate(angle, AxisVec(axis).normalized());
 }
 
 void Movable::Rotate(float angle, const Eigen::Vector3f& axisVec)
 {
     if (isStatic) return;
-    Tout.rotate(Eigen::AngleAxisf(angle, axisVec));
+    Tout.rotate(Eigen::AngleAxisf(angle, axisVec.normalized()));
     PropagateTransform();
 }
 
@@ -221,7 +221,10 @@ Eigen::Affine3f Movable::GetScaling(const Eigen::Matrix4f& _transform)
 
 Eigen::Matrix4f Movable::GetAggregatedTransform() const
 {
-    return aggregatedTransform;
+    if (auto p = parent.lock())
+        return aggregatedTransform * GetScaling(Tin.matrix()).matrix();
+    else
+        return Tout.matrix() * Tin.matrix();
 }
 
 Eigen::Affine3f Movable::GetTin() const

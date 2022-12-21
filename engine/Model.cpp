@@ -41,7 +41,7 @@ std::vector<igl::opengl::ViewerData> Model::CreateViewerData(const std::shared_p
         viewerData.set_normals(meshData.vertexNormals);
         viewerData.line_width = 1.0f;
         viewerData.uniform_colors(Eigen::Vector3d(1.0, 1.0, 1.0), Eigen::Vector3d(1.0, 1.0, 1.0), Eigen::Vector3d(1.0, 1.0, 1.0)); // todo: implement colors
-        viewerData.compute_normals(); // todo: implement (this overwrites both face and vertex normals even if either is already present)
+      //  viewerData.compute_normals(); // todo: implement (this overwrites both face and vertex normals even if either is already present)
         if (viewerData.V_uv.rows() == 0)
             viewerData.grid_texture();
         viewerData.is_visible = 1;
@@ -60,13 +60,30 @@ void Model::UpdateDataAndBindMesh(igl::opengl::ViewerData& viewerData, const Pro
     viewerData.meshgl.bind_mesh();
 }
 
+// void Model::AddOverlay(Eigen::MatrixXd points,Eigen::MatrixXd edges, Eigen::MatrixXd colors)
+void Model::AddOverlay(const OverlayData& data, bool drawPoints)
+{
+    viewerDataListPerMesh[0][0].show_overlay = 3;
+ //   viewerDataListPerMesh[0][0].show_faces = -1;
+    if(drawPoints)
+        viewerDataListPerMesh[0][0].add_points(data.points, data.colors);
+    else
+        viewerDataListPerMesh[0][0].add_edges(data.points, data.edges, data.colors); 
+}
+
 void Model::UpdateDataAndDrawMeshes(const Program& program, bool _showFaces, bool bindTextures)
 {
     for (auto& viewerDataList: viewerDataListPerMesh) {
         auto& viewerData = viewerDataList[std::min(meshIndex, int(viewerDataList.size() - 1))];
         UpdateDataAndBindMesh(viewerData, program);
         if (bindTextures) material->BindTextures();
-        viewerData.meshgl.draw_mesh(_showFaces);
+        if (mode == 0)
+            viewerData.meshgl.draw_mesh(_showFaces);
+        else
+            viewerData.meshgl.draw_lines();
+        // viewerData.meshgl.bind_overlay_points();
+        // viewerData.meshgl.draw_overlay_points();
+        // viewerData.meshgl.bind_overlay_lines();
     }
 }
 
