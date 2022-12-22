@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Scene.h"
+#include "AABB.h"
 
 #include <utility>
 
@@ -11,10 +12,15 @@ public:
     void Init(float fov, int width, int height, float near, float far);
     void Update(const cg3d::Program& program, const Eigen::Matrix4f& proj, const Eigen::Matrix4f& view, const Eigen::Matrix4f& model) override;
 
+
 private:
+
     std::shared_ptr<Movable> root;
-    std::shared_ptr<cg3d::Model> camel, sphere1 ,cube;
-    void CheckAndHandleCollusion(std::shared_ptr<cg3d::Model> model1, std::shared_ptr<cg3d::Model> model2);
+    std::shared_ptr<cg3d::Model> camel, sphere1;
+    igl::AABB<Eigen::MatrixXd, 3> leftTree;
+    igl::AABB<Eigen::MatrixXd, 3> rightTree;
+
+    void CheckAndHandleCollusion();
     void HandleCollusion(std::shared_ptr<cg3d::Model> model1, std::shared_ptr<cg3d::Model> model2);
-    static std::vector<Eigen::Vector3d> VerticesList(std::shared_ptr<cg3d::Model> model);
+
 };

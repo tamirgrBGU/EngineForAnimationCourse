@@ -6,10 +6,34 @@
 #include "igl/read_triangle_mesh.cpp"
 #include "igl/edge_flaps.h"
 #include "BoundingBox.h"
+#include "UnalignedBox.h"
+#include <limits>
 
 // #include "AutoMorphingModel.h"
 
 using namespace cg3d;
+
+Eigen::AlignedBox<double, 3> getAlignedBox(std::shared_ptr<cg3d::Model> model) {
+    Eigen::Vector3d minCorner(std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity());
+    Eigen::Vector3d maxCorner(-std::numeric_limits<double>::infinity(), -std::numeric_limits<double>::infinity(), -std::numeric_limits<double>::infinity());
+    for(auto meshList : model->GetMeshList()) {
+        for(auto meshData: meshList->data) {
+            auto vertices = meshData.vertices;
+            for(int i=0; i<vertices.rows(); i++) {
+                minCorner(0) = std::min(minCorner(0), vertices(i, 0));
+                minCorner(1) = std::min(minCorner(1), vertices(i, 1));
+                minCorner(2) = std::min(minCorner(2), vertices(i, 2));
+
+                maxCorner(0) = std::max(maxCorner(0), vertices(i, 0));
+                maxCorner(1) = std::max(maxCorner(1), vertices(i, 1));
+                maxCorner(2) = std::max(maxCorner(2), vertices(i, 2));
+            }
+        }
+    }
+
+    Eigen::AlignedBox<double, 3> box(minCorner, maxCorner);
+    return box;
+}
 
 void BasicScene::Init(float fov, int width, int height, float near, float far)
 {
@@ -36,7 +60,7 @@ void BasicScene::Init(float fov, int width, int height, float near, float far)
     
     sphere1 = Model::Create( "sphere",sphereMesh, material);
     camel = Model::Create("camel", camelMesh, material);
-    cube = Model::Create( "cube", cubeMesh, material);
+    camel->GetMeshList()[0]->data[0].vertices;
     sphere1->Scale(2);
     sphere1->showWireframe = true;
     sphere1->Translate({-3,0,0});
@@ -44,33 +68,15 @@ void BasicScene::Init(float fov, int width, int height, float near, float far)
     //camel->Rotate(30, cg3d::Movable::Axis::Y);
     camel->Scale(0.12f);
     camel->showWireframe = true;
-    cube->showWireframe = true;
     camera->Translate(20, Axis::Z);
     root->AddChild(sphere1);
     root->AddChild(camel);
-    root->AddChild(cube);
-    
-    auto mesh = cube->GetMeshList();
-    Eigen::VectorXi EMAP;
-    Eigen::MatrixXi F,E,EF,EI;
-    Eigen::VectorXi EQ;
-  // If an edge were collapsed, we'd collapse it to these points:
-    Eigen::MatrixXd V, C;
-    int num_collapsed;
 
-  // Function to reset original mesh and data structures
-    V = mesh[0]->data[0].vertices;
-    F = mesh[0]->data[0].faces;
-   // igl::read_triangle_mesh("data/cube.off",V,F);
-    igl::edge_flaps(F,E,EMAP,EF,EI);
-    std::cout<< "vertices: \n" << V <<std::endl;
-    std::cout<< "faces: \n" << F <<std::endl;
-    
-    std::cout<< "edges: \n" << E.transpose() <<std::endl;
-    std::cout<< "edges to faces: \n" << EF.transpose() <<std::endl;
-    std::cout<< "faces to edges: \n "<< EMAP.transpose()<<std::endl;
-    std::cout<< "edges indices: \n" << EI.transpose() <<std::endl;
 
+
+    leftTree.init(sphere1->GetMesh()->data[0].vertices, sphere1->GetMesh()->data[0].faces);
+    rightTree.init(camel->GetMesh()->data[0].vertices, camel->GetMesh()->data[0].faces);
+    int x = 2;
 }
 
 void BasicScene::Update(const Program& program, const Eigen::Matrix4f& proj, const Eigen::Matrix4f& view, const Eigen::Matrix4f& model)
@@ -86,82 +92,117 @@ void BasicScene::Update(const Program& program, const Eigen::Matrix4f& proj, con
         }
     }
 
-    for(int i=0; i < rootModels.size(); i++) {
-        for(int j=i+1; j < rootModels.size(); j++) {
-            CheckAndHandleCollusion(rootModels[i], rootModels[j]);
-        }
-    }
+    CheckAndHandleCollusion();
 
-    //cube->Rotate(0.01f, Axis::All);
 }
 
-std::vector<Eigen::Vector3d> BasicScene::VerticesList(std::shared_ptr<cg3d::Model> model) {
-    std::vector<Eigen::Vector3d> points;
 
-   Eigen::Matrix4d transform = model->GetTransform().cast<double>();
-    for(auto mesh : model->GetMeshList()) {
+Eigen::Matrix3Xd alignedBoxToMatrix(Eigen::AlignedBox<double, 3> box) {
+    Eigen::Matrix<double, 3, 8> mat;
 
-        for(const auto& meshData : mesh->data) {
-            for(int i=0; i<meshData.vertices.rows(); i++) {
-                Eigen::Vector4d vertex(meshData.vertices(i, 0), meshData.vertices(i, 1), meshData.vertices(i, 2), 1);
-                Eigen::Vector4d fixedVertex4d = transform * vertex;
-                Eigen::Vector3d fixedVertex3d(fixedVertex4d.x(), fixedVertex4d.y(), fixedVertex4d.z());
+    auto v0 = box.corner(box.BottomLeftFloor);
+    auto v1 = box.corner(box.BottomRightFloor);
+    auto v2 = box.corner(box.TopLeftFloor);
+    auto v3 = box.corner(box.TopRightFloor);
+    auto v4 = box.corner(box.BottomLeftCeil);
+    auto v5 = box.corner(box.BottomRightCeil);
+    auto v6 = box.corner(box.TopLeftCeil);
+    auto v7 = box.corner(box.TopRightCeil);
 
-                points.push_back(fixedVertex3d);
+    mat <<  v0.x(), v1.x(), v2.x(), v3.x(), v4.x(), v5.x(), v6.x(), v7.x(),
+            v0.y(), v1.y(), v2.y(), v3.y(), v4.y(), v5.y(), v6.y(), v7.y(),
+            v0.z(), v1.z(), v2.z(), v3.z(), v4.z(), v5.z(), v6.z(), v7.z();
+
+
+    return mat;
+}
+
+UnalignedBox matrixToUnalignedBox(Eigen::Matrix3Xd matrix) {
+    std::vector<Eigen::Vector3d> vertices;
+    for(int i=0; i<matrix.cols(); i++) {
+        vertices.emplace_back(matrix.col(i));
+    }
+
+    return UnalignedBox::BuildBoxFromVertices(vertices);
+}
+
+std::vector<igl::AABB<Eigen::MatrixXd, 3>> goDown(igl::AABB<Eigen::MatrixXd, 3> tree) {
+    if(tree.is_leaf()) {
+        return {tree};
+    }
+    if(tree.m_left == nullptr) {
+        return {*tree.m_right};
+    }
+    if(tree.m_right == nullptr) {
+        return {*tree.m_left};
+    }
+
+    return {*tree.m_left, *tree.m_right};
+}
+
+UnalignedBox fromBoxAndModel(Eigen::AlignedBox<double, 3> box, std::shared_ptr<cg3d::Model> m) {
+    std::vector<Eigen::Vector3d> vertices;
+    Eigen::Matrix4d transform = (m->GetTransform()).cast<double>();
+    auto matrix = alignedBoxToMatrix(box);
+    for(int i=0; i<matrix.cols(); i++) {
+        Eigen::Vector4d vertex;
+        vertex << matrix(0, i),  matrix(1, i), matrix(2, i), 1;
+        Eigen::Vector4d fixed4D = transform * vertex;
+        Eigen::Vector3d fixed3D;
+        fixed3D << fixed4D.x(), fixed4D.y(), fixed4D.z();
+        vertices.push_back(fixed3D);
+    }
+    return UnalignedBox::BuildBoxFromVertices(vertices);
+}
+
+bool doNodesCollide(igl::AABB<Eigen::MatrixXd, 3> tree1, std::shared_ptr<cg3d::Model> m1,
+                    igl::AABB<Eigen::MatrixXd, 3> tree2, std::shared_ptr<cg3d::Model> m2) {
+
+    auto box1 = fromBoxAndModel(tree1.m_box, m1);
+    auto box2 = fromBoxAndModel(tree2.m_box, m2);
+
+    return UnalignedBox::CheckCollusion(box1, box2);
+}
+
+bool leavesOnly(std::vector<igl::AABB<Eigen::MatrixXd, 3>> trees)  {
+    for(auto node : trees) {
+        if(!node.is_leaf()) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool doCollide(igl::AABB<Eigen::MatrixXd, 3> tree1, std::shared_ptr<cg3d::Model> m1,
+                    igl::AABB<Eigen::MatrixXd, 3> tree2, std::shared_ptr<cg3d::Model> m2) {
+    std::vector<igl::AABB<Eigen::MatrixXd, 3>> nodes1 = {tree1};
+    std::vector<igl::AABB<Eigen::MatrixXd, 3>> nodes2 = {tree2};
+
+    while(!nodes1.empty() && !leavesOnly(nodes1)) {
+        std::vector<igl::AABB<Eigen::MatrixXd, 3>> newNodes1;
+        std::vector<igl::AABB<Eigen::MatrixXd, 3>> newNodes2;
+
+        for (auto node1: nodes1) {
+            if (doNodesCollide(node1, m1, tree2, m2)) {
+                newNodes1.push_back(node1);
+            }
+        }
+        nodes1.clear();
+        for (auto n1: newNodes1) {
+            auto down = goDown(n1);
+            for (auto n: down) {
+                nodes1.push_back(n);
             }
         }
     }
-    return points;
+
+    return !nodes1.empty();
 }
 
-
-void BasicScene::CheckAndHandleCollusion(std::shared_ptr<cg3d::Model> model1, std::shared_ptr<cg3d::Model> model2) {
-    auto vList1 = VerticesList(model1);
-    auto vList2 = VerticesList(model2);
-
-    BoundingBox bb1(vList1);
-    BoundingBox bb2(vList2);
-    auto collusionRes = bb1.Collide(bb2);
-    bool collide = false;
-
-//    if(collusionRes.has_value()) {
-//        collide = true;
-//    }
-
-
-    while(collusionRes.has_value()) {
-        BoundingBox collusionBox = collusionRes.value();
-        int vList1SizeBefore = vList1.size();
-        int vList2SizeBefore = vList2.size();
-        if(vList1.size() >= 15)
-            vList1 = collusionBox.FilterIfOut(vList1);
-        if(vList2.size() >= 15)
-            vList2 = collusionBox.FilterIfOut(vList2);
-//        if(vList1.size() < 10 && vList2.size() < 10) {
-//            collide = true;
-//            break;
-//        }
-//        if(vList1.empty() || vList2.empty()) {
-//            collide = false;
-//            break;
-//        }
-        if(vList1.size() < 2 || vList2.size() < 2) {
-            collide = !vList1.empty() && !vList2.empty();
-            break;
-        }
-        if(vList1SizeBefore == vList1.size() && vList2SizeBefore == vList2.size()) {
-            collide = true;
-            break;
-        }
-        bb1 = BoundingBox(vList1);
-        bb2 = BoundingBox(vList2);
-        collusionRes = bb1.Collide(bb2);
+void BasicScene::CheckAndHandleCollusion() {
+    if(doCollide(leftTree, sphere1, rightTree, camel)) {
+        HandleCollusion(sphere1, camel);
     }
-
-    if(collide) {
-        HandleCollusion(model1, model2);
-    }
-
 }
 
 void BasicScene::HandleCollusion(std::shared_ptr<cg3d::Model> model1, std::shared_ptr<cg3d::Model> model2) {

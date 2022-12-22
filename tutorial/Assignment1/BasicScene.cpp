@@ -79,28 +79,36 @@ void BasicScene::decreaseQuality() {
     if(connectors.find(pickedModel->name) == connectors.end()) {
         initConnectors(pickedModel);
     }
+    if(oldMeshes.find(pickedModel->name) == oldMeshes.end()) {
+        oldMeshes[pickedModel->name] = {};
+    }
     std::vector<std::shared_ptr<Connector>> modelConnectors = connectors[pickedModel->name];
+    bool succeeded = false;
 
     std::vector<std::shared_ptr<cg3d::Mesh>> newMeshList;
     for(int i=0; i<pickedModel->GetMeshList().size(); i++) {
         auto newMesh = modelConnectors[i]->simplifyTenPercent(this);
         if(newMesh != nullptr) {
             newMeshList.push_back(newMesh);
+            succeeded = true;
         } else {
             newMeshList.push_back(pickedModel->GetMesh(i));
         }
+    }
+    if(succeeded) {
+        oldMeshes[pickedModel->name].push(pickedModel->GetMeshList());
     }
     pickedModel->SetMeshList(newMeshList);
 
 }
 
 void BasicScene::increaseQuality() {
-    if(pickedModel == nullptr || connectors.find(pickedModel->name) == connectors.end()) return;
-    std::vector<std::shared_ptr<cg3d::Mesh>> newMeshList;
-    for(auto connector : connectors[pickedModel->name]) {
-        newMeshList.push_back(connector->reset(this));
-    }
-    pickedModel->SetMeshList(newMeshList);
+    if(pickedModel == nullptr || connectors.find(pickedModel->name) == connectors.end() ||
+        oldMeshes.find(pickedModel->name) == oldMeshes.end() || oldMeshes[pickedModel->name].empty()) return;
+    auto meshToReset = oldMeshes[pickedModel->name].top();
+    oldMeshes[pickedModel->name].pop();
+    pickedModel->SetMeshList(meshToReset);
+    initConnectors(pickedModel);
 }
 
 void BasicScene::initConnectors(std::shared_ptr<cg3d::Model> model) {

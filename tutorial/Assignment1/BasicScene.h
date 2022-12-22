@@ -21,5 +21,6 @@ private:
     void initConnectors(std::shared_ptr<cg3d::Model> model);
     void decreaseQuality();
     void increaseQuality();
+    std::map<std::string, std::stack<std::vector<std::shared_ptr<cg3d::Mesh>>>> oldMeshes;
 
 };
