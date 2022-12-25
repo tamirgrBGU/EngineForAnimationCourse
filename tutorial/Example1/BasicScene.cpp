@@ -76,7 +76,7 @@ void BasicScene::Init(float fov, int width, int height, float near, float far)
     float scaleFactor = 1; 
     cyls.push_back( Model::Create("cyl",cylMesh, material));
     cyls[0]->Scale(scaleFactor,Axis::X);
-    cyls[0]->SetCenter(Eigen::Vector3f(-0.8*scaleFactor,0,0));
+    cyls[0]->SetCenter(Eigen::Vector3f(-0.8f*scaleFactor,0,0));
     root->AddChild(cyls[0]);
    
     for(int i = 1;i < 3; i++)
@@ -84,10 +84,10 @@ void BasicScene::Init(float fov, int width, int height, float near, float far)
         cyls.push_back( Model::Create("cyl", cylMesh, material));
         cyls[i]->Scale(scaleFactor,Axis::X);   
         cyls[i]->Translate(1.6f*scaleFactor,Axis::X);
-        cyls[i]->SetCenter(Eigen::Vector3f(-0.8*scaleFactor,0,0));
+        cyls[i]->SetCenter(Eigen::Vector3f(-0.8f*scaleFactor,0,0));
         cyls[i-1]->AddChild(cyls[i]);
     }
-    cyls[0]->Translate({0.8*scaleFactor,0,0});
+    cyls[0]->Translate({0.8f*scaleFactor,0,0});
 
     auto morphFunc = [](Model* model, cg3d::Visitor* visitor) {
       return model->meshIndex;//(model->GetMeshList())[0]->data.size()-1;
@@ -138,8 +138,8 @@ void BasicScene::Update(const Program& program, const Eigen::Matrix4f& proj, con
     program.SetUniform4f("lightColor", 0.8f, 0.3f, 0.0f, 0.5f);
     program.SetUniform4f("Kai", 1.0f, 0.3f, 0.6f, 1.0f);
     program.SetUniform4f("Kdi", 0.5f, 0.5f, 0.0f, 1.0f);
-    program.SetUniform1f("specular_exponent", 5.0);
-    program.SetUniform4f("light_position", 0.0, 15.0, 0.0, 1.0);
+    program.SetUniform1f("specular_exponent", 5.0f);
+    program.SetUniform4f("light_position", 0.0, 15.0f, 0.0, 1.0f);
 //    cyl->Rotate(0.001f, Axis::Y);
     cube->Rotate(0.1f, Axis::XYZ);
 }
@@ -208,9 +208,9 @@ void BasicScene::CursorPosCallback(Viewport* viewport, int x, int y, bool draggi
         } else {
            // camera->SetTout(cameraToutAtPress);
             if (buttonState[GLFW_MOUSE_BUTTON_RIGHT] != GLFW_RELEASE)
-                root->TranslateInSystem(system, {-float(xAtPress - x) / moveCoeff/10.0, float( yAtPress - y) / moveCoeff/10.0, 0});
+                root->TranslateInSystem(system, {-float(xAtPress - x) / moveCoeff/10.0f, float( yAtPress - y) / moveCoeff/10.0f, 0});
             if (buttonState[GLFW_MOUSE_BUTTON_MIDDLE] != GLFW_RELEASE)
-                root->RotateInSystem(system, float(x - xAtPress) / 180, Axis::Z);
+                root->RotateInSystem(system, float(x - xAtPress) / 180.0f, Axis::Z);
             if (buttonState[GLFW_MOUSE_BUTTON_LEFT] != GLFW_RELEASE) {
                 root->RotateInSystem(system, float(x - xAtPress) / angleCoeff, Axis::Y);
                 root->RotateInSystem(system, float(y - yAtPress) / angleCoeff, Axis::X);
