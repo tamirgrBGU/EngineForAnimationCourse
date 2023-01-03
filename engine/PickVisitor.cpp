@@ -42,7 +42,7 @@ void PickVisitor::Visit(Model* model)
 
     if (!model->isHidden) {
         auto& program = *model->material->BindFixedColorProgram();
-        scene->Update(program, proj, view, model->isStatic ? model->aggregatedTransform : norm * model->aggregatedTransform);
+        scene->Update(program, proj, view, model->isStatic ? model->GetAggregatedTransform() : norm * model->GetAggregatedTransform());
         models.emplace_back(model);
 
         int id = int(models.size()); // temporary id for the model (translated to color below)

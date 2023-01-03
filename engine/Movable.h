@@ -22,6 +22,8 @@ protected:
     Movable(const Movable& other); // important: doesn't add itself to the parent's children (object isn't constructed yet)
     Movable(Movable&&) = default; // important: doesn't add itself to the parent's children (object isn't constructed yet)
     Movable& operator=(const Movable& other);
+private:    
+    Eigen::Matrix4f aggregatedTransform{Eigen::Matrix4f::Identity()}; // aggregation of all transformations starting from top level
 
 public:
     std::string name;
@@ -81,9 +83,8 @@ public:
     static Eigen::Affine3f GetTranslationRotation(const Eigen::Matrix4f& transform);
     static Eigen::Affine3f GetScaling(const Eigen::Matrix4f& _transform);
 
-    Eigen::Matrix4f aggregatedTransform{Eigen::Matrix4f::Identity()}; // aggregation of all transformations starting from top level
     Eigen::Affine3f Tout{Eigen::Affine3f::Identity()}, Tin{Eigen::Affine3f::Identity()}; // transformations of *this* object (only)
-    float lineWidth = 2;
+    float lineWidth = 5;
     bool isPickable = true;
     bool isStatic = false;
     std::vector<std::shared_ptr<Movable>> children;
